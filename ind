@@ -1,0 +1,137 @@
+#!/bin/bash
+# Calculates Byzantine date, Indiction, and Buddhist year.
+# 2013-07-16
+
+# v1.0	2013-07-16, initial calculations
+# v1.5	2014-05-06, add Buddhist year calculations
+# v1.6	2014-06-07, correct base ten for day calc
+# v2.0	2014-08-01, Re-write, add switches
+# v2.1	2014-08-07, add Buddhist holidays
+
+# To change defaults, change 'true' to 'false'
+COMMON=true
+BYZANTINE=true
+BUDDHIST=true
+
+budconvert=543	# Thai Solar
+byzconvert=5508 # Year begins in September
+MONTHS=(dummy Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
+year=`date +%Y`;(( year=$year/1 ))
+month="10#`date +%m`";(( month=$month/1 )) # '10#' sets base ten
+day="10#`date +%d`";(( day=$day/1 ))
+
+ordinal () {
+	case "$1" in
+		1)	ord="st";;
+		2)	ord="nd";;	
+		3)	ord="rd";;
+		*)	ord="th";;
+	esac
+}
+
+usage()
+{
+cat << EOF
+usage: ${0##*/} options
+
+Calculates Byzantine date, Indiction, and Buddhist year.
+
+OPTIONS:
+	-i	Info on dating systems
+	-c	Toggle Common year
+	-z	Toggle Byzantine year
+	-b	Toggle Buddhist year
+	-y	Set year
+	-m	Set month
+	-d	Set day
+	-v	Verbose
+EOF
+}
+
+info()
+{
+cat << EOF
+A brief history of dating systems:
+
+The Byzantine calendar: also "Creation Era of Constantinople," or "Era of
+the World" was the calendar used by the Eastern Orthodox Church from c. 691
+to 1728 in the Ecumenical Patriarchate. It was also the official calendar of
+the Byzantine Empire from 988 to 1453, and in Russia from c. 988 to 1700.
+The calendar is based on the Julian calendar except that the year started on
+1 September and the year number used an Anno Mundi epoch derived from the
+Septuagint version of the Bible. It placed the date of creation at 5509
+years before the Incarnation, and was characterized by a certain tendency
+which had already been a tradition amongst Jews and early Christians to
+number the years from the foundation of the world. (Latin: ‘Annus Mundi’ —
+A.M.). Its year one, the supposed date of creation, was September 1, 5509 BC
+to August 31, 5508 BC.
+
+An indiction: is any of the years in a 15-year cycle used to date medieval
+documents throughout Europe, both East and West. Each year of a cycle was
+numbered: first indiction, second indiction, etc. However, the cycles were
+not numbered, thus other information is needed to identify the specific
+year.
+
+The Buddhist calendar: is a set of lunisolar calendars primarily used in
+mainland Southeast Asian countries of Cambodia, Laos, Myanmar and Thailand
+as well as in Sri Lanka for religious and/or official occasions. While the
+calendars share a common lineage, they also have minor but important
+variations such as intercalation schedules, month names and numbering, use
+of cycles, etc. In Thailand, the name Buddhist Era is a year numbering
+system shared by the traditional Thai lunisolar calendar and by the Thai
+solar calendar.
+
+{Wikipedia}
+EOF
+}
+
+while getopts “?hiczby:m:d:v” OPTION
+do
+	case $OPTION in
+		i) info; exit;;
+		c) unset COMMON;;
+		z) unset BYZANTINE;;
+		b) unset BUDDHIST;;	
+		y) year=$OPTARG;;
+		m) month=$OPTARG;;
+		d) day=$OPTARG;;
+		v) VERBOSE=true;;
+		*) usage; exit;;
+	esac
+done
+
+if [ $month -lt 1 -o $month -gt 12 ]; then
+	echo ${0##*/}: Month not within range.
+	echo
+	exit 1
+fi
+
+if [ $year -le 0 ]; then
+	echo ${0##*/}: Date must be positive.
+	echo
+	exit 1
+fi
+
+smonth=${MONTHS[$month]}
+
+(( ind=($year+2)%15+1 ))
+ordinal $ind; gord=$ord # set Gregorian ordinal
+
+if [ $month -ge "9" ]; then
+	(( byzantine=year+byzconvert+1 ))
+else
+	(( byzantine=year+byzconvert ))
+fi	
+
+(( byzind=$byzantine%15 ))
+[ $byzind -eq "0" ] && byzind=15
+ordinal $byzind; bord=$ord # set Byzantine ordinal
+
+(( buddhist=year+budconvert ))
+[ $month -eq 4 -a $day -eq 8 ]	&& holiday=", today is The Buddha's Birthday."
+[ $month -eq 4 -a $day -eq 13 ]	&& holiday=", today is the traditional Thai New Year."
+
+[ $VERBOSE ]	&& echo $day $smonth
+[ $COMMON ]		&& echo C.E. $year, $ind$gord Indiction
+[ $BYZANTINE ]	&& echo A.M. $byzantine, $byzind$bord Indiction
+[ $BUDDHIST ]	&& echo B.E. $buddhist$holiday
