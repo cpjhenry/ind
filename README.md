@@ -1,10 +1,11 @@
 ind
 ===
 
-'ind' is a bash script which calculates the Byzantine date, indiction for current and Byzantine date, and the Buddhist year.
+'ind' is a bash script which calculates the Byzantine date, indiction for
+current and Byzantine date, and the Buddhist year.
 
 ## Installation
-Copy to your local 'bin' directory, or somewhere in path, and enjoy.
+Copy to your local 'bin' directory, or somewhere in path.
 
 ## A brief history of dating systems:
 

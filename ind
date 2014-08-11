@@ -1,6 +1,6 @@
 #!/bin/bash
 # Calculates Byzantine date, Indiction, and Buddhist year.
-# 2013-07-16
+# 2013-07-16/cpjhenry
 
 # v1.0	2013-07-16, initial calculations
 # v1.5	2014-05-06, add Buddhist year calculations
