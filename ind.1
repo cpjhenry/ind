@@ -1,123 +1,105 @@
-.TH ind 1 2015-07-26
-.SH NAME
-ind \- calculates and displays dates and years for uncommon dating systems.
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "IND" "1" "July 2015" "" ""
+.
+.SH "NAME"
+\fBind\fR \- calculates and displays dates and years for uncommon dating systems\.
+.
+.SH "SYNOPSIS"
+\fBind\fR [\-cljrzbv] [\-y year] [\-m month] [\-d day number|yesterday|today|tomorrow]
+.
+.SH "DESCRIPTION"
+\fBind\fR is a bash script which calculates the Byzantine year, indiction for current and Byzantine year, the Buddhist year, and the year from the founding of the City of Rome\. Other available lunar\-solar calculations include: metonic cycle, epact, dominical year, Rosh Hashanah and the Hebrew calendar, and Buddhist holidays in the Theravadan tradition\.
+.
+.P
+Users of Darwin (Mac) systems should install (and alias) the latest \fBcoreutils\fR using your preferred third\-party package manager\.
+.
+.P
+Buddhist holiday calculations require the remind(1) tool to properly calculate lunar dates\. If not present, holiday calculations will be turned off automatically\.
+.
+.SH "OPTIONS"
+.
+.TP
+\fB\-c\fR
+Toggle Common year\.
+.
+.TP
+\fB\-l\fR
+Toggle Lunar data\. (off by default)
+.
+.TP
+\fB\-j\fR
+Toggle Hebrew year\. (off by default)
+.
+.TP
+\fB\-r\fR
+Toggle year of Rome\. (off by default)
+.
+.TP
+\fB\-z\fR
+Toggle Byzantine year\.
+.
+.TP
+\fB\-b\fR
+Toggle Buddhist year\.
+.
+.TP
+\fB\-y\fR
+Set year in format \'yyyy\'\.
+.
+.TP
+\fB\-m\fR
+Set month in format \'m\'\.
+.
+.TP
+\fB\-d\fR
+Set day in format \'d\'\. Also accepts fuzzy dates, e\.g\. \'yesterday\', \'today\', \'tomorrow\'\.
+.
+.TP
+\fB\-v\fR
+Verbose mode\.
+.
+.SH "A brief history of dating systems: (source: Wikipedia)"
+The Hebrew or Jewish calendar: is a lunisolar calendar used today predominantly for Jewish religious observances\. The principles and rules were fully codified by Maimonides whose work also replaced counting "years since the destruction of the Temple" with the modern creation\-era Anno Mundi\. The Hebrew lunar year is about eleven days shorter than the solar cycle and uses the 19\-year Metonic cycle to bring it into line, with the addition of an intercalary month every two or three years\.
+.
+.P
+"Ab urbe condita" (also "anno urbis", a\.u\.), or "from the founding of the City (Rome)", traditionally dated to 753 BC\. AUC is a year\-numbering system used by historians of ancient Rome to identify particular years\. The dominant method of identifying years in Roman times was to name the two consuls who held office that year\. The regnal year of the emperor was also used to identify years, especially in the Byzantine Empire after 537\.
+.
+.P
+The Byzantine calendar: also "Creation Era of Constantinople," or "Era of the World" was the calendar used by the Eastern Orthodox Church from c\. 691 to 1728 in the Ecumenical Patriarchate\. It was also the official calendar of the Byzantine Empire from 988 to 1453, and in Russia from c\. 988 to 1700\. The calendar is based on the Julian calendar except that the year started on 1 September and the year number used an Anno Mundi epoch\. Its year one, from creation, was September 1, 5509 BC to August 31, 5508 BC\.
+.
+.P
+An indiction: is any of the years in a 15\-year cycle used to date medieval documents throughout Europe, both East and West\. Each year of a cycle was numbered: first indiction, second indiction, etc\. However, the cycles were not numbered, thus other information is needed to identify specific years\.
+.
+.P
+The Buddhist calendar: is a set of lunisolar calendars primarily used in mainland Southeast Asian countries of Cambodia, Laos, Myanmar and Thailand as well as in Sri Lanka for religious and/or official occasions\. In Thailand, the name Buddhist Era is a year numbering system shared by the traditional Thai lunisolar calendar and by the Thai solar calendar\.
+.
+.P
+Epact: If a solar and lunar year start on the same day, then after one year, the start of the solar year is 11 days after the start of the lunar year\. These excess days are epacts, and are added to the day of the solar year to determine the day of the lunar year\.
+.
+.SS "Uposatha"
+The Uposatha (Sanskrit: Upavasatha) is a Buddhist day of observance, in existence from the Buddha\'s time (500 BCE), and still being kept today in Buddhist countries\. The Buddha taught that the Uposatha day is for "the cleansing of the defiled mind", resulting in inner calm and joy\. On this day, lay disciples and monks intensify their practice, deepen their knowledge and express communal commitment through millennia\-old acts of lay\-monastic reciprocity\. On these days, the lay followers make a conscious effort to keep the Five Precepts or (as the tradition suggests) the Eight Precepts\. It is a day for practicing the Buddha\'s teachings and meditation\.
+.
+.P
+There are five \'special\' full moon Uposatha:
+.
+.IP "" 4
+.
+.nf
 
-.SH SYNOPSIS
-.B ind [-cljrzbv] [-y
-.I year
-.B ] [-m
-.I month
-.B ] [-d
-.I day number
-.B |
-.I yesterday
-.B |
-.I today
-.B |
-.I tomorrow
-.B ]
-
-.SH DESCRIPTION
-.B ind
-is a bash script which calculates the Byzantine year, indiction for current
-and Byzantine year, the Buddhist year, and the year from the founding of the
-City of Rome. Other available lunar-solar calculations include: metonic
-cycle, epact, dominical year, Rosh Hashanah and the Hebrew calendar, and
-Buddhist holidays in the Theravadan tradition.
-
-Users of Darwin (Mac) systems should install (and alias) the latest
-.B coreutils
-using your preferred third-party package manager.
-
-Buddhist holiday calculations require the
-.B remind
-tool to properly calculate lunar dates. If not present, holiday calculations
-will be turned off automatically.
-
-.SH OPTIONS
-.IP -c  
-Toggle Common year.
-.IP -l  
-Toggle Lunar data. (off by default)
-.IP -j  
-Toggle Hebrew year. (off by default)
-.IP -r
-Toggle year of Rome. (off by default)
-.IP -z  
-Toggle Byzantine year.
-.IP -b  
-Toggle Buddhist year.
-.IP -y  
-Set year in format 'yyyy'.
-.IP -m  
-Set month in format 'm'.
-.IP -d  
-Set day in format 'd'. Also accepts fuzzy dates, e.g. 'yesterday', 'today', 'tomorrow'.
-.IP -v  
-Verbose mode.
-
-.SH A brief history of dating systems: (source: Wikipedia)
-
-The Hebrew or Jewish calendar: is a lunisolar calendar used today
-predominantly for Jewish religious observances. The principles and rules
-were fully codified by Maimonides whose work also replaced counting "years
-since the destruction of the Temple" with the modern creation-era Anno
-Mundi. The Hebrew lunar year is about eleven days shorter than the solar
-cycle and uses the 19-year Metonic cycle to bring it into line, with the
-addition of an intercalary month every two or three years.
-
-"Ab urbe condita" (also "anno urbis", a.u.), or "from the founding of the
-City (Rome)", traditionally dated to 753 BC. AUC is a year-numbering system
-used by historians of ancient Rome to identify particular years. The
-dominant method of identifying years in Roman times was to name the two
-consuls who held office that year. The regnal year of the emperor was also
-used to identify years, especially in the Byzantine Empire after 537.
-
-The Byzantine calendar: also "Creation Era of Constantinople," or "Era of
-the World" was the calendar used by the Eastern Orthodox Church from c. 691
-to 1728 in the Ecumenical Patriarchate. It was also the official calendar of
-the Byzantine Empire from 988 to 1453, and in Russia from c. 988 to 1700.
-The calendar is based on the Julian calendar except that the year started on
-1 September and the year number used an Anno Mundi epoch. Its year one, from
-creation, was September 1, 5509 BC to August 31, 5508 BC.
-
-An indiction: is any of the years in a 15-year cycle used to date medieval
-documents throughout Europe, both East and West. Each year of a cycle was
-numbered: first indiction, second indiction, etc. However, the cycles were
-not numbered, thus other information is needed to identify specific years.
-
-The Buddhist calendar: is a set of lunisolar calendars primarily used in
-mainland Southeast Asian countries of Cambodia, Laos, Myanmar and Thailand
-as well as in Sri Lanka for religious and/or official occasions. In
-Thailand, the name Buddhist Era is a year numbering system shared by the
-traditional Thai lunisolar calendar and by the Thai solar calendar.
-
-Epact: If a solar and lunar year start on the same day, then after one year,
-the start of the solar year is 11 days after the start of the lunar year.
-These excess days are epacts, and are added to the day of the solar year to
-determine the day of the lunar year.
-
-.SH Uposatha
-The Uposatha (Sanskrit: Upavasatha) is a Buddhist day of observance, in
-existence from the Buddha's time (500 BCE), and still being kept today in
-Buddhist countries. The Buddha taught that the Uposatha day is for "the
-cleansing of the defiled mind", resulting in inner calm and joy. On this
-day, lay disciples and monks intensify their practice, deepen their
-knowledge and express communal commitment through millennia-old acts of
-lay-monastic reciprocity. On these days, the lay followers make a conscious
-effort to keep the Five Precepts or (as the tradition suggests) the Eight
-Precepts. It is a day for practicing the Buddha's teachings and meditation.
-
-There are five 'special' full moon Uposatha:
-
- - Sangha day (February)
- - Buddha day (May)
- - Dhamma day (July)
- - Pavarana (October)
- - Anapanasati day (November)
-
-.SH AUTHOR
-Paul J Henry <cpjhenry@gmail.com>
-
-.SH SEE ALSO
-.BR remind (1)
+\- Sangha day (February)
+\- Buddha day (May)
+\- Dhamma day (July)
+\- Pavarana (October)
+\- Anapanasati day (November)
+.
+.fi
+.
+.IP "" 0
+.
+.SH "AUTHOR"
+Paul J Henry \fIcpjhenry@gmail\.com\fR
+.
+.SH "SEE ALSO"
+remind(1)
