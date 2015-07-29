@@ -2,7 +2,7 @@
 # Re-directs from Mac defaults to gnu variants if present
 # 2014-10-15/pjh
 
-# Also details files are not installed on Mac by default
+# Also details files that are not installed on Mac by default
 # To use, symlink to this file (e.g. ln -s gnu date)
 
 app=$(basename $0)
