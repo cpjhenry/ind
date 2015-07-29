@@ -1,24 +1,32 @@
 #!/bin/bash
-# Calculates Byzantine date, Indiction, and Buddhist year.
-# 2013-07-16/cpjhenry
+# Calculates Byzantine date & Indiction
+# 2013-07-16
 
-# v1.0	2013-07-16, initial calculations
-# v1.5	2014-05-06, add Buddhist year calculations
-# v1.6	2014-06-07, correct base ten for day calc
-# v2.0	2014-08-01, Re-write, add switches
-# v2.1	2014-08-07, add Buddhist holidays
-
-# To change defaults, change 'true' to 'false'
 COMMON=true
+LUNAR=
+HEBREW=
 BYZANTINE=true
+ROME=
 BUDDHIST=true
+HOLIDAYS=true
 
 budconvert=543	# Thai Solar
-byzconvert=5508 # Year begins in September
+hebconvert=3760 # Hebrew; year begins in September (day varies)
+byzconvert=5508 # Byzantine; year begins September 1st
+romconvert=753  # Founding of Rome - 753 BCE
 MONTHS=(dummy Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-year=`date +%Y`;(( year=$year/1 ))
-month="10#`date +%m`";(( month=$month/1 )) # '10#' sets base ten
-day="10#`date +%d`";(( day=$day/1 ))
+MONTHL=(dummy January February March April May June July August September October November December)
+EPACTS=(0 29 10 21 2 13 24 5 16 27 8 19 30 11 22 3 14 25 6 17)
+DOMINI=(G A B C D E F)
+PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
+
+rem="remind"
+
+setdate () { # usage: setdate [yesterday|today|tomorrow]
+	year=$(date -d "$1" +%Y)
+	month=$(date -d "$1" +%-m);month=$(printf "%02d" $month)
+	day=$(date -d "$1" +%-d);day=$(printf "%02d" $day)
+}
 
 ordinal () {
 	case "$1" in
@@ -29,16 +37,32 @@ ordinal () {
 	esac
 }
 
+is_leap_year() { ## USAGE: is_leap_year [year]
+	ily_year=${1:-`date +%Y`}
+	case $ily_year in
+		*0[48] |\
+		*[2468][048] |\
+		*[13579][26] |\
+		*[02468][048]00 |\
+		*[13579][26]00 ) _IS_LEAP_YEAR=1
+		return 0 ;;
+		*) unset _IS_LEAP_YEAR
+		return 1 ;;
+	esac
+}
+
 usage()
 {
 cat << EOF
-usage: ${0##*/} options
+usage: $(basename $0) options
 
-Calculates Byzantine date, Indiction, and Buddhist year.
+Calculates and displays dates for uncommon dating systems.
 
 OPTIONS:
-	-i	Info on dating systems
 	-c	Toggle Common year
+	-l	Toggle Lunar data
+	-j	Toggle Hebrew year
+	-r	Toggle year of Rome
 	-z	Toggle Byzantine year
 	-b	Toggle Buddhist year
 	-y	Set year
@@ -48,90 +72,127 @@ OPTIONS:
 EOF
 }
 
-info()
-{
-cat << EOF
-A brief history of dating systems:
+setdate today # set initial date
 
-The Byzantine calendar: also "Creation Era of Constantinople," or "Era of
-the World" was the calendar used by the Eastern Orthodox Church from c. 691
-to 1728 in the Ecumenical Patriarchate. It was also the official calendar of
-the Byzantine Empire from 988 to 1453, and in Russia from c. 988 to 1700.
-The calendar is based on the Julian calendar except that the year started on
-1 September and the year number used an Anno Mundi epoch derived from the
-Septuagint version of the Bible. It placed the date of creation at 5509
-years before the Incarnation, and was characterized by a certain tendency
-which had already been a tradition amongst Jews and early Christians to
-number the years from the foundation of the world. (Latin: ‘Annus Mundi’ —
-A.M.). Its year one, the supposed date of creation, was September 1, 5509 BC
-to August 31, 5508 BC.
-
-An indiction: is any of the years in a 15-year cycle used to date medieval
-documents throughout Europe, both East and West. Each year of a cycle was
-numbered: first indiction, second indiction, etc. However, the cycles were
-not numbered, thus other information is needed to identify the specific
-year.
-
-The Buddhist calendar: is a set of lunisolar calendars primarily used in
-mainland Southeast Asian countries of Cambodia, Laos, Myanmar and Thailand
-as well as in Sri Lanka for religious and/or official occasions. While the
-calendars share a common lineage, they also have minor but important
-variations such as intercalation schedules, month names and numbering, use
-of cycles, etc. In Thailand, the name Buddhist Era is a year numbering
-system shared by the traditional Thai lunisolar calendar and by the Thai
-solar calendar.
-
-{Wikipedia}
-EOF
-}
-
-while getopts “?hiczby:m:d:v” OPTION
+while getopts "?hcljrzbvy:m:d:" OPTION
 do
 	case $OPTION in
-		i) info; exit;;
-		c) unset COMMON;;
-		z) unset BYZANTINE;;
-		b) unset BUDDHIST;;	
-		y) year=$OPTARG;;
-		m) month=$OPTARG;;
-		d) day=$OPTARG;;
+		c) [ $COMMON ] 		&& unset COMMON 	|| COMMON=true;;
+		l) [ $LUNAR ] 		&& unset LUNAR 		|| LUNAR=true;;
+		j) [ $HEBREW ] 		&& unset HEBREW 	|| HEBREW=true;;
+		r) [ $ROME ] 		&& unset ROME 		|| ROME=true;;
+		z) [ $BYZANTINE ] 	&& unset BYZANTINE 	|| BYZANTINE=true;;
+		b) [ $BUDDHIST ] 	&& unset BUDDHIST 	|| BUDDHIST=true;;
 		v) VERBOSE=true;;
+		y) year=$OPTARG;;
+		m) month=$(printf "%02d" $OPTARG);;
+		d) 
+			if [[ $OPTARG =~ [A-Za-z\ ] ]] ; then # regex comparison: letters, spaces
+				setdate "$OPTARG"
+			else
+				day=$(printf "%02d" $OPTARG)
+			fi	
+			;;
 		*) usage; exit;;
 	esac
 done
 
-if [ $month -lt 1 -o $month -gt 12 ]; then
-	echo ${0##*/}: Month not within range.
-	echo
-	exit 1
-fi
+[ $month -lt 1 -o $month -gt 12 ] && echo $(basename $0): Month not within range.&& echo && exit 1
+[ $year -le 0 ] && echo $(basename $0): Date must be positive. && echo && exit 1
 
-if [ $year -le 0 ]; then
-	echo ${0##*/}: Date must be positive.
-	echo
-	exit 1
-fi
-
-smonth=${MONTHS[$month]}
-
-(( ind=($year+2)%15+1 ))
-ordinal $ind; gord=$ord # set Gregorian ordinal
+ymd="$year-$month-$day"
+jd=$(date -d$ymd +%-j) # set Julian day
 
 if [ $month -ge "9" ]; then
 	(( byzantine=year+byzconvert+1 ))
+	(( hebrew=year+hebconvert+1 ))
 else
 	(( byzantine=year+byzconvert ))
+	(( hebrew=year+hebconvert ))
 fi	
 
-(( byzind=$byzantine%15 ))
+# more sophisticated hebrew date
+if [ $(which $rem) ] ; then
+	hebnyr=$((echo "BANNER %"; echo "MSG [hebdate(1, \"Tishrey\")]") | $rem - $year-01-01 | sed '/^$/d')
+	hebnyrm=$(echo $hebnyr | sed 's/^....-//;s/-..$//;s/^0//') 	# leading zeros stripped
+	hebnyrd=$(echo $hebnyr | sed 's/^....-..-//;s/^0//')		# leading zeros stripped
+	hebyr=$( (echo "BANNER %"; echo "MSG [hebyear(today())]")	| $rem - $ymd | sed '/^$/d')
+	hebmon=$((echo "BANNER %"; echo "MSG [hebmon(today())]")	| $rem - $ymd | sed '/^$/d')
+	hebday=$((echo "BANNER %"; echo "MSG [hebday(today())]")	| $rem - $ymd | sed '/^$/d')
+else
+	hebyr=$hebrew
+fi
+
+(( rome=year+romconvert ))
+
+(( ind=($year+2)%15+1 ))# set Gregorian indiction
+ordinal $ind; gord=$ord # set Gregorian ordinal
+
+(( byzind=$byzantine%15 )) # set Byzantine indiction
 [ $byzind -eq "0" ] && byzind=15
 ordinal $byzind; bord=$ord # set Byzantine ordinal
 
-(( buddhist=year+budconvert ))
-[ $month -eq 4 -a $day -eq 8 ]	&& holiday=", today is The Buddha's Birthday."
-[ $month -eq 4 -a $day -eq 13 ]	&& holiday=", today is the traditional Thai New Year."
+(( golden=year%19+1 ))
+(( dominical=((year-1)%100%4*2+(year-1)%100%7*4+(year-1)/100%4*2)%7 ))
 
-[ $VERBOSE ]	&& echo $day $smonth
-[ $COMMON ]		&& echo C.E. $year, $ind$gord Indiction
-[ $BYZANTINE ]	&& echo A.M. $byzantine, $byzind$bord Indiction
-[ $BUDDHIST ]	&& echo B.E. $buddhist$holiday
+is_leap_year $year
+if [ $_IS_LEAP_YEAR ]; then
+	leap="(leap year)"
+	dom="${DOMINI[$dominical]}${DOMINI[$dominical-1]}"
+else
+	dom="${DOMINI[$dominical]}"
+
+fi
+
+[ $VERBOSE ]	&& printf "Gregorian CE %d %s %d (%s)\n" $day ${MONTHS[10#$month]} $year $year-$month-$day
+[ $COMMON ]	 	&& printf "CE %d %d%s Ind. / Day %d " $year $ind $gord $jd ; echo $leap
+[ $LUNAR ]	 	&& printf "Metonic %s / Epact %s / Dominical %s\n" $golden ${EPACTS[$golden]} $dom
+[ $HEBREW ]  	&& printf "Hebrew    AM %d (%d %s)\n" $hebyr $hebday $hebmon
+				[ $HEBREW ] && [ $VERBOSE ] && printf "Rosh Hashanah: %d %s\n" $hebnyrd ${MONTHL[$hebnyrm]}
+[ $ROME ]		&& printf "City of Rome %d\n" $rome
+[ $BYZANTINE ]	&& printf "Byzantine AM %d %d%s Ind.\n" $byzantine $byzind $bord
+
+(( buddhist=year+budconvert ))
+[ $BUDDHIST ]	&& echo Buddhist Era $buddhist
+
+if [ $(which $rem) ] ; then # Moon calculations
+	for i in $(seq 0 3); do
+		moonphase[$i]=$((echo "BANNER %"; echo "MSG [moondate($i, today(), 12:00)]") | $rem - $year-$month-01 | sed '/^$/d')
+		[ "${moonphase[$i]}" = "$ymd" ] && moon=${PHASES[$i]}
+		[ $VERBOSE ] && printf "%-13s: %s\n" "${PHASES[$i]}" ${moonphase[$i]}
+	done
+
+	# calculate blue / black moons
+	nfmoon=$((echo "BANNER %"; echo "MSG [moondate(2, today(), 12:00)]") | $rem - $year-$month-$day | sed '/^$/d')
+	nfmont=$((echo "BANNER %"; echo "MSG [moontime(2, today(), 12:00)]") | $rem - $year-$month-$day | sed '/^$/d')
+	if [ "$(echo $nfmoon | sed 's/-..$//')" = "$year-$month" ] ; then
+		[ "$nfmoon" != "${moonphase[2]}" ] && [ "$nfmoon" = "$ymd" ] && moon="Blue Moon"
+	fi
+	nnmoon=$( (echo "BANNER %"; echo "MSG [moondate(0, today(), 12:00)]") | $rem - $year-$month-$day | sed '/^$/d')
+	nnmont=$( (echo "BANNER %"; echo "MSG [moontime(0, today(), 12:00)]") | $rem - $year-$month-$day | sed '/^$/d')
+	if [ "$(echo $nnmoon | sed 's/-..$//')" = "$year-$month" ] ; then
+		[ "$nnmoon" != "${moonphase[0]}" ] && [ "$nnmoon" = "$ymd" ] && moon="Black Moon"
+	fi
+	[ $VERBOSE ] && echo "Next Fullmoon: $nfmoon at $nfmont"
+	[ $VERBOSE ] && echo "Next New Moon: $nnmoon at $nnmont"
+
+	# calculate Vassa
+	vsday=$((echo "BANNER %"; echo "MSG [moondate(2)+1]") | $rem - $year-07-01 | sed '/^$/d;s/^....-..-//;s/^0//')
+	[ $VERBOSE ] && echo Vassa begins : $vsday ${MONTHL[7]}
+		
+else
+	unset HOLIDAYS
+	[ $VERBOSE ] && echo Moon calculations turned off. Please install \'remind\'.
+fi
+if [ $BUDDHIST ] && [ $HOLIDAYS ] ; then
+	[ "$moon" != "" ] && observance="$moon Uposatha."
+	if [ "$moon" = "Full Moon" ]; then
+		[ $month -eq 2  ] && observance="Sangha day."
+		[ $month -eq 5  ] && observance="Buddha day."
+		[ $month -eq 7  ] && observance="Dhamma day. Vassa begins tomorrow."
+		[ $month -eq 10 ] && observance="Pavarana. Vassa ends."
+		[ $month -eq 11 ] && observance="Anapanasati day."
+	fi
+	[ $month -eq 7 -a $day -eq $vsday ]	&& observance="Vassa begins."
+	[ "$observance" != "" ] && echo $observance
+fi

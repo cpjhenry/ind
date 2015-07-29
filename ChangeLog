@@ -1,4 +1,4 @@
-ChangeLog -- ind
+ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 
 v1.0	2013-07-16
         * initial calculations
@@ -35,5 +35,7 @@ v2.8	2015-05-21
 
 v3.0	2015-07-26
 		* added blue / black moon calculations
-		* fixed base 10 month display in common section (yes, a problem with array indexes)
+		* fixed common section month base ten error (array indexes in bash)
         * added new documention (changelog, man file)
+		* supplied 'gnu' alias file
+
