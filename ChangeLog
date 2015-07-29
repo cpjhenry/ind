@@ -37,5 +37,3 @@ v3.0	2015-07-26
 		* added blue / black moon calculations
 		* fixed common section month base ten error (array indexes in bash)
 		* added new documention (changelog, man file)
-		* supplied 'gnu' alias file
-
