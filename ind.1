@@ -1,6 +1,6 @@
 .TH ind 1 2015-07-26
 .SH NAME
-ind \- Calculates and displays dates for uncommon dating systems.
+ind \- Calculates and displays dates and years for uncommon dating systems.
 
 .SH SYNOPSIS
 .B ind [-cljrzbv] [-y
@@ -19,21 +19,15 @@ ind \- Calculates and displays dates for uncommon dating systems.
 
 .SH DESCRIPTION
 .B ind
-calculates and displays dates for uncommon dating systems. It is a shell
-script, written for bash. Users of Darwin (Mac) systems should install (and
-alias) the latest
+is a bash script which calculates the Byzantine year, indiction for current
+and Byzantine year, the Buddhist year, and the year from the founding of the
+City of Rome. Other available lunar-solar calculations include: metonic
+cycle, epact, dominical year, Rosh Hashanah and the Hebrew calendar, and
+Buddhist holidays in the Theravadan tradition.
+
+Users of Darwin (Mac) systems should install (and alias) the latest
 .B coreutils
 using your preferred third-party package manager.
-
-The project began as a simple tool to calculate the Byzantine date and
-indiction (see
-.I "Dating Systems"
-below) inspired by Harry Turtledove's
-.I Agent of Byzantium
-(Baen Books, March 1994). The program was later expanded
-to add additional calculations (see
-.I "OPTIONS"
-for a complete list).
 
 Buddhist holiday calculations require the
 .B remind
