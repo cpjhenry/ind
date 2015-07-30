@@ -19,9 +19,7 @@ my own.
 
 Please see ChangeLog for a history of changes to this script.
 
-## A brief history of dating systems:
-A brief history of dating systems: (source: Wikipedia)  
-
+## A brief history of dating systems
 The Hebrew or Jewish calendar: is a lunisolar calendar used today
 predominantly for Jewish religious observances. The principles and rules
 were fully codified by Maimonides whose work also replaced counting "years
@@ -79,3 +77,5 @@ There are five 'special' full moon Uposatha:
 - Dhamma day (July)
 - Pavarana (October)
 - Anapanasati day (November)
+
+(source: Wikipedia)  
