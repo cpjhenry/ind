@@ -8,11 +8,18 @@ include: metonic cycle, epact, dominical year, Rosh Hashanah and the Hebrew
 calendar, and Buddhist holidays in the Theravadan tradition.
 
 ## Installation
-- Copy script to your local 'bin' directory, or somewhere in path.
-- Copy man file to your local 'share/man' directory or somewhere in manpath.
+	- Copy script to your local 'bin' directory, or somewhere in path.
+	- Copy man file to your local 'share/man' directory or somewhere in manpath.
+
+## History
+This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an
+afictionado of horology, I went looking for a tool which would easily
+calculate the Byzantine (and common era) indictions. Finding none, I created
+my own.
+
+Please see ChangeLog for a history of changes to this script.
 
 ## A brief history of dating systems:
-
 A brief history of dating systems: (source: Wikipedia)  
 
 The Hebrew or Jewish calendar: is a lunisolar calendar used today
@@ -53,3 +60,22 @@ Epact: If a solar and lunar year start on the same day, then after one year,
 the start of the solar year is 11 days after the start of the lunar year.
 These excess days are epacts, and are added to the day of the solar year to
 determine the day of the lunar year.
+
+### Uposatha
+The Uposatha (Sanskrit: Upavasatha) is a Buddhist day of observance, in
+existence from the Buddha's time (500 BCE), and still being kept today in
+Buddhist countries. The Buddha taught that the Uposatha day is for "the
+cleansing of the defiled mind", resulting in inner calm and joy. On this
+day, lay disciples and monks intensify their practice, deepen their
+knowledge and express communal commitment through millennia-old acts of
+lay-monastic reciprocity. On these days, the lay followers make a conscious
+effort to keep the Five Precepts or (as the tradition suggests) the Eight
+Precepts. It is a day for practicing the Buddha's teachings and meditation.
+
+There are five 'special' full moon Uposatha:
+
+    - Sangha day (February)
+    - Buddha day (May)
+    - Dhamma day (July)
+    - Pavarana (October)
+    - Anapanasati day (November)
