@@ -8,8 +8,8 @@ include: metonic cycle, epact, dominical year, Rosh Hashanah and the Hebrew
 calendar, and Buddhist holidays in the Theravadan tradition.
 
 ## Installation
-	- Copy script to your local 'bin' directory, or somewhere in path.
-	- Copy man file to your local 'share/man' directory or somewhere in manpath.
+- Copy script to your local 'bin' directory, or somewhere in path.
+- Copy man file to your local 'share/man' directory or somewhere in manpath.
 
 ## History
 This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an
@@ -74,8 +74,8 @@ Precepts. It is a day for practicing the Buddha's teachings and meditation.
 
 There are five 'special' full moon Uposatha:
 
-    - Sangha day (February)
-    - Buddha day (May)
-    - Dhamma day (July)
-    - Pavarana (October)
-    - Anapanasati day (November)
+- Sangha day (February)
+- Buddha day (May)
+- Dhamma day (July)
+- Pavarana (October)
+- Anapanasati day (November)
