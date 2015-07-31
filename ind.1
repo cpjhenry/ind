@@ -7,7 +7,7 @@
 \fBind\fR \- calculates and displays dates and years for uncommon dating systems\.
 .
 .SH "SYNOPSIS"
-\fBind\fR [\-cljrzbv] [\-y year] [\-m month] [\-d day number|yesterday|today|tomorrow]
+\fBind\fR [\-cljrzb] [\-y year] [\-m month] [\-d day number|yesterday|today|tomorrow] [\-hv?]
 .
 .SH "DESCRIPTION"
 \fBind\fR is a bash script which calculates the Byzantine year, indiction for current and Byzantine year, the Buddhist year, and the year from the founding of the City of Rome\. Other available lunar\-solar calculations include: metonic cycle, epact, dominical year, Rosh Hashanah and the Hebrew calendar, and Buddhist holidays in the Theravadan tradition\.
@@ -57,8 +57,16 @@ Set month in format \'m\'\.
 Set day in format \'d\'\. Also accepts fuzzy dates, e\.g\. \'yesterday\', \'today\', \'tomorrow\'\.
 .
 .TP
+\fB\-h\fR
+Turn off holiday calculations\.
+.
+.TP
 \fB\-v\fR
 Verbose mode\.
+.
+.TP
+\fB\-?\fR
+Usage summary\.
 .
 .SH "A brief history of dating systems: (source: Wikipedia)"
 The Hebrew or Jewish calendar: is a lunisolar calendar used today predominantly for Jewish religious observances\. The principles and rules were fully codified by Maimonides whose work also replaced counting "years since the destruction of the Temple" with the modern creation\-era Anno Mundi\. The Hebrew lunar year is about eleven days shorter than the solar cycle and uses the 19\-year Metonic cycle to bring it into line, with the addition of an intercalary month every two or three years\.

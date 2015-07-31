@@ -13,7 +13,7 @@ calendar, and Buddhist holidays in the Theravadan tradition.
 
 ## History
 This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an
-afictionado of horology, I went looking for a tool which would easily
+aficionado of horology, I went looking for a tool which would easily
 calculate the Byzantine (and common era) indictions. Finding none, I created
 my own.
 
@@ -68,7 +68,7 @@ day, lay disciples and monks intensify their practice, deepen their
 knowledge and express communal commitment through millennia-old acts of
 lay-monastic reciprocity. On these days, the lay followers make a conscious
 effort to keep the Five Precepts or (as the tradition suggests) the Eight
-Precepts. It is a day for practicing the Buddha's teachings and meditation.
+Precepts. It is a day for practising the Buddha's teachings and meditation.
 
 There are five 'special' full moon Uposatha:
 
