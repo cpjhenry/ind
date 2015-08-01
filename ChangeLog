@@ -1,4 +1,5 @@
-ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
+ChangeLog
+ -- ind / cpjhenry <cpjhenry@gmail.com>
 
 v1.0	2013-07-16
 	- initial calculations
@@ -41,3 +42,6 @@ v3.0	2015-07-26
 v3.1	2015-07-31
 	- improved error checking, including Darwin detection
 	- added holiday 'off' switch and display tweaks
+
+v3.2	2015-08-01
+	- fixed blue moon timings

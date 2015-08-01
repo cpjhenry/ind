@@ -86,7 +86,7 @@ do
 		z) [ $BYZANTINE ] 	&& unset BYZANTINE 	|| BYZANTINE=true;;
 		b) [ $BUDDHIST ] 	&& unset BUDDHIST 	|| BUDDHIST=true;;
 		y) year=$OPTARG;;
-		m) month=$(printf "%02d" $OPTARG);;
+		m) month=$(printf "%02d" $(echo $OPTARG | sed 's/^0//'));;
 		d) 
 			if [[ $OPTARG =~ [A-Za-z\ ] ]] ; then # regex comparison: letters, spaces
 				setdate "$OPTARG"
@@ -167,8 +167,8 @@ if [ $rem ] ; then # Moon calculations
 	done
 
 	# calculate blue / black moons
-	nfmoon=$((echo "BANNER %"; echo "MSG [moondate(2, today(), 12:00)]") | $rem - $year-$month-$day | sed '/^$/d')
-	nfmont=$((echo "BANNER %"; echo "MSG [moontime(2, today(), 12:00)]") | $rem - $year-$month-$day | sed '/^$/d')
+	nfmoon=$((echo "BANNER %"; echo "MSG [moondate(2, today(), 05:00)]") | $rem - $year-$month-$day | sed '/^$/d')
+	nfmont=$((echo "BANNER %"; echo "MSG [moontime(2, today(), 05:00)]") | $rem - $year-$month-$day | sed '/^$/d')
 	if [ "$(echo $nfmoon | sed 's/-..$//')" = "$year-$month" ] ; then
 		[ "$nfmoon" != "${moonphase[2]}" ] && [ "$nfmoon" = "$ymd" ] && moon="Blue Moon"
 	fi
@@ -177,8 +177,8 @@ if [ $rem ] ; then # Moon calculations
 	if [ "$(echo $nnmoon | sed 's/-..$//')" = "$year-$month" ] ; then
 		[ "$nnmoon" != "${moonphase[0]}" ] && [ "$nnmoon" = "$ymd" ] && moon="Black Moon"
 	fi
-	[ $VERBOSE ] && echo "Next Fullmoon: $nfmoon at $nfmont"
 	[ $VERBOSE ] && echo "Next New Moon: $nnmoon at $nnmont"
+	[ $VERBOSE ] && echo "Next Fullmoon: $nfmoon at $nfmont"
 
 	# calculate Vassa
 	vsday=$((echo "BANNER %"; echo "MSG [moondate(2)+1]") | $rem - $year-07-01 | sed '/^$/d;s/^....-..-//;s/^0//')
