@@ -37,5 +37,5 @@ Installing the following helper apps, will enable additional features:
 included with this distribution.
 
 ## Author
-Paul J Henry <cpjhenry@gmail.com>
+Paul J Henry <cpjhenry@gmail.com>  
 30 August 2018
