@@ -1,47 +1,73 @@
 ChangeLog
  -- ind / cpjhenry <cpjhenry@gmail.com>
 
-v1.0	2013-07-16
+2013-07-16	v1.0
 	- initial calculations
 
-v1.5	2014-05-06
+2014-05-06	v1.5
 	- added Buddhist year calculations
 
-v1.6	2014-06-07
+2014-06-07	v1.6
 	- corrected base ten for day calc [deprecated]
 
-v2.0	2014-08-01
+2014-08-01	v2.0
 	- Re-wrote, added switches
 
-v2.1	2014-08-07
+2014-08-07	v2.1
 	- added Buddhist holidays, info on dating systems
 
-v2.3	2015-02-06
+2015-02-06	v2.3
 	- added lunar, Hebrew, and Rome calculations
 
-v2.4	2015-03-21
+2015-03-21	v2.4
 	- added fullmoon calculations = more lunisolar holidays
 
-v2.5	2015-04-12
+2015-04-12	v2.5
 	- added all moon calculations, Uposatha observances
 
-v2.6	2015-05-18
+2015-05-18	v2.6
 	- changed moon phase to array
 
-v2.7	2015-05-20
+2015-05-20	v2.7
 	- added more sophisticated Hebrew date calculations; tidied up 'remind' calls
 
-v2.8	2015-05-21
+2015-05-21	v2.8
 	- added relative date specification to -d option (see: gdate for format)
 
-v3.0	2015-07-26
+2015-07-26	v3.0
 	- added blue / black moon calculations
 	- fixed common section month base ten error (array indexes in bash)
 	- added new documention (changelog, man file)
 
-v3.1	2015-07-31
+2015-07-31	v3.1
 	- improved error checking, including Darwin detection
 	- added holiday 'off' switch and display tweaks
 
-v3.2	2015-08-01
+2015-08-01	v3.2
 	- fixed blue moon timings
+
+2017-08-24	v4.0	
+	- added support for Julian Period
+	- added support for Japanese Imperial Year
+	- added additional Hebrew holiday support
+	- added Chinese New Year
+	
+2018-03-16	v4.5
+	- added full vs part CE display
+	- added ordinal support
+	- added additional common era holidays
+	- moved self-documentation to 'getusage'
+	- added support for Ides
+	
+2018-08-07	v4.7
+	- added next first and last quarters
+ 	- added support for Hanke-Henry dates
+ 	- added support for Discordian dates
+
+2018-08-18	v4.8
+	- added highlighting
+	- added additional common era holidays
+
+2018.08-23	v5.0
+	- sorting of diagnostic data
+	- miscellaneous display tweaking
