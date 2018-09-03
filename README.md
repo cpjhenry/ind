@@ -1,7 +1,7 @@
 ind
 ===
 
-'ind' is a bash script which calculates the Byzantine year, indiction for
+**ind** is a bash script which calculates the Byzantine year, indiction for
 current and Byzantine year, the Buddhist year, and the year from the
 founding of the City of Rome. Other available lunar-solar calculations
 include: metonic cycle, epact, dominical year, Rosh Hashanah and the Hebrew
@@ -21,7 +21,7 @@ aficionado of horology, I went looking for a tool which would easily
 calculate the Byzantine (and common era) indictions. Finding none, I created
 my own.
 
-Like all good programs, 'ind' has expanded beyond both its original scope,
+Like all good programs, **ind** has expanded beyond both its original scope,
 and one might suggest, its usefulness. Take that, _Old Farmer's Almanac_!
 
 Please see ChangeLog for a history of changes to this script.
@@ -33,7 +33,7 @@ Installing the following helper apps, will enable additional features:
 - 'ddate' provides Discordian date support
 - 'hh' (by the same author) provides Hanke-Henry date support
 
-'ind' is self-documenting. The extraction script -- 'getusage' -- is
+**ind** is self-documenting. The extraction script -- 'getusage' -- is
 included with this distribution.
 
 ## Author
