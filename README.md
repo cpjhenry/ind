@@ -11,9 +11,9 @@ Other obscure and idiosyncratic dating system support, including unusual
 holidays, has also been added. Please see the man file for full list.
 
 ## Installation
-- Copy script to your local 'bin' directory, or somewhere in path.
-- Copy 'getusage' to your local 'bin' directory, or somewhwere in path.
-- Copy man file to your local 'share/man' directory or somewhere in manpath.
+- Copy script to your local `bin` directory, or somewhere in path.
+- Copy **getusage** to your local `bin` directory, or somewhwere in path.
+- Copy man file to your local `share/man` directory or somewhere in manpath.
 
 ## History
 This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an
@@ -29,11 +29,11 @@ Please see ChangeLog for a history of changes to this script.
 ## Helpers
 Installing the following helper apps, will enable additional features:
 
-- 'remind' provides for more sophisticated Hebrew and lunar calculations
-- 'ddate' provides Discordian date support
-- 'hh' (by the same author) provides Hanke-Henry date support
+- **remind** provides for more sophisticated Hebrew and lunar calculations
+- **ddate** provides Discordian date support
+- **hh** (by the same author) provides Hanke-Henry date support
 
-**ind** is self-documenting. The extraction script -- 'getusage' -- is
+**ind** is self-documenting. The extraction script -- **getusage** -- is
 included with this distribution.
 
 ## Author
