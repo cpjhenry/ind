@@ -68,6 +68,11 @@ ChangeLog
 	- added highlighting
 	- added additional common era holidays
 
-2018.08-23	v5.0
+2018-08-23	v5.0
 	- sorting of diagnostic data
 	- miscellaneous display tweaking
+
+2018-09-08	v5.1
+	- fixed speeling mistake
+	- added Hogmanay
+

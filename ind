@@ -360,10 +360,12 @@ if [ $hol ]; then
 
 	if [ $COMMON ]; then
 		[ $day -eq $ides ] && dhol+=$(echo "Ides of ${MONTHL[10#$month]}|")
+
 		[ $month -eq 4 -a $day -eq 1 -a $hour -lt 12 ] && dhol+=$(echo "April Fools' Day|")
-		[ $month -eq 5 -a $day -eq 25 ] && dhol+=$(echo "Towel Day|")
-		[ $month -eq 7 -a $day -eq 2 ]	&& dhol+=$(echo "Mid Year's Day|")
-		[ $month -eq 7 -a $day -eq 5 ]	&& dhol+=$(echo "X-Day|")
+		[ $month -eq 5 -a $day -eq 25 ]  && dhol+=$(echo "Towel Day|")
+		[ $month -eq 7 -a $day -eq 2 ]	 && dhol+=$(echo "Mid Year's Day|")
+		[ $month -eq 7 -a $day -eq 5 ]	 && dhol+=$(echo "X-Day|")
+		[ $month -eq 12 -a $day -eq 31 ] && dhol+=$(echo "Hogmanay|")
 	fi
 fi
 
@@ -380,7 +382,7 @@ if [ $VERBOSE ]; then
 	dmoo+=$(printf "$nlmoon  Last Quarter  ($nlmont)|")
 	echo -en "$dmoo" | sed 's/|/\n/g' | sort
 	echo
-	echo "Holidays & Observances:"
+	echo "Lunar Holidays & Observances:"
 	echo
 	dobs+=$(printf "%s  Passover, Pilgrimage, Remembers the Exodus from Egypt (at sunset)|" $passover)
 	dobs+=$(printf "%s  Shavu'ot, Pilgrimage, Remembers the giving of the Torah (at sunset)|" $shavuot)
