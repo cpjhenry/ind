@@ -387,7 +387,7 @@ if [ $VERBOSE ]; then
 	dobs+=$(printf "%s  Tisha B'Av, Day of Mourning (at sunset)|" $tishabav)
 	dobs+=$(printf "%s  Rosh Hashanah, New Year (at sunset)|" $hashanah)
 	dobs+=$(printf "%s  Yom Kippur, Day of Atonment (at sunset)|" $yomkippur)
-	dobs+=$(printf "%s  Sukkot, Pilgrimage, Remembers the wandering in the dessert (at sunset)|" $sukkot)
+	dobs+=$(printf "%s  Sukkot, Pilgrimage, Remembers the wandering in the desert (at sunset)|" $sukkot)
 	dobs+=$(printf "%s  Hanukkah, Festival of Lights, Remembers the rededication of the Temple (at sunset)|" $hanukkah)
 
 	dobs+=$(printf "%s  Carnival, Final celebration before the fasting and austerity of Lent|" $carnival)
