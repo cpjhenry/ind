@@ -46,19 +46,19 @@ ChangeLog
 2015-08-01	v3.2
 	- fixed blue moon timings
 
-2017-08-24	v4.0	
+2017-08-24	v4.0
 	- added support for Julian Period
 	- added support for Japanese Imperial Year
 	- added additional Hebrew holiday support
 	- added Chinese New Year
-	
+
 2018-03-16	v4.5
 	- added full vs part CE display
 	- added ordinal support
 	- added additional common era holidays
 	- moved self-documentation to 'getusage'
 	- added support for Ides
-	
+
 2018-08-07	v4.7
 	- added next first and last quarters
  	- added support for Hanke-Henry dates
@@ -76,3 +76,5 @@ ChangeLog
 	- fixed speeling mistake
 	- added Hogmanay
 
+2018-09-09  v5.1.1
+    - edits to README.md
