@@ -12,7 +12,7 @@ holidays, has also been added. Please see the man file for full list.
 
 ## Installation
 - Copy script to your local `bin` directory, or somewhere in path.
-- Copy **getusage** to your local `bin` directory, or somewhwere in path.
+- Copy **getusage** to your local `bin` directory, or somewhere in path.
 - Copy man file to your local `share/man` directory or somewhere in manpath.
 
 ## History
@@ -21,8 +21,9 @@ aficionado of horology, I went looking for a tool which would easily
 calculate the Byzantine (and common era) indictions. Finding none, I created
 my own.
 
-Like all good programs, **ind** has expanded beyond both its original scope,
-and one might suggest, its usefulness. Take that, _Old Farmer's Almanac_!
+Like all good programs, **ind** has expanded beyond its original scope. In
+keeping with Linux tradition, significant blocks of specific task code has been
+spun off as a separate tool.
 
 Please see ChangeLog for a history of changes to this script.
 
