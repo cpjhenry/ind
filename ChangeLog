@@ -20,7 +20,7 @@ ChangeLog
 	- added lunar, Hebrew, and Rome calculations
 
 2015-03-21	v2.4
-	- added fullmoon calculations = more lunisolar holidays
+	- added full-moon calculations = more lunisolar holidays
 
 2015-04-12	v2.5
 	- added all moon calculations, Uposatha observances
@@ -29,15 +29,15 @@ ChangeLog
 	- changed moon phase to array
 
 2015-05-20	v2.7
-	- added more sophisticated Hebrew date calculations; tidied up 'remind' calls
+	- added more sophisticated Hebrew date calculations; tidied up `remind` calls
 
 2015-05-21	v2.8
-	- added relative date specification to -d option (see: gdate for format)
+	- added relative date specification to -d option (see: `gdate` for format)
 
 2015-07-26	v3.0
 	- added blue / black moon calculations
 	- fixed common section month base ten error (array indexes in bash)
-	- added new documention (changelog, man file)
+	- added new documentation (ChangeLog, man file)
 
 2015-07-31	v3.1
 	- improved error checking, including Darwin detection
@@ -56,7 +56,7 @@ ChangeLog
 	- added full vs part CE display
 	- added ordinal support
 	- added additional common era holidays
-	- moved self-documentation to 'getusage'
+	- moved self-documentation to `getusage`
 	- added support for Ides
 
 2018-08-07	v4.7
@@ -73,7 +73,7 @@ ChangeLog
 	- miscellaneous display tweaking
 
 2018-09-08	v5.1
-	- fixed speeling mistake
+	- edits
 	- added Hogmanay
 
 2018-09-09  v5.1.1
