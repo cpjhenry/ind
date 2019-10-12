@@ -11,7 +11,7 @@
 
 blok=$(sed '/^\s*while getopts/,/^\s*done/!d' $1)
 args=$(sed '/getopts/!d;s/.* \"//;s/\".*//;s/://g' <<< "$blok")
-opts=$(sed '/# /!d;s/^\s*/  -/;s/)[ \tA-Za-z0-9].*# /    /' <<< "$blok")
+opts=$(sed '/# /!d;s/^\s*/  -/;s/)\s.*# /    /' <<< "$blok")
 
 if [ "$args" ]; then
 	echo "usage: $(basename $1) [-$args]";echo
