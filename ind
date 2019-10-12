@@ -124,7 +124,7 @@ do
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			# Chinese diagnostic data
 
 		U)	cp -uv $HOME/bin/ind $HOME/src/ind/								# update git repository
-			cp -uv $HOME/share/man/man1/ind.1 $HOME/src/ind
+			cp -uv $HOME/share/man/man1/ind.1 $HOME/src/ind/
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
 	esac

@@ -12,9 +12,9 @@ holidays, has also been added. Please see the man file for full list.
 
 ## Installation
 - Copy script to local `bin` directory, or somewhere in path.
+- Copy man file to your local `share/man` directory or somewhere in manpath.
 - Copy **getusage**, **rnum** to local `bin` directory, or path.
 - Complile **phases** and copy executable to local `bin` or path.
-- Copy man file to your local `share/man` directory or somewhere in manpath.
 - Download and install helper apps (see below).
 
 ## History
@@ -40,6 +40,7 @@ Installing the following helper apps, will enable additional features:
 In addition, **phases** calculates, with fair accuracy, the phase of the new
 and full moons. It is written in C and should be compiled locally prior to
 use:
+
 	gcc -o phases phases.c
 
 **ind** is self-documenting. The extraction script -- **getusage** -- is
