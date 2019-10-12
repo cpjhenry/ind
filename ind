@@ -122,6 +122,7 @@ do
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar diagnostic data
 		L)	[ $LCOMMON ]	&& unset LCOMMON	|| LCOMMON=true;;			# lunar common data
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			# Chinese diagnostic data
+
 		U)	cp -uv $HOME/bin/ind $HOME/src/ind/								# update git repository
 			cp -uv $HOME/share/man/man1/ind.1 $HOME/src/ind
 			exit;;
