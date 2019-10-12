@@ -85,7 +85,7 @@ ChangeLog
 	- added Chinese month calculations
 
 2019-03-05	v3.4.5
-	- added Chinese 'year of' calculations
+	- added Chinese 'year of' calculation
 
 2019-03-19	v3.4.6
 	- cleanup of diagnostic data
@@ -96,7 +96,7 @@ ChangeLog
 	- update documentation
 
 2019-04-02	v3.5.1
-	- fix lunar / verbose displays
+	- fixed lunar / verbose displays
 
 2019-05-20	v3.5.5
 	- added Roman numeral year to common
@@ -110,7 +110,7 @@ ChangeLog
 	- corrected MJD to UTC time
 
 2019-09-07	v3.6.2
-	- tweaked display
+	- display tweaks
 	- corrected speeling mistakes
 	- fixed Tish'a B'Av date (not on Shabbat)
 
@@ -118,11 +118,11 @@ ChangeLog
 	- aligned Byzantine date to Julian calendar
 	- added better calculation of Hebrew year (using remind)
 	- added more common holidays (quarter / cross-quarter days)
-	- tweaked display
+	- display tweaks
 
 2019-09-16	v3.6.5
 	- sped up Chinese holiday display (now on by default)
-	- tweaked display
+	- display tweaks
 
 2019-09-23	v3.6.7
 	- replaced remind with hebcal for Hebrew calculations
@@ -133,9 +133,14 @@ ChangeLog
 
 2019-09-29	v3.7
 	- significant re-write, and final removal of remind
-	- now requires helper app 'phases'
+	- now requires helper app 'phases' to calculate moon phases
 	- streamlined calculation of Chinese months & festivals
 
 2019-09-30	v3.7.1
 	- fixed OPTARG issue when current day exceeds days in the month
 	- added Hebrew holiday switch
+
+2019-10-12	v3.7.3
+	- substituted Orthodox Pascha for Double-Nine
+	- fixed calculation of Easter/Orthodox Easter when year supplied
+	- display tweaks
