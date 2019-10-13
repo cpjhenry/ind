@@ -406,7 +406,6 @@ if [ $hol ]; then
 		[ $month -eq 7 -a $day -eq 5 ]	 && dhol+=$(echo "X-Day|")
 		[ $month -eq 8 -a $day -eq 1 ]	 && dhol+=$(echo "Lammas Day (x-qtr)|")
 		[ $month -eq 9 -a $day -eq 29 ]	 && dhol+=$(echo "Michaelmas (qtr)|")
-		[ $month -eq 10 -a $day -eq 13 ] && dhol+=$(echo "No Bra Day (cancer awareness)|")
 		[ $month -eq 10 -a $day -eq 31 ] && dhol+=$(echo "Halloween (x-qtr)|")
 		[ $month -eq 11 -a $day -eq 11 ] && dhol+=$(echo "Martlemass|")
 		[ $month -eq 12 -a $day -eq 31 ] && dhol+=$(echo "Hogmanay|")
