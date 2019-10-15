@@ -22,7 +22,6 @@ JAPANIY=
 BUDDHIST=
 
 hol=true
-HEBHOL=
 
 budconvert=543	# Buddhist; Thai Solar
 byzconvert=5508 # Byzantine; year begins September 1st
@@ -90,7 +89,7 @@ displaynone() {
 
 setdate today # set today's date
 
-while getopts ":anfpcotejMrzuxiby:m:d:hHJvlLCU?" OPTION
+while getopts ":anfpcotejMrzuxiby:m:d:hHvlLCU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
@@ -116,7 +115,6 @@ do
 
 		h)	unset hol;;														# disable holidays
 		H)	bold="**" ; italics="_";;										# highlight
-		J)	[ $HEBHOL ]		&& unset HEBHOL		|| HEBHOL=true;;			# Hebrew holidays
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| VERBOSE=true;;			# verbose
 
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar diagnostic data
@@ -178,27 +176,27 @@ jcal=$(date -d "$ymd - 13 days" +%F)
 # Hebrew calendar; 'hebcal' utility required
 # Jewish observances begin the evening before at sunset
 if [ $(which hebcal) ]; then
-	hebdate=$(hebcal -Th $month $day $year | sed -n 1p | sed 's/,.*$//')
-	hebyear=$(hebcal -Th $month $day $year | sed -n 1p | sed 's/.*, //')
-	hebyr=$(hebcal -Th 01 01 $year | sed -n 1p | sed 's/.*, //')
+	hebdate=$(hebcal -Th $month $day $year | sed -n 1p)
+	hebyear=$(hebcal -Th 01 01 $year | sed -n 1p | sed 's/.*, //')
 
-	passover=$(hebcal -rh Nissan 15 $hebyr | cut -f1)
+	passover=$(hebcal -rh Nissan 15 $hebyear | cut -f1)
 	passover=$(date -d "$passover - 1 day" +%F)
 
-	tishabav=$(hebcal -rh Av 9 $hebyr | cut -f1)
+	tishabav=$(hebcal -rh Av 9 $hebyear | cut -f1)
 	# Tish'a B'Av is never observed on Shabbat.
 	[[ $(date -d "$tishabav" +%w) < 6 ]] && tishabav=$(date -d "$tishabav - 1 day" +%F)
 
-	hashanah=$(hebcal -rh Tishrey 1 $(($hebyr + 1)) | cut -f1)
+	hashanah=$(hebcal -rh Tishrey 1 $(($hebyear + 1)) | cut -f1)
 	hashanah=$(date -d "$hashanah - 1 day" +%F)
 
-	yomkippur=$(hebcal -rh Tishrey 10 $(($hebyr +1)) | cut -f1)
+	yomkippur=$(hebcal -rh Tishrey 10 $(($hebyear +1)) | cut -f1)
 	yomkippur=$(date -d "$yomkippur - 1 day" +%F)
 
-	hanukkah=$(hebcal -rh Kislev 25 $(($hebyr +1)) | cut -f1)
+	hanukkah=$(hebcal -rh Kislev 25 $(($hebyear +1)) | cut -f1)
 	hanukkah=$(date -d "$hanukkah - 1 day" +%F)
 
-	unset hebyr
+	hebrhol=$(hebcal -Tx $month $day $year | sed 1d)
+	unset hebyear
 else
 	unset HEBREW
 fi
@@ -330,7 +328,7 @@ else (( arc=year+arcconvert )); fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "$hhdmon" $hhyear
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "$discord" $YOLD
-[ $HEBREW ]		&& printf "%-18s AM %d\n" "$hebdate" $hebyear
+[ $HEBREW ]		&& printf "%-18s AM %d\n" "${hebdate::${#hebdate}-6}" "${hebdate:(-4)}"
 
 [ $MASORETIC ]	&& printf "Masoretic          AL %d\n" $masor
 [ $ROME ]		&& printf "City of Rome       au %d\n" $rome
@@ -362,13 +360,7 @@ if [ $hol ]; then
 		[ "$ymd" = "$midautum"	] && dhol+=$(echo "Mid-Autumn Moon Festival|")
 	fi
 
-	if [ $HEBHOL ]; then
-		[ "$ymd" = "$passover"	] && dhol+=$(echo "Passover|")
-		[ "$ymd" = "$tishabav"	] && dhol+=$(echo "Tish'a B'Av|")
-		[ "$ymd" = "$hashanah"	] && dhol+=$(echo "Rosh Hashanah|")
-		[ "$ymd" = "$yomkippur"	] && dhol+=$(echo "Yom Kippur|")
-		[ "$ymd" = "$hanukkah"	] && dhol+=$(echo "Hanukkah|")
-	fi
+	[ $HEBREW ] && [ "$hebrhol" ] && dhol+=$(echo "$hebrhol|")
 
 	if [ $BUDDHIST ]; then
 		[ $full ] && [ $month -eq 9 ] && moon="Harvest Moon"

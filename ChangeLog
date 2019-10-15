@@ -144,3 +144,6 @@ ChangeLog
 	- substituted Orthodox Pascha for Double-Nine
 	- fixed calculation of Easter/Orthodox Easter when year supplied
 	- display tweaks
+
+2019-10-15	v3.7.5
+	- added hebcal-based holidays to display
