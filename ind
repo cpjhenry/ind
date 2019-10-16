@@ -154,8 +154,7 @@ else unset HHPC; fi
 
 # Set Discordian date; 'ddate' utility required
 if [ $(which ddate) ]; then
-	YOLD=$(ddate +'%Y' $day $month $year)
-	discord=$(ddate +'%{%e %B%}' $day $month $year | sed 's/The //')
+	discord=$(ddate +'%{%e %B%} %Y' $day $month $year | sed 's/The //')
 	dischol=$(ddate +'%N%H' $day $month $year)
 else unset DDATE; fi
 
@@ -207,7 +206,7 @@ lent=$(date -d "$easter - 46 days" +%F)
 # Advent
 xmasdow=$(date -d "$year-12-25" +%w)
 xmaswks=3
-[ $xmasdow -eq 0 ] && (( xmaswks=xmaswks+1 ))
+[ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
 (( xmasadj= -1 * ((xmaswks * 7) + xmasdow) ))
 advent=$(date -d "$year-12-25 $xmasadj days" +%F)
 
@@ -324,7 +323,7 @@ else (( arc=year+arcconvert )); fi
 [ $COMMON ]		&& printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
-[ $DDATE ]		&& printf "%-16s YOLD %d\n" "$discord" $YOLD
+[ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
 [ $HEBREW ]		&& printf "%-18s AM %d\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)}
 
 [ $MASORETIC ]	&& printf "Masoretic          AL %d\n" $masor
