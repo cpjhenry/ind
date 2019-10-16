@@ -150,9 +150,6 @@ else mjd="00000.0"; fi
 # Set Hanke-Henry date; 'hh' utility required
 if [ $(which hh) ]; then
 	hhdate=$(hh -W -d$day -m$month -y$year)
-	hhleng=${#hhdate}; (( hhleng=hhleng-5 ))
-	hhdmon=${hhdate:0:$hhleng}
-	hhyear=${hhdate:(-4)}
 else unset HHPC; fi
 
 # Set Discordian date; 'ddate' utility required
@@ -326,9 +323,9 @@ else (( arc=year+arcconvert )); fi
 [ $COMMON ]		&& printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
 [ $COMMON ]		&& printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
 
-[ $HHPC ]		&& printf "%-17s H-H %4d\n" "$hhdmon" $hhyear
+[ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "$discord" $YOLD
-[ $HEBREW ]		&& printf "%-18s AM %d\n" "${hebdate::${#hebdate}-6}" "${hebdate:(-4)}"
+[ $HEBREW ]		&& printf "%-18s AM %d\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)}
 
 [ $MASORETIC ]	&& printf "Masoretic          AL %d\n" $masor
 [ $ROME ]		&& printf "City of Rome       au %d\n" $rome
