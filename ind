@@ -135,12 +135,12 @@ setdate $year-$month-$day
 
 ymd=$year-$month-$day
 hms=$(date +%H:%M:%S)
-dow=$(date -d "$ymd" +%w)
+dow=$(date -d $ymd +%w)
 
-doy=$(date -d "$ymd" +%-j) 	# day of year
-iwn=$(date -d "$ymd" +%-V) 	# ISO week no
-tz=$(date -d "$ymd" +%Z)	# time zone
-utc=$(date -ud "$ymd $hms $tz" "+%Y-%0m-%0d %H:%M:%S")
+doy=$(date -d $ymd +%-j) 	# day of year
+iwn=$(date -d $ymd +%-V) 	# ISO week no
+tz=$(date -d $ymd +%Z)		# time zone
+utc=$(date -ud "$ymd $hms $tz" "+%F %H:%M:%S")
 
 # Set Modified Julian Date (UTC); 'jday' utility required
 if [ $(which jday) ] ; then
