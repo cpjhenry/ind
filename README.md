@@ -11,9 +11,9 @@ Other obscure and idiosyncratic dating system support, including unusual
 holidays, has also been added. Please see the man file for full list.
 
 ## Installation
-- Copy script to local `bin` directory, or somewhere in path.
-- Copy man file to your local `share/man` directory or somewhere in manpath.
-- Copy **getusage**, **rnum** to local `bin` directory, or path.
+- Copy script to local `bin` or path.
+- Copy man file to your local `share/man` or manpath.
+- Copy **getusage**, **rnum** to local `bin` or path.
 - Complile **phases** and copy executable to local `bin` or path.
 - Download and install helper apps (see below).
 
@@ -25,7 +25,7 @@ my own.
 
 Like all good programs, **ind** has expanded beyond its original scope. In
 keeping with Linux tradition, significant blocks of specific task code has been
-spun off as separate tools.
+spun off as separate tools or turned over to helper apps.
 
 Please see ChangeLog for a history of changes to this script.
 
