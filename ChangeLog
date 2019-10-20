@@ -151,3 +151,6 @@ ChangeLog
 2019-10-16	v3.7.6
 	- display and math tweaks
 	- optimize date variables used only once
+
+2019-10-19	v3.7.7
+	- update documentation
