@@ -4,8 +4,8 @@ ind
 **ind** is a bash script which calculates the Byzantine year, indiction for
 current and Byzantine year, the Buddhist year, and the year from the
 founding of the City of Rome. Other available lunar-solar calculations
-include: metonic cycle, epact, dominical year, and Christian, Hebrew, and
-Buddhist holidays in the Theravadan tradition.
+include: metonic cycle, epact, dominical year, and Christian, and Buddhist
+holidays in the Theravadan tradition.
 
 Other obscure and idiosyncratic dating system support, including unusual
 holidays, has also been added. Please see the man file for full list.

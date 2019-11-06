@@ -154,3 +154,8 @@ ChangeLog
 
 2019-10-19	v3.7.7
 	- update documentation
+
+2019-11-02	v3.8
+	- remove Hebrew holidays (see helper app 'hebcal')
+	- adjust documentation
+	- display tweaks

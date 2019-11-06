@@ -78,12 +78,12 @@ displayall() {
 }
 displaynone() {
 	unset PARTCE; unset FULLCE; unset COMMON;
-	unset LY; unset DDATE; unset HHPC; unset MASORETIC
+	unset LY; unset DDATE; unset HHPC; unset MASORETIC;
 	unset HEBREW; unset ROME; unset JULIANPRD;
 	unset BYZANTINE; unset ARC; unset JAPANIY;
 	unset BUDDHIST; 
 
-	unset LUNAR; unset CHINESE; unset LCOMMON;
+	unset LUNAR; unset LCOMMON; unset CHINESE; 
 	unset VERBOSE;
 }
 
@@ -175,22 +175,6 @@ if [ $(which hebcal) ]; then
 	hebdate=$(hebcal -Th $month $day $year | sed -n 1p)
 	hebyear=$(hebcal -Th 01 01 $year | sed -n 1p | sed 's/.*, //')
 
-	passover=$(hebcal -rh Nissan 15 $hebyear | cut -f1)
-	passover=$(date -d "$passover - 1 day" +%F)
-
-	tishabav=$(hebcal -rh Av 9 $hebyear | cut -f1)
-	# Tish'a B'Av is never observed on Shabbat.
-	[[ $(date -d "$tishabav" +%w) < 6 ]] && tishabav=$(date -d "$tishabav - 1 day" +%F)
-
-	hashanah=$(hebcal -rh Tishrey 1 $(($hebyear + 1)) | cut -f1)
-	hashanah=$(date -d "$hashanah - 1 day" +%F)
-
-	yomkippur=$(hebcal -rh Tishrey 10 $(($hebyear +1)) | cut -f1)
-	yomkippur=$(date -d "$yomkippur - 1 day" +%F)
-
-	hanukkah=$(hebcal -rh Kislev 25 $(($hebyear +1)) | cut -f1)
-	hanukkah=$(date -d "$hanukkah - 1 day" +%F)
-
 	hebrhol=$(hebcal -Tx $month $day $year | sed 1d)
 	unset hebyear
 else
@@ -268,7 +252,6 @@ if [ $(which phases) ]; then
 
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)
 	cny=${lunarmonth[1]}	
-	[ $VERBOSE ] && echo "Chinese New Year $year ${cny:5:5} ${CNYDATE[(($year-2019))]}"
 
 	# 'year of'
 	case 1 in
@@ -334,11 +317,17 @@ else (( arc=year+arcconvert )); fi
 [ $JAPANIY ]	&& printf "Japanese Imperial     %d\n" $jiy
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
-[ $VERBOSE ]	&& printf "Julian calendar       %s\n" ${jcal:5:5} | sed 's/-/\//'
-[ $VERBOSE ]	&& printf "Dominical letter      %s\n" $dom
-[ $VERBOSE ]	&& printf "Epact                 %s\n" ${EPACTS[$golden]}
-[ $VERBOSE ]	&& printf "Golden number         %s\n" $golden
-[ $VERBOSE ]	&& printf "Ides                  %d\n" $ides
+if [ $VERBOSE ]; then
+	if [ $CHINESE ]; then
+		printf "Chinese New Year %s %s (%s)\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]}
+	else
+		printf "Julian calendar       %s\n" ${jcal:5:5} | sed 's/-/\//'
+		printf "Dominical letter      %s\n" $dom
+		printf "Epact                 %s\n" ${EPACTS[$golden]}
+		printf "Golden number         %s\n" $golden
+		printf "Ides                  %d\n" $ides
+	fi
+fi
 
 # Lunar and Hebrew observances and holidays
 if [ $hol ]; then
@@ -385,11 +374,13 @@ if [ $hol ]; then
 		[ $month -eq 1 -a $day -eq 1 ]	 && dhol+=$(echo "Hogmanay|")
 		[ $month -eq 1 -a $day -eq 2 ]	 && dhol+=$(echo "Hogmanay|")
 		[ $month -eq 2 -a $day -eq 2 ]   && dhol+=$(echo "Groundhog Day|")
+		[ $month -eq 3 -a $day -eq 14 ]	 && dhol+=$(echo "Pi Day|")
 		[ $month -eq 3 -a $day -eq 25 ]	 && dhol+=$(echo "Lady Day|")
 		[ $month -eq 4 -a $day -eq 1 -a ${hms:0:2} -lt 12 ] && dhol+=$(echo "April Fools' Day|")
 		[ $month -eq 5 -a $day -eq 1 ]   && dhol+=$(echo "May Day|")
 		[ $month -eq 5 -a $day -eq 25 ]  && dhol+=$(echo "Towel Day|")
 		[ $month -eq 6 -a $day -eq 24 ]  && dhol+=$(echo "Midsummer Day|")
+		[ $month -eq 6 -a $day -eq 28 ]  && dhol+=$(echo "Tau Day|")
 		[ $month -eq 7 -a $day -eq 2 ]	 && dhol+=$(echo "Mid Year's Day|")
 		[ $month -eq 7 -a $day -eq 5 ]	 && dhol+=$(echo "X-Day|")
 		[ $month -eq 8 -a $day -eq 1 ]	 && dhol+=$(echo "Lammas|")
@@ -416,12 +407,6 @@ if [ $LUNAR ]; then
 	echo -en "$dmoo" | sed 's/|/\n/g' | sort
 	
 	if [ $LCOMMON ]; then
-		dobs+=$(printf "%s  Passover, Pilgrimage, the Exodus from Egypt (sunset)|" $passover)
-		dobs+=$(printf "%s  Tish'a B'Av, Day of Mourning, destruction (sunset)|" $tishabav)
-		dobs+=$(printf "%s  Rosh Hashanah, New Year (sunset)|" $hashanah)
-		dobs+=$(printf "%s  Yom Kippur, Day of Atonement (sunset)|" $yomkippur)
-		dobs+=$(printf "%s  Hanukkah, Festival of Lights, rededication (sunset)|" $hanukkah)
-
 		dobs+=$(printf "%s  Lent, 40-day period of penitential preparation|" $lent)
 		dobs+=$(printf "%s  Pascha, central liturgical feast (Lent ends)|" $easter)
 		dobs+=$(printf "%s  Orthodox Pascha, liturgical feast in the East|" $oeaster)
