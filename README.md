@@ -12,7 +12,7 @@ holidays, has also been added. Please see the man file for full list.
 
 ## Installation
 - Copy script to local `bin` or path.
-- Copy man file to your local `share/man` or manpath.
+- Copy man file to local `share/man` or manpath.
 - Copy **getusage**, **rnum** to local `bin` or path.
 - Complile **phases** and copy executable to local `bin` or path.
 - Download and install helper apps (see below).
