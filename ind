@@ -191,7 +191,7 @@ advent=$(date -d "$year-12-25 $xmasadj days" +%F)
 
 is_leap_year $year
 if [ $_IS_LEAP_YEAR ]; then
-	leap="(L)"
+	leap=" (L)"
 	if [ $dominical -eq 0 ]; then dom="${DOMINI[$dominical]}${DOMINI[6]}"
 	else dom="${DOMINI[$dominical]}${DOMINI[$dominical-1]}"; fi
 else
