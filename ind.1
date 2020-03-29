@@ -1,19 +1,19 @@
 .\" generated with Ronn/v0.7.3
 .\" http://github.com/rtomayko/ronn/tree/0.7.3
 .
-.TH "IND" "1" "November 2019" "" ""
+.TH "IND" "1" "March 2020" "" ""
 .
 .SH "NAME"
 \fBind\fR \- calculates dates for uncommon dating systems
 .
 .SH "SYNOPSIS"
-\fBind\fR [\-anfpcotejMrzuxib] [\-y year] [\-m month] [\-d day|yesterday|today|tomorrow] [\-hHvlLC?]
+\fBind\fR [\-anfpcotejMrzuxiqb] [\-y year] [\-m month] [\-d day|yesterday|today|tomorrow] [\-hHvlLC?]
 .
 .SH "DESCRIPTION"
-\fBind\fR is a bash script which calculates the Byzantine year, indiction for current and Byzantine year, the Buddhist year, the year from the founding of the City of Rome and the Japanese Imperial year\.
+\fBind\fR is a bash script which calculates the Byzantine year, indiction for current and Byzantine year, the Buddhist year, the year from the founding of the City of Rome, the Masoretic year, and the Japanese Imperial year\.
 .
 .P
-Lunar\-solar calculations include: metonic cycle, epact, dominical year, and Buddhist holidays in the Theravadan tradition\. Astronomical dating includes current Julian period and Modified Julian Date\.
+Lunar\-solar calculations include: metonic cycle, epact, dominical year, Chinese year and holidays, and Buddhist holidays in the Theravadan tradition\. Astronomical dating includes current Julian period and Modified Julian Date\.
 .
 .P
 Users of Darwin (Mac) systems should install (and alias) the latest \fBcoreutils\fR using your preferred third\-party package manager\.
@@ -86,6 +86,10 @@ Toggle Julian Period\.
 Toggle Japanese Imperial year\.
 .
 .TP
+\fB\-q\fR
+Toggle Chinese Lunar year\.
+.
+.TP
 \fB\-b\fR
 Toggle Buddhist year\.
 .
@@ -141,7 +145,7 @@ The Masoretic calendar (Anno Lucis): is a dating system used in ceremonial or co
 "Ab urbe condita" (also "anno urbis", a\.u\.), or "from the founding of the City (Rome)", traditionally dated to 753 BC\. AUC is a year\-numbering system used by historians of ancient Rome to identify particular years\. The dominant method of identifying years in Roman times was to name the two consuls who held office that year\. The regnal year of the emperor was also used to identify years, especially in the Byzantine Empire after 537\.
 .
 .P
-The Byzantine calendar: also "Creation Era of Constantinople," or "Era of the World" (Anno Mundi) was the calendar used by the Eastern Orthodox Church from c\. 691 to 1728 in the Ecumenical Patriarchate\. It was also the official calendar of the Byzantine Empire from 988 to 1453, and in Russia from c\. 988 to 1700\. The calendar is based on the Julian calendar except that the year started on 1 September and the year number used an Anno Mundi epoch\. Its year one, from creation, was September 1, 5509 BC to August 31, 5508 BC\.
+The Byzantine calendar: also "Creation Era of Constantinople," or "Era of the World" (Anno Mundi) was the calendar used by the Eastern Orthodox Church from c\. 691 to 1728 in the Ecumenical Patriarchate\. It was also the official calendar of the Byzantine Empire from 988 to 1453, and in Russia from c\. 988 to 1700\. The calendar is based on the Julian calendar except that the year started on 1 September and the year number used an Anno Mundi epoch\. Its year one, from creation, was September 1 5509 BC to August 31 5508 BC\.
 .
 .P
 An indiction: is any of the years in a 15\-year cycle used to date medieval documents throughout Europe, both East and West\. Each year of a cycle was numbered: first indiction, second indiction, etc\. However, the cycles were not numbered, thus other information is needed to identify specific years\.
@@ -153,7 +157,10 @@ The Julian period or the Julian Day system provides astronomers with a single sy
 The Modified Julian Day (MJD) is an abbreviated version of the old Julian Day (JD) dating method which has been in use for centuries by astronomers, geophysicists, chronologers, and others who needed to have an unambiguous dating system based on continuing day counts\.
 .
 .P
-The Japanese imperial year or "national calendar year" is a unique calendar system in Japan\. It is based on the legendary foundation of Japan by Emperor Jimmu in 660 BC and emphasizes the long history of Japan and the Imperial dynasty\.
+The Japanese imperial year or "national calendar year" is a unique calendar system in Japan\. It is based on the legendary foundation of Japan by Emperor Jimmu in 660 BC, and emphasizes the long history of Japan and the Imperial dynasty\.
+.
+.P
+The traditional Chinese calendar (officially known as the Agricultural Calendar, Former Calendar, Traditional Calendar, or Lunar Calendar), is a lunisolar calendar which reckons years, months, and days according to astronomical phenomena\. Although modern\-day China uses the Gregorian calendar, the traditional Chinese calendar governs holidays —\- such as the Chinese New Year and Lantern Festival —\- in both China and in overseas Chinese communities\.
 .
 .P
 The Buddhist calendar: is a set of lunisolar calendars primarily used in mainland Southeast Asian countries of Cambodia, Laos, Myanmar and Thailand as well as in Sri Lanka for religious and/or official occasions\. In Thailand, the name Buddhist Era is a year numbering system shared by the traditional Thai lunisolar calendar and by the Thai solar calendar\.

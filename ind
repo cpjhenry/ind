@@ -19,17 +19,19 @@ ROME=
 ARC=
 JULIANPRD=
 JAPANIY=
+CHINALY=
 BUDDHIST=
 
 hol=true
 
 budconvert=543	# Buddhist; Thai Solar
-byzconvert=5508 # Byzantine; year begins September 1st
+byzconvert=5508 # Byzantine; year begins September 1st (Julian calendar)
 romconvert=753  # Founding of Rome - 753 BCE
-arcconvert=1353 # A.R.C., begins March 21th, 1:06 a.m. ET
+arcconvert=1352 # A.R.C., begins March 21th, 1:06 a.m. ET
 jupconvert=4713	# Julian Period begins January 1st, 4713 BCE
 jiyconvert=660	# Japanese Imperial Year, begins January 1st, 660 BCE
 masconvert=4000	# Masoretic Text - 4000 BCE
+chiconvert=2697	# Chinese Lunar Year begins 21 January to 20 February
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -74,14 +76,14 @@ displayall() {
 	LY=true; DDATE=true; HHPC=true; MASORETIC=true;
 	HEBREW=true; ROME=true; JULIANPRD=true;
 	BYZANTINE=true; ARC=true; JAPANIY=true;
-	BUDDHIST=true;
+	CHINALY=true; BUDDHIST=true;
 }
 displaynone() {
 	unset PARTCE; unset FULLCE; unset COMMON;
 	unset LY; unset DDATE; unset HHPC; unset MASORETIC;
 	unset HEBREW; unset ROME; unset JULIANPRD;
 	unset BYZANTINE; unset ARC; unset JAPANIY;
-	unset BUDDHIST; 
+	unset CHINALY; unset BUDDHIST; 
 
 	unset LUNAR; unset LCOMMON; unset CHINESE; 
 	unset VERBOSE;
@@ -89,7 +91,7 @@ displaynone() {
 
 setdate today # set today's date
 
-while getopts ":anfpcotejMrzuxiby:m:d:hHvlLCU?" OPTION
+while getopts ":anfpcotejMrzuxiqby:m:d:hHvlLCU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
@@ -107,6 +109,7 @@ do
 		u)	[ $JULIANPRD ]	&& unset JULIANPRD	|| JULIANPRD=true;;			# Julian period
 		x)	[ $ARC ]		&& unset ARC		|| ARC=true;;				# A.R.C.
 		i)	[ $JAPANIY ] 	&& unset JAPANIY	|| JAPANIY=true;;			# Japanese Imperial
+		q)	[ $CHINALY ]	&& unset CHINALY	|| CHINALY=true;;			# Chinese Lunar
 		b)	[ $BUDDHIST ] 	&& unset BUDDHIST 	|| BUDDHIST=true;;			# Buddhist
 
 		y)	year=$OPTARG;;													# set year
@@ -163,25 +166,13 @@ if [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
 else rnyear="/"; fi
 
-# Byzantine calendar is aligned to Julian
-# Julian calendar has 13 day delta for 20th/21st centuries
-jcal=$(date -d "$ymd - 13 days" +%F)
-((byzantine=year+byzconvert))
-[[ 10#$(date -d "$jcal" +%j) -ge 10#$(date -d "1 Sept" +%j) ]] && ((byzantine+=1))
-
 # Hebrew calendar; 'hebcal' utility required
-# Jewish observances begin the evening before at sunset
 if [ $(which hebcal) ]; then
 	hebdate=$(hebcal -Th $month $day $year | sed -n 1p)
-	hebyear=$(hebcal -Th 01 01 $year | sed -n 1p | sed 's/.*, //')
-
 	hebrhol=$(hebcal -Tx $month $day $year | sed 1d)
-	unset hebyear
-else
-	unset HEBREW
-fi
+else unset HEBREW; fi
 
-# Lent and other Easter-based holidays
+# Lent and other Easter-based holidays; 'ncal' utility required
 easter=$(date -d "$(ncal -e $year)" +%F)
 oeaster=$(date -d "$(ncal -o $year)" +%F)
 carnival=$(date -d "$easter - 47 days" +%F)
@@ -200,11 +191,10 @@ advent=$(date -d "$year-12-25 $xmasadj days" +%F)
 
 is_leap_year $year
 if [ $_IS_LEAP_YEAR ]; then
-	leap=" LY"
+	leap="(L)"
 	if [ $dominical -eq 0 ]; then dom="${DOMINI[$dominical]}${DOMINI[6]}"
 	else dom="${DOMINI[$dominical]}${DOMINI[$dominical-1]}"; fi
 else
-	unset leap
 	dom="${DOMINI[$dominical]}"
 fi
 [ ! $LY ] && unset leap
@@ -239,7 +229,7 @@ if [ $(which phases) ]; then
 	# Vassa
 	vsday=$(date -d "$(phases $year 7 1 | sed -n 1p) + 1 day" +%d)
 
-	# Chinese New Year begins 21 January to 20 February; calculate subsequent months
+	# Chinese calendar
 	cstep=1; for i in "${chinesemoon[@]}"; do
 		if [ $cstep -eq 1 ]; then
 			[ "${i:5:2}" = "01" ] && [ "${i:8:2}" -ge 21 ] && lunarmonth[$cstep]=$i && ((cstep++))
@@ -252,6 +242,10 @@ if [ $(which phases) ]; then
 
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)
 	cny=${lunarmonth[1]}	
+
+	# Chinese Lunar Year
+	((cly=year+chiconvert))
+	[[ 10#$(date -d "$ymd" +%j) -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
 
 	# 'year of'
 	case 1 in
@@ -268,6 +262,7 @@ if [ $(which phases) ]; then
 	doubleni=$(date -d "${lunarmonth[9]} + 8 days" +%F)
 else
 	unset LUNAR
+	unset CHINALY
 fi
 
 # Simple year calculations
@@ -280,6 +275,12 @@ fi
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
+# Byzantine calendar is aligned to Julian
+# Julian calendar has 13 day delta for 20th/21st centuries
+jcal=$(date -d "$ymd - 13 days" +%F)
+((byzantine=year+byzconvert))
+[[ 10#$(date -d "$jcal" +%j) -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
+
 # Indictions and ordinals
 (( ind=($year+2)%15+1 ))	# set Gregorian indiction
 ordinal $ind; gord=$ord 	# set Gregorian ordinal
@@ -291,11 +292,8 @@ ordinal $byzind; bord=$ord	# set Byzantine ordinal
 ordinal $(( 10#$day )) 		# set standard ordinal
 
 # ARC
-if [ $month -lt 3 ]; then (( arc=year+arcconvert-1 ))
-elif [ $month -eq 3 ]; then
-	if [ $day -lt 21 ]; then (( arc=year+arcconvert-1 ))
-	else (( arc=year+arcconvert )); fi
-else (( arc=year+arcconvert )); fi
+((arc=year+arcconvert))
+[[ 10#$(date -d "$ymd" +%j) -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
 
 # main()
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
@@ -315,6 +313,7 @@ else (( arc=year+arcconvert )); fi
 [ $JULIANPRD ]	&& printf "Julian Period         %d\n" $julp
 [ $ARC ]		&& printf "A.R.C.                %d\n" $arc
 [ $JAPANIY ]	&& printf "Japanese Imperial     %d\n" $jiy
+[ $CHINALY ]	&& printf "Chinese Lunar         %d\n" $cly
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then

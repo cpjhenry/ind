@@ -150,12 +150,20 @@ ChangeLog
 
 2019-10-16	v3.7.6
 	- display and math tweaks
-	- optimize date variables used only once
+	- optimized date variables used only once
 
 2019-10-19	v3.7.7
 	- update documentation
 
 2019-11-02	v3.8
 	- remove Hebrew holidays (see helper app 'hebcal')
-	- adjust documentation
 	- display tweaks
+	- adjust documentation
+
+2020-03-29 v3.8.5
+	- cleanup orphaned calculations
+	- added Chinese Lunar Year
+	- fixed Byzantine start of year when year supplied
+	- tweaked ARC calculation
+	- display tweaks
+	- update documentation
