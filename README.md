@@ -15,9 +15,8 @@ holidays, has also been added. Please see the man file for full list.
 
 ## History
 This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an
-aficionado of horology, I went looking for a tool which would easily
-calculate the Byzantine (and common era) indictions. Finding none, I created
-my own.
+aficionado of horology, I went looking for a tool which would easily calculate
+the Byzantine (and common era) indictions. Finding none, I created my own.
 
 Like all good programs, **ind** has expanded beyond its original scope. In
 keeping with Linux tradition, significant blocks of specific task code has been
