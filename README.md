@@ -2,20 +2,16 @@ ind
 ===
 
 **ind** is a bash script which calculates the Byzantine year, indiction for
-current and Byzantine year, the Buddhist year, and the year from the
-founding of the City of Rome. Other available lunar-solar calculations
-include: metonic cycle, epact, dominical year, and Christian, and Buddhist
-holidays in the Theravadan tradition.
+current and Byzantine year, the Buddhist year, the year from the founding of
+the City of Rome, the Masoretic year, and the Japanese Imperial year.
+
+Lunar-solar calculations include: metonic cycle, epact, dominical year,
+Chinese year, and Christian, Chinese, and Buddhist holidays in the Theravadan
+tradition. Astronomical dating includes current Julian period and Modified
+Julian Date.
 
 Other obscure and idiosyncratic dating system support, including unusual
 holidays, has also been added. Please see the man file for full list.
-
-## Installation
-- Copy script to local `bin` or path.
-- Copy man file to local `share/man` or manpath.
-- Copy **getusage**, **rnum** to local `bin` or path.
-- Complile **phases** and copy executable to local `bin` or path.
-- Download and install helper apps (see below).
 
 ## History
 This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an
@@ -28,6 +24,16 @@ keeping with Linux tradition, significant blocks of specific task code has been
 spun off as separate tools or turned over to helper apps.
 
 Please see ChangeLog for a history of changes to this script.
+
+## Installation
+Users of Darwin (Mac) systems should install (and alias) the latest
+**coreutils** using your preferred third-party package manager.
+
+- Copy script to local `bin` or path.
+- Copy man file to local `share/man` or manpath.
+- Copy **getusage**, **rnum** to local `bin` or path.
+- Complile **phases** and copy executable to local `bin` or path.
+- Download and install helper apps (see below).
 
 ## Helpers
 Installing the following helper apps, will enable additional features:
