@@ -126,6 +126,7 @@ do
 
 		U)	cp -uv $HOME/bin/ind $HOME/src/ind/								# update git repository
 			cp -uv $HOME/share/man/man1/ind.1 $HOME/src/ind/
+			cp -uv $HOME/share/man/man7/uposatha.7 $HOME/src/ind/
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
 	esac
