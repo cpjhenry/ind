@@ -73,14 +73,14 @@ is_leap_year() { ## USAGE: is_leap_year [year]
 }
 displayall() {
 	unset PARTCE; FULLCE=true; COMMON=true;
-	LY=true; DDATE=true; HHPC=true; MASORETIC=true;
+	HHPC=true; DDATE=true; MASORETIC=true;
 	HEBREW=true; ROME=true; JULIANPRD=true;
 	BYZANTINE=true; ARC=true; JAPANIY=true;
 	CHINALY=true; BUDDHIST=true;
 }
 displaynone() {
-	unset PARTCE; unset FULLCE; unset COMMON;
-	unset LY; unset DDATE; unset HHPC; unset MASORETIC;
+	unset PARTCE; unset FULLCE; unset COMMON; unset LY;
+	unset HHPC; unset DDATE; unset MASORETIC;
 	unset HEBREW; unset ROME; unset JULIANPRD;
 	unset BYZANTINE; unset ARC; unset JAPANIY;
 	unset CHINALY; unset BUDDHIST; 
