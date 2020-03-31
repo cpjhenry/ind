@@ -32,28 +32,27 @@ Please see ChangeLog for a history of changes to this script.
 - Download and install helper apps (below).
 
 Users of Darwin (Mac) systems should install (and alias) the latest
-**coreutils** using your preferred third-party package manager. **GNU sed**
+**coreutils** using your preferred third-party package manager. **GNU-sed**
 is also required.
 
+**ind** is self-documenting. The extraction script (**getusage**) is included
+with this distribution.
+
+**rnum**, a simple script to calculate Roman numerals from decimal is also
+included.
+
+**phases** calculates, with fair accuracy, the phase of the new and full
+moons. It is written in C and should be compiled locally prior to use:
+
+	gcc -o phases phases.c
+
 ## Helpers
-Installing the following helper apps, will enable additional features:
+Installing the following helper apps will enable additional features:
 
 - **ddate** provides Discordian date support (https://github.com/bo0ts/ddate)
 - **hebcal** provides Hebrew calculations (https://www.hebcal.com)
 - **hh** provides Hanke-Henry date support (https://github.com/cpjhenry/hh)
 - **jday** provides Julian Date (https://sourceforge.net/projects/jday/)
-
-In addition, **phases** calculates, with fair accuracy, the phase of the new
-and full moons. It is written in C and should be compiled locally prior to
-use:
-
-	gcc -o phases phases.c
-
-**ind** is self-documenting. The extraction script -- **getusage** -- is
-included with this distribution.
-
-**rnum**, a simple script to calculate Roman numerals from decimal is
-also included.
 
 ## Author
 Paul J Henry <cpjhenry@gmail.com>  
