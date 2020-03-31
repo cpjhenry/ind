@@ -26,7 +26,7 @@ hol=true
 
 budconvert=543	# Buddhist; Thai Solar
 byzconvert=5508 # Byzantine; year begins September 1st (Julian calendar)
-romconvert=753  # Founding of Rome - 753 BCE
+romconvert=752  # Founding of Rome - 753 BCE (Julian calendar)
 arcconvert=1352 # A.R.C., begins March 21th, 1:06 a.m. ET
 jupconvert=4713	# Julian Period begins January 1st, 4713 BCE
 jiyconvert=660	# Japanese Imperial Year, begins January 1st, 660 BCE
@@ -146,6 +146,11 @@ iwn=$(date -d $ymd +%-V) 	# ISO week no
 tz=$(date -d $ymd +%Z)		# time zone
 utc=$(date -ud "$ymd $hms $tz" "+%F %H:%M:%S")
 
+# Julian calendar has 13 day delta for 20th/21st centuries
+jymd=$(date -d "$ymd - 13 days" +%F)
+jdoy=$(date -d "$jymd" +%j)	# day of year
+[ $month -eq 1 -a $day -le 13 ] && jdoy=0
+
 # Set Modified Julian Date (UTC); 'jday' utility required
 if [ $(which jday) ] ; then
 	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc)
@@ -200,7 +205,7 @@ else
 fi
 [ ! $LY ] && unset leap
 
-# Moons
+# Moons; 'phases' utility required
 if [ $(which phases) ]; then
 	for i in {1..12}; do
 		while IFS= read -r line; do
@@ -244,9 +249,16 @@ if [ $(which phases) ]; then
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)
 	cny=${lunarmonth[1]}	
 
+	# Chinese festivals
+	qingming="$year-04-05"
+	duanwufe=$(date -d "${lunarmonth[5]} + 4 days" +%F)
+	ghostfes=$(date -d "${lunarmonth[7]} + 14 days" +%F)
+	midautum=$(date -d "${lunarmonth[8]} + 14 days" +%F)
+	doubleni=$(date -d "${lunarmonth[9]} + 8 days" +%F)
+
 	# Chinese Lunar Year
-	((cly=year+chiconvert))
-	[[ 10#$(date -d "$ymd" +%j) -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
+	(( cly=year+chiconvert ))
+	[[ 10#$doy -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
 
 	# 'year of'
 	case 1 in
@@ -254,13 +266,6 @@ if [ $(which phases) ]; then
 		$(($year< 2032))) (( yearof=$year-2020 )) ;;
 		$(($year< 2044))) (( yearof=$year-2032 )) ;;
 	esac
-
-	# Chinese festivals
-	qingming="$year-04-05"
-	duanwufe=$(date -d "${lunarmonth[5]} + 4 days" +%F)
-	ghostfes=$(date -d "${lunarmonth[7]} + 14 days" +%F)
-	midautum=$(date -d "${lunarmonth[8]} + 14 days" +%F)
-	doubleni=$(date -d "${lunarmonth[9]} + 8 days" +%F)
 else
 	unset LUNAR
 	unset CHINALY
@@ -268,19 +273,23 @@ fi
 
 # Simple year calculations
 (( masor=year+masconvert ))
-(( rome=year+romconvert ))
 (( julp=year+jupconvert ))
 (( jiy=year+jiyconvert ))
 (( buddhist=year+budconvert ))
 
+# Byzantine & Roman calendars are aligned to Julian calendar
+(( byzantine=year+byzconvert ))
+[[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
+
+(( rome=year+romconvert ))
+[[ 10#$jdoy -ge 10#$(date -d "1 Jan  $year" +%j) ]] && (( rome+=1 ))
+
+# ARC
+(( arc=year+arcconvert ))
+[[ 10#$doy -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
+
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
-
-# Byzantine calendar is aligned to Julian
-# Julian calendar has 13 day delta for 20th/21st centuries
-jcal=$(date -d "$ymd - 13 days" +%F)
-((byzantine=year+byzconvert))
-[[ 10#$(date -d "$jcal" +%j) -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
 
 # Indictions and ordinals
 (( ind=($year+2)%15+1 ))	# set Gregorian indiction
@@ -291,10 +300,6 @@ ordinal $ind; gord=$ord 	# set Gregorian ordinal
 ordinal $byzind; bord=$ord	# set Byzantine ordinal
 
 ordinal $(( 10#$day )) 		# set standard ordinal
-
-# ARC
-((arc=year+arcconvert))
-[[ 10#$(date -d "$ymd" +%j) -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
 
 # main()
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
@@ -321,7 +326,7 @@ if [ $VERBOSE ]; then
 	if [ $CHINESE ]; then
 		printf "Chinese New Year %s %s (%s)\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]}
 	else
-		printf "Julian calendar       %s\n" ${jcal:5:5} | sed 's/-/\//'
+		printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
 		printf "Dominical letter      %s\n" $dom
 		printf "Epact                 %s\n" ${EPACTS[$golden]}
 		printf "Golden number         %s\n" $golden
