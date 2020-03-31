@@ -32,7 +32,8 @@ Please see ChangeLog for a history of changes to this script.
 - Download and install helper apps (below).
 
 Users of Darwin (Mac) systems should install (and alias) the latest
-**coreutils** using your preferred third-party package manager.
+**coreutils** using your preferred third-party package manager. **GNU sed**
+is also required.
 
 ## Helpers
 Installing the following helper apps, will enable additional features:
@@ -56,4 +57,4 @@ also included.
 
 ## Author
 Paul J Henry <cpjhenry@gmail.com>  
-12 October 2019
+30 March 2020
