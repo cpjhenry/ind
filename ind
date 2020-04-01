@@ -154,7 +154,7 @@ jdoy=$(date -d "$jymd" +%-j)
 # Set Modified Julian Date (UTC); 'jday' utility required
 if [ $(which jday) ] ; then
 	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc)
-else mjd="00000.0"; fi
+else unset mjd; fi
 
 # Set Hanke-Henry date; 'hh' utility required
 if [ $(which hh) ]; then
@@ -267,8 +267,9 @@ if [ $(which phases) ]; then
 		$(($year< 2044))) (( yearof=$year-2032 )) ;;
 	esac
 else
-	unset LUNAR
 	unset CHINALY
+	unset LUNAR
+	unset CHINESE
 fi
 
 # Simple year calculations
@@ -307,7 +308,7 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 
 [ $COMMON ]		&& printf "$bold" && printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord && echo "$leap$bold"
 [ $COMMON ]		&& printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
-[ $COMMON ]		&& printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
+[ $COMMON ] && [ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
@@ -323,11 +324,12 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
-	printf "Chinese New Year %s" $year 
+	[ $cny ] && printf "Chinese New Year %s" $year 
 	if [ $CHINESE ]; then
 		printf " %s %s\n" ${cny:5:5} ${CNYDATE[(($year-2019))]}
 	else
-		printf " %s\n" ${cny:5:5} | sed 's/-/\//'
+		[ $cny ] && printf " %s\n" ${cny:5:5} | sed 's/-/\//'
+
 		printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
 		printf "Julian day of year    %03d\n" $jdoy
 		printf "Dominical letter      %s\n" $dom
@@ -367,8 +369,8 @@ if [ $hol ]; then
 			[ $month -eq 10 ] && observance="Pavarana (Vassa ends)"
 			[ $month -eq 11 ] && observance="Anapanasati day"
 		fi
-		[ $month -eq 7 -a $day -eq $vsday ]	&& observance="Vassa"
-		[ "$observance" != "" ]  && dhol+=$(echo "$observance|")
+		[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && observance="Vassa"
+		[ "$observance" != "" ] && dhol+=$(echo "$observance|")
 	fi
 
 	# Fixed non-lunar holidays

@@ -176,6 +176,7 @@ ChangeLog
 2020-03-31 v3.8.8
 	- aligned City of Rome date to Julian calendar
 	- added error-checking for Julian day of year
+	- optimized disabled feature error trapping
 	- optimized variables for day of year and Julian day of year
 	- display tweaks
 	- update documentation
