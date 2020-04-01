@@ -177,4 +177,5 @@ ChangeLog
 	- aligned City of Rome date to Julian calendar
 	- added error-checking for Julian day of year
 	- optimized variables for day of year and Julian day of year
+	- display tweaks
 	- update documentation
