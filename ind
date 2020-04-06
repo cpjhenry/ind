@@ -24,14 +24,15 @@ BUDDHIST=
 
 hol=true
 
-budconvert=543	# Buddhist; Thai Solar
-byzconvert=5508 # Byzantine; year begins September 1st (Julian calendar)
-romconvert=752  # Founding of Rome - 753 BCE (Julian calendar)
-arcconvert=1352 # A.R.C., begins March 21th, 1:06 a.m. ET
-jupconvert=4713	# Julian Period begins January 1st, 4713 BCE
-jiyconvert=660	# Japanese Imperial Year, begins January 1st, 660 BCE
-masconvert=4000	# Masoretic Text - 4000 BCE
-chiconvert=2697	# Chinese Lunar Year begins 21 January to 20 February
+byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
+romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
+arcconvert=1352 # A.R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
+
+budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
+jupconvert=4713	# Julian Period; 4713 BCE
+jiyconvert=660	# Japanese Imperial year; 660 BCE
+masconvert=4000	# Masoretic Text; 4000 BCE
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
