@@ -128,7 +128,7 @@ do
 
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'"; done \
-			< <(grep DEP: $0 | sed -e "/grep DEP/d;s/^.*DEP: //")
+			< <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
 		U)	cp -uv $HOME/bin/ind $HOME/src/ind/								# update git repository
 			cp -uv $HOME/share/man/man1/ind.1 $HOME/src/ind/
@@ -157,28 +157,28 @@ jymd=$(date -d "$ymd - 13 days" +%F)
 jdoy=$(date -d "$jymd" +%-j)
 [ $month -eq 1 -a $day -le 13 ] && jdoy=0
 
-# Set Modified Julian Date (UTC); DEP: jday
+# Set Modified Julian Date (UTC); DEP jday
 if [ $(which jday) ] ; then
 	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc)
 else unset mjd; fi
 
-# Set Hanke-Henry date; DEP: hh
+# Set Hanke-Henry date; DEP hh
 if [ $(which hh) ]; then
 	hhdate=$(hh -W -d$day -m$month -y$year)
 else unset HHPC; fi
 
-# Set Discordian date; DEP: ddate
+# Set Discordian date; DEP ddate
 if [ $(which ddate) ]; then
 	discord=$(ddate +'%{%e %B%} %Y' $day $month $year | sed 's/The //')
 	dischol=$(ddate +'%N%H' $day $month $year)
 else unset DDATE; fi
 
-# Set Roman numeral year; DEP: rnum
+# Set Roman numeral year; DEP rnum
 if [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
 else rnyear="/"; fi
 
-# Hebrew calendar; DEP: hebcal
+# Hebrew calendar; DEP hebcal
 if [ $(which hebcal) ]; then
 	hebdate=$(hebcal -Th $month $day $year | sed -n 1p)
 	hebrhol=$(hebcal -Tx $month $day $year | sed 1d)
@@ -211,7 +211,7 @@ else
 fi
 [ ! $LY ] && unset leap
 
-# Moons; DEP: phases
+# Moons; DEP phases
 if [ $(which phases) ]; then
 	for i in {1..12}; do
 		while IFS= read -r line; do
