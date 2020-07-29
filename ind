@@ -74,7 +74,7 @@ is_leap_year() { ## USAGE: is_leap_year [year]
 	esac
 }
 displayall() {
-	unset PARTCE; FULLCE=true; COMMON=true;
+	unset PARTCE; unset FULLCE; COMMON=true;
 	HHPC=true; DDATE=true; MASORETIC=true;
 	HEBREW=true; ROME=true; JULIANPRD=true;
 	BYZANTINE=true; ARC=true; JAPANIY=true;
@@ -236,6 +236,7 @@ if [ $(which phases) ]; then
 		[ "${i:5:2}" = "$month" ] && [ ! $moonset ] && moonphase[2]=$i && moonset=yes
 		[ "$i" = "$ymd" ] && moon=${PHASES[2]} && full=yes
 		[ "$blmoon" = "$ymd" ] && moon="Blue Moon" && unset full
+		[ $full ] && [ $month -eq 9 ] && moon="Harvest Moon"
 	done
 
 	# Vassa
@@ -330,7 +331,8 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
-	[ $cny ] && printf "Chinese New Year %s" $year 
+	[ "$moon" ] && printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
+	[ $cny ] 	&& printf "Chinese New Year %s" $year
 	if [ $CHINESE ]; then
 		printf " %s %s\n" ${cny:5:5} ${CNYDATE[(($year-2019))]}
 	else
@@ -353,7 +355,8 @@ if [ $hol ]; then
 		[ "$ymd" = "$easter"	] && dhol+=$(echo "Pascha (Lent ends)|")
 		[ "$ymd" = "$oeaster"	] && dhol+=$(echo "Orthodox Pascha|")
 		[ "$ymd" = "$advent"	] && dhol+=$(echo "Advent begins|")
-
+	fi
+	if [ $CHINALY ]; then
 		[ "$ymd" = "$cny" 		] && dhol+=$(echo "Chinese New Year (Year of the ${ZODIAC[10#$yearof]})|")
 		[ "$ymd" = "$qingming"	] && dhol+=$(echo "Tomb Sweeping Festival|")
 		[ "$ymd" = "$duanwufe"	] && dhol+=$(echo "Dragon Boat Festival|")
@@ -364,7 +367,6 @@ if [ $hol ]; then
 	[ $HEBREW ] && [ "$hebrhol" ] && dhol+=$(echo "$hebrhol|")
 
 	if [ $BUDDHIST ]; then
-		[ $full ] && [ $month -eq 9 ] && moon="Harvest Moon"
 		[ "$moon" != "" ] && observance="$moon Uposatha"
 		
 		# only the first full moon
@@ -422,14 +424,15 @@ if [ $LUNAR ]; then
 		[ "$bkmoon" ] && dmoo+=$(printf "%s  Black Moon|" $bkmoon)
 		[ "$blmoon" ] && dmoo+=$(printf "%s  Blue Moon |" $blmoon)
 
-		echo -en "$dmoo" | sed 's/|/\n/g' | sort; echo
-		dobs+=$(printf "$year-07-%02d  Vassa, Buddhist monastic retreat|" $vsday)
+		echo -en "$dmoo" | sed 's/|/\n/g' | sort
 	fi	
 	if [ $LCOMMON ]; then
 		dobs+=$(printf "%s  Lent, 40-day period of penitential preparation|" $lent)
 		dobs+=$(printf "%s  Pascha, central liturgical feast (Lent ends)|" $easter)
 		dobs+=$(printf "%s  Orthodox Pascha, liturgical feast in the East|" $oeaster)
 		dobs+=$(printf "%s  Advent, First season of the church year|" $advent)
+
+		dobs+=$(printf "$year-07-%02d  Vassa, Buddhist monastic retreat|" $vsday)
 	fi
 	if [ $CHINESE ]; then
 		dobs+=$(printf "%s  Chinese New Year (Year of the %s)|" $cny ${ZODIAC[10#$yearof]})
@@ -439,6 +442,7 @@ if [ $LUNAR ]; then
 		dobs+=$(printf "%s  Moon Festival, family meal, mooncake|" $midautum)
 	fi
 	if [ "$dobs" ]; then
+		[ "$dmoo" ] && echo
 		echo "Lunar Holidays & Observances:"
 		echo -en "$dobs" | sed 's/|/\n/g' | sort
 	fi
