@@ -156,7 +156,7 @@ ChangeLog
 	- update documentation
 
 2019-11-02	v3.8
-	- remove Hebrew holidays (see helper app 'hebcal')
+	- removed Hebrew holidays (see helper app 'hebcal')
 	- display tweaks
 	- update documentation
 
@@ -183,3 +183,9 @@ ChangeLog
 
 2020-04-05 v3.8.9
 	- source tweaks
+	- update documentation
+
+2020-07-29 v3.8.10
+	- added dependency check
+	- tweak lunar diagnostic data
+	- update documentation
