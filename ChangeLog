@@ -189,3 +189,6 @@ ChangeLog
 	- added dependency check
 	- tweak lunar diagnostic data
 	- update documentation
+
+2020-08-05 v3.8.11
+	- tweak verbose display
