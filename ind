@@ -331,13 +331,13 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
-	[ "$moon" ] && printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
 	[ $cny ] 	&& printf "Chinese New Year %s" $year
 	if [ $CHINESE ]; then
 		printf " %s %s\n" ${cny:5:5} ${CNYDATE[(($year-2019))]}
 	else
 		[ $cny ] && printf " %s\n" ${cny:5:5} | sed 's/-/\//'
 
+		[ "$moon" ] && printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
 		printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
 		printf "Julian day of year    %03d\n" $jdoy
 		printf "Dominical letter      %s\n" $dom
