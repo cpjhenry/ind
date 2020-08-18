@@ -254,7 +254,11 @@ if [ $(which phases) ]; then
 	done
 
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)
+
+	# Chinese Lunar Year
 	cny=${lunarmonth[1]}	
+	(( cly=year+chiconvert ))
+	[[ 10#$doy -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
 
 	# Chinese festivals
 	qingming="$year-04-05"
@@ -262,10 +266,6 @@ if [ $(which phases) ]; then
 	ghostfes=$(date -d "${lunarmonth[7]} + 14 days" +%F)
 	midautum=$(date -d "${lunarmonth[8]} + 14 days" +%F)
 	doubleni=$(date -d "${lunarmonth[9]} + 8 days" +%F)
-
-	# Chinese Lunar Year
-	(( cly=year+chiconvert ))
-	[[ 10#$doy -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
 
 	# 'year of'
 	case 1 in
