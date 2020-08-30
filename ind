@@ -236,8 +236,8 @@ if [ $(which phases) ]; then
 		[ "${i:5:2}" = "$month" ] && [ ! $moonset ] && moonphase[2]=$i && moonset=yes
 		[ "$i" = "$ymd" ] && moon=${PHASES[2]} && full=yes
 		[ "$blmoon" = "$ymd" ] && moon="Blue Moon" && unset full
-		[ $full ] && [ $month -eq 9 ] && moon="Harvest Moon"
 	done
+	[ $full ] && [ $month -eq 9 ] && moon="Harvest Moon"
 
 	# Vassa
 	vsday=$(date -d "$(phases $year 7 1 | sed -n 1p) + 1 day" +%d)
@@ -252,7 +252,6 @@ if [ $(which phases) ]; then
 			((cstep++))
 		fi
 	done
-
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)
 
 	# Chinese Lunar Year
@@ -425,6 +424,12 @@ if [ $LUNAR ]; then
 		[ "$blmoon" ] && dmoo+=$(printf "%s  Blue Moon |" $blmoon)
 
 		echo -en "$dmoo" | sed 's/|/\n/g' | sort
+
+#		IFS="|" dmoo=($dmoo)
+#		dmoos=($(sort <<<"${dmoo[*]}"))
+#		for i in ${dmoos[@]}; do
+#			echo "$i"
+#		done
 	fi	
 	if [ $LCOMMON ]; then
 		dobs+=$(printf "%s  Lent, 40-day period of penitential preparation|" $lent)
