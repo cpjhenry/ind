@@ -157,10 +157,14 @@ jymd=$(date -d "$ymd - 13 days" +%F)
 jdoy=$(date -d "$jymd" +%-j)
 [ $month -eq 1 -a $day -le 13 ] && jdoy=0
 
-# Set Modified Julian Date (UTC); DEP jday
+# Set Modified Julian Date & Rata Die (UTC); DEP jday
 if [ $(which jday) ] ; then
 	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc)
-else unset mjd; fi
+	ratadie=$(echo "$(jday -d $utc)-1721424.5" | bc | cut -f1 -d".")
+else 
+	unset mjd
+	unset ratadie
+fi
 
 # Set Hanke-Henry date; DEP hh
 if [ $(which hh) ]; then
@@ -315,6 +319,7 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $COMMON ]		&& printf "$bold" && printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord && echo "$leap$bold"
 [ $COMMON ]		&& printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
 [ $COMMON ] && [ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
+[ $COMMON ] && [ $ratadie ] && printf "RD %s at 00:00 UT\n" $ratadie
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}

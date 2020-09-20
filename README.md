@@ -7,8 +7,8 @@ the City of Rome, the Masoretic year, and the Japanese Imperial year.
 
 Lunar-solar calculations include: metonic cycle, epact, dominical year,
 Chinese year, and Christian, Chinese, and Buddhist holidays in the Theravadan
-tradition. Astronomical dating includes current Julian period and Modified
-Julian Date.
+tradition. Astronomical dating includes current Julian period, Modified
+Julian Date, and Rata Die.
 
 Other obscure and idiosyncratic dating system support, including unusual
 holidays, has also been added. Please see the man file for full list.
@@ -56,4 +56,4 @@ Installing the following helper apps will enable additional features:
 
 ## Author
 Paul J Henry <cpjhenry@gmail.com>  
-30 March 2020
+12 September 2020
