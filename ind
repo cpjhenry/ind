@@ -400,6 +400,7 @@ if [ $hol ]; then
 		[ $month -eq 3 -a $day -eq 25 ]	 && dhol+=$(echo "Lady Day|")
 		[ $month -eq 4 -a $day -eq 1 -a ${hms:0:2} -lt 12 ] && dhol+=$(echo "April Fools' Day|")
 		[ $month -eq 5 -a $day -eq 1 ]   && dhol+=$(echo "May Day|")
+		[ $month -eq 5 -a $day -eq 15 ]  && dhol+=$(echo "Whitsunday|")
 		[ $month -eq 5 -a $day -eq 25 ]  && dhol+=$(echo "Towel Day|")
 		[ $month -eq 6 -a $day -eq 24 ]  && dhol+=$(echo "Midsummer Day|")
 		[ $month -eq 6 -a $day -eq 28 ]  && dhol+=$(echo "Tau Day|")
