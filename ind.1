@@ -7,7 +7,7 @@
 \fBind\fR \- calculates dates for uncommon dating systems
 .
 .SH "SYNOPSIS"
-\fBind\fR [\-anfpcotejMrzuxiqb] [\-y year] [\-m month] [\-d day|yesterday|today|tomorrow] [\-hHvlLC?]
+\fBind\fR [\-anfpcotejMrzuxiqb] [\-y year] [\-m month] [\-d day|yesterday|today|tomorrow|y\-m\-d] [\-hHvlLC?]
 .
 .SH "DESCRIPTION"
 \fBind\fR is a bash script which calculates the Byzantine year, indiction for current and Byzantine year, the Buddhist year, the year from the founding of the City of Rome, the Masoretic year, and the Japanese Imperial year\.
@@ -94,7 +94,7 @@ Set month in format \'m\'\.
 .
 .TP
 \fB\-d\fR
-Set day in format \'d\'\. Also accepts fuzzy dates, e\.g\. \'yesterday\', \'today\', \'tomorrow\'\.
+Set day in format \'d\'\. Also accepts fuzzy dates, e\.g\. \'yesterday\', \'today\', \'tomorrow\', and y\-m\-d specifications\.
 .
 .TP
 \fB\-h\fR
@@ -184,8 +184,23 @@ The quarter days are: Lady Day (25 March), Midsummer Day (24 June), Michaelmas (
 .P
 The cross\-quarter days are four holidays falling in between the quarter days: Candlemas (2 February), May Day (1 May), Lammas (1 August), and All Hallows (1 November)\.
 .
+.SS "Scottish Term and Quarter Days"
+The Old Scottish Term and Quarter Days (Julian to Gregorian) are: Candlemas (2 February), Whitsun (15 May), Lammas (1 August), and Martlemas (11 November)\. The Term Days are Whitsun and Martinmas\.
+.
 .P
-The Old Scottish Term and Quarter Days (Julian to Gregorian) are: Candlemas (2 February), Whitsunday (15 May), Lammas (1 August), and Martlemas (11 November)\.
+Candlemas originally fell on 2 February, the day of the feast of the Purification, or the Presentation of Christ\. This was celebrated in pre\-Reformation times by candlelit processions\. The tradition was started in the 5th century during the Roman celebration of Februa, and carried over into Scotland, where mothers of children born the previous year would march with candles, hoping to be purified by the Virgin Mary\.
+.
+.P
+Whitsun was originally the feast of Pentecost, around which a great many christenings would occur, so it became associated with the colour white\. Because the date of Pentecost moves each year, the legal Term Day of Whitsun was fixed in Scotland as 26 May in the Julian Calendar, which became 15 May under the Gregorian Calendar, adopted in Scotland in 1599\.
+.
+.P
+Lammas was celebrated on 1 August, the day the first fruits of the harvest were offered, the name coming from the Anglo\-Saxon for \'loaf\-mass\' or \'bread\-feast\'\.
+.
+.P
+Martinmas, on 11 November, was originally the feast of Saint Martin of Tours, a 4th\-century bishop and hermit\.
+.
+.P
+In Scotland, 1886 saw the term dates for removals and the hiring of servants in towns changed to 28 February, 28 May, 28 August and 28 November\. The original dates are now referred to as Old Scottish Term Days\. The dates were regularised by the Term and Quarter Days (Scotland) Act 1990\.
 .
 .SS "Uposatha"
 The Uposatha (Sanskrit: Upavasatha) is a Buddhist day of observance, in existence from the Buddha\'s time (500 BCE), and still being kept today in Buddhist countries\. The Buddha taught that the Uposatha day is for "the cleansing of the defiled mind", resulting in inner calm and joy\. On this day, lay disciples and monks intensify their practice, deepen their knowledge and express communal commitment through millennia\-old acts of lay\-monastic reciprocity\. On these days, the lay followers make a conscious effort to keep the Five Precepts or (as the tradition suggests) the Eight Precepts\. It is a day for practicing the Buddha\'s teachings and meditation\.

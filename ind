@@ -116,8 +116,10 @@ do
 
 		y)	year=$OPTARG;;													# set year
 		m)	month=$OPTARG;;													# set month
-		d) 	[[ $OPTARG =~ [A-Za-z\ ] ]] && setdate "$OPTARG"||day=$OPTARG;;	# set day
-
+		d)	day=$OPTARG														# set day
+			[ "$(echo $day | grep -E [[:alpha:][:blank:]])" != "" ]	&& setdate "$day"
+			[ "$(echo $day | grep -E '-')" != "" ]					&& setdate "$day"
+			;;
 		h)	unset hol;;														# disable holidays
 		H)	bold="**" ; italics="_";;										# highlight
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| VERBOSE=true;;			# verbose
@@ -400,7 +402,7 @@ if [ $hol ]; then
 		[ $month -eq 3 -a $day -eq 25 ]	 && dhol+=$(echo "Lady Day|")
 		[ $month -eq 4 -a $day -eq 1 -a ${hms:0:2} -lt 12 ] && dhol+=$(echo "April Fools' Day|")
 		[ $month -eq 5 -a $day -eq 1 ]   && dhol+=$(echo "May Day|")
-		[ $month -eq 5 -a $day -eq 15 ]  && dhol+=$(echo "Whitsunday|")
+		[ $month -eq 5 -a $day -eq 15 ]  && dhol+=$(echo "Whitsun|")
 		[ $month -eq 5 -a $day -eq 25 ]  && dhol+=$(echo "Towel Day|")
 		[ $month -eq 6 -a $day -eq 24 ]  && dhol+=$(echo "Midsummer Day|")
 		[ $month -eq 6 -a $day -eq 28 ]  && dhol+=$(echo "Tau Day|")
