@@ -211,3 +211,7 @@ ChangeLog
 2020-09-27 v3.8.17
 	- added 'y-m-d' format to -d option
 	- tweaks
+
+2020-09-29 v3.8.18
+	- tweaks
+	- optimized '-d'

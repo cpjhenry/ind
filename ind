@@ -117,8 +117,7 @@ do
 		y)	year=$OPTARG;;													# set year
 		m)	month=$OPTARG;;													# set month
 		d)	day=$OPTARG														# set day
-			[ "$(echo $day | grep -E [[:alpha:][:blank:]])" != "" ]	&& setdate "$day"
-			[ "$(echo $day | grep -E '-')" != "" ]					&& setdate "$day"
+			[ "$(egrep [[:alpha:][:blank:]-] <<< $day)" != "" ] && setdate "$day"
 			;;
 		h)	unset hol;;														# disable holidays
 		H)	bold="**" ; italics="_";;										# highlight
@@ -321,7 +320,7 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $COMMON ]		&& printf "$bold" && printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord && echo "$leap$bold"
 [ $COMMON ]		&& printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
 [ $COMMON ] && [ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
-[ $COMMON ] && [ $ratadie ] && printf "RD %s at 00:00 UT\n" $ratadie
+[ $COMMON ] && [ $ratadie ] && printf "RD %s @ 00:00 UTC\n" $ratadie
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
