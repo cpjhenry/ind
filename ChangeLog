@@ -215,3 +215,10 @@ ChangeLog
 2020-09-29 v3.8.18
 	- tweaks
 	- optimized '-d'
+
+2020-09-30 v3.9
+	- year, month, day error checking improvements
+	- runtime optimizations
+	- added correction for 13 month to Chinese calendar
+	- optimized Chinese holidays
+	- add ROC ordinal

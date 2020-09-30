@@ -16,5 +16,4 @@ opts=$(sed '/# /!d;s/^\s*/  -/;s/)\s.*# /    /' <<< "$blok")
 if [ "$args" ]; then
 	echo "usage: $(basename $1) [-$args]";echo
 	[ "$opts" ] && echo "$opts"
-	echo "  -?    help"
 fi
