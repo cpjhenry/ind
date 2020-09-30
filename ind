@@ -127,7 +127,7 @@ do
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar diagnostic data
 		L)	[ $LCOMMON ]	&& unset LCOMMON	|| LCOMMON=true;;			# lunar common data
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			# Chinese diagnostic data
-		N)	[ $CHMONTH ]	&& unset CHMONTH	|| CHMONTH=true;;			# Chinese traditional calendar
+		N)	[ $CHMONTH ]	&& unset CHMONTH	|| CHMONTH=true;;			# Chinese calendar
 
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'"; done \
