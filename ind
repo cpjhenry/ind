@@ -166,9 +166,10 @@ jymd=$(date -d "$ymd - 13 days" +%F)
 jdoy=$(date -d "$jymd" +%-j)
 [ $month -eq 1 -a $day -le 13 ] && jdoy=0
 
-# Set Modified Julian Date & Rata Die (UTC); DEP jday
+# Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
 if [ $(which jday) ] ; then
 	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc)
+	tjd=$(echo "$(jday -d $utc)-2440000.5" | bc | cut -f1 -d".")
 	ratadie=$(echo "$(jday -d $utc)-1721424.5" | bc | cut -f1 -d".")
 else 
 	unset mjd
@@ -235,7 +236,6 @@ if [ $(which phases) ]; then
 		    fullmoon+=( "$(date -d "$line UTC" +%F)" )
 		done < <( phases $year $i 1 )
 	done
-
 	for i in "${newmoon[@]}"; do
 		[ "${i:5:2}" = "$month" ] && [ $moonset ] && bkmoon=$i
 		[ "${i:5:2}" = "$month" ] && [ ! $moonset ] && moonphase[0]=$i && moonset=yes
@@ -276,11 +276,9 @@ if [ $(which phases) ]; then
 	# Chinese festivals
 
 	# A leap month is inserted if there are 13 New Moons from the start of the 11th
-	# month in the first year to the start of the 11th month in the next year.
+	# month in the first year to the start of the 11th month in the following.
 
-	lm=0
-	thnm=(2020 2023)
-
+	lm=0; thnm=(2020) # FIXME add 12 new moon years
 	for i in "${thnm[@]}"; do
 		[ $year -eq $i ] && lm=1
 	done
@@ -337,7 +335,8 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $COMMON ]		&& printf "$bold" && printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord && echo "$leap$bold"
 [ $COMMON ]		&& printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
 [ $COMMON ] && [ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
-[ $COMMON ] && [ $ratadie ] && printf "RD %s @ 00:00 UTC\n" $ratadie
+[ $COMMON ] && [ $tjd ] && printf "TJD %5s    mid. UTC\n" $tjd
+[ $COMMON ] && [ $ratadie ] && printf "RD %s    mid. UTC\n" $ratadie
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
@@ -464,8 +463,8 @@ if [ $LUNAR ]; then
 	fi
 	if [ $CHINESE ]; then
 		dobs+=$(printf "%s  Spring Festival (Year of the %s)|" $cny ${ZODIAC[10#$yearof]})
-		dobs+=$(printf "%s  Qingming Festival|" $qingming)
-		dobs+=$(printf "%s  Mid-Autumn Festival|" $mdautumn)
+		dobs+=$(printf "%s  Qingming Festival, tomb sweeping|" $qingming)
+		dobs+=$(printf "%s  Mid-Autumn Festival, moon feast|" $mdautumn)
 	fi
 	if [ "$dobs" ]; then
 		[ "$dmoo" ] && echo

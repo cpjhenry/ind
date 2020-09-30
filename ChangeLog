@@ -219,6 +219,6 @@ ChangeLog
 2020-09-30 v3.9
 	- year, month, day error checking improvements
 	- runtime optimizations
-	- added correction for 13 month to Chinese calendar
+	- added correction for 13 months to Chinese calendar calculations
 	- optimized Chinese holidays
 	- add ROC ordinal
