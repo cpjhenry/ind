@@ -168,12 +168,13 @@ jdoy=$(date -d "$jymd" +%-j)
 
 # Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
 if [ $(which jday) ] ; then
-	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc)
-	tjd=$(echo "$(jday -d $utc)-2440000.5" | bc | cut -f1 -d".")
-	ratadie=$(echo "$(jday -d $utc)-1721424.5" | bc | cut -f1 -d".")
+	mjd=$( echo "$(jday -d $utc)-2400000.5" | bc )
+	tjd=$( echo "$(jday -d $utc)-2440000.5" | bc | cut -f1 -d"." )
+	rdie=$(echo "$(jday -d $utc)-1721424.5" | bc | cut -f1 -d"." )
 else 
 	unset mjd
-	unset ratadie
+	unset tjd
+	unset rdie
 fi
 
 # Set Hanke-Henry date; DEP hh
@@ -276,7 +277,7 @@ if [ $(which phases) ]; then
 	# Chinese festivals
 
 	# A leap month is inserted if there are 13 New Moons from the start of the 11th
-	# month in the first year to the start of the 11th month in the following.
+	# month in the first year to the start of the 11th month in the following year.
 
 	lm=0; thnm=(2020 2023 2025 2028)
 	for i in "${thnm[@]}"; do
@@ -334,9 +335,9 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 
 [ $COMMON ]		&& printf "$bold" && printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord && echo "$leap$bold"
 [ $COMMON ]		&& printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
-[ $COMMON ] && [ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
-[ $COMMON ] && [ $tjd ] && printf "TJD %5s    mid. UTC\n" $tjd
-[ $COMMON ] && [ $ratadie ] && printf "RD %s    mid. UTC\n" $ratadie
+[ $COMMON ] && [ $mjd  ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
+[ $COMMON ] && [ $tjd  ] && printf "TJD %5s / " $tjd
+[ $COMMON ] && [ $rdie ] && printf "RD %s\n" $rdie
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
