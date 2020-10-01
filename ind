@@ -278,7 +278,7 @@ if [ $(which phases) ]; then
 	# A leap month is inserted if there are 13 New Moons from the start of the 11th
 	# month in the first year to the start of the 11th month in the following.
 
-	lm=0; thnm=(2020) # FIXME add 12 new moon years
+	lm=0; thnm=(2020 2023 2025 2028)
 	for i in "${thnm[@]}"; do
 		[ $year -eq $i ] && lm=1
 	done
