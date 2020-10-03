@@ -222,3 +222,7 @@ ChangeLog
 	- added correction for 13 months to Chinese calendar calculations
 	- optimized Chinese holidays
 	- add ROC ordinal
+
+2020-10-03 v3.9.1
+	- tweaks & optimizations
+	- move leap year to verbose mode
