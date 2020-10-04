@@ -75,14 +75,14 @@ is_leap_year() { ## USAGE: is_leap_year [year]
 	esac
 }
 displayall() {
-	unset PARTCE; unset FULLCE; COMMON=true;
+	unset FULLCE; COMMON=true;
 	HHPC=true; DDATE=true; MASORETIC=true;
 	HEBREW=true; ROME=true; JULIANPRD=true;
 	BYZANTINE=true; ARC=true; JAPANIY=true;
 	CHINALY=true; BUDDHIST=true;
 }
 displaynone() {
-	unset PARTCE; unset FULLCE; unset COMMON;
+	unset FULLCE; unset COMMON;
 	unset HHPC; unset DDATE; unset MASORETIC;
 	unset HEBREW; unset ROME; unset JULIANPRD;
 	unset BYZANTINE; unset ARC; unset JAPANIY;
@@ -94,13 +94,12 @@ displaynone() {
 
 setdate today # set today's date
 
-while getopts ":anfpcotejMrzuxiqby:m:d:hHvlLCNDU?" OPTION
+while getopts ":anfcotejMrzuxiqby:m:d:hHvlLCNDU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
 		f)	[ $FULLCE ]		&& unset FULLCE		|| FULLCE=true;;			# full date
-		p)	[ $PARTCE ]		&& unset PARTCE		|| PARTCE=true;;			# part date
 		c)	[ $COMMON ] 	&& unset COMMON 	|| COMMON=true;;			# common year
 		t)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
 		e)	[ $DDATE ]		&& unset DDATE		|| DDATE=true;;				# Discordian
