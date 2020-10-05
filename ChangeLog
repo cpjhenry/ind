@@ -226,3 +226,4 @@ ChangeLog
 2020-10-03 v3.9.1
 	- tweaks & optimizations
 	- move leap year to verbose mode
+	- remove PARTCE argument
