@@ -82,7 +82,7 @@ displayall() {
 	CHINALY=true; BUDDHIST=true;
 }
 displaynone() {
-	unset FULLCE; unset COMMON;
+	unset FULLCE; unset PARTCE; unset COMMON;
 	unset HHPC; unset DDATE; unset MASORETIC;
 	unset HEBREW; unset ROME; unset JULIANPRD;
 	unset BYZANTINE; unset ARC; unset JAPANIY;
