@@ -75,7 +75,7 @@ is_leap_year() { ## USAGE: is_leap_year [year]
 	esac
 }
 displayall() {
-	unset FULLCE; COMMON=true;
+	COMMON=true;
 	HHPC=true; DDATE=true; MASORETIC=true;
 	HEBREW=true; ROME=true; JULIANPRD=true;
 	BYZANTINE=true; ARC=true; JAPANIY=true;
