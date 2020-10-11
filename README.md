@@ -38,7 +38,7 @@ is also required.
 **ind** is self-documenting. The extraction script (**getusage**) is included
 with this distribution.
 
-**rnum**, a simple script to calculate Roman numerals from decimal is also
+**rnum**, a simple script to calculate Roman numerals from decimal, is also
 included.
 
 **phases** calculates, with fair accuracy, the phase of the new and full

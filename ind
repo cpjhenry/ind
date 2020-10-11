@@ -74,6 +74,10 @@ is_leap_year() { ## USAGE: is_leap_year [year]
 		return 1 ;;
 	esac
 }
+NWR() { # Not within range
+	echo "$(basename $0): Y-M-D not within range."
+	exit 1
+}
 displayall() {
 	COMMON=true;
 	HHPC=true; DDATE=true; MASORETIC=true;
@@ -123,10 +127,10 @@ do
 		H)	bold="**" ; italics="_";;										# highlight
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| VERBOSE=true;;			# verbose
 
-		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar diagnostic data
-		L)	[ $LCOMMON ]	&& unset LCOMMON	|| LCOMMON=true;;			# : common
-		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			# : Chinese
-		N)	[ $CHMONTH ]	&& unset CHMONTH	|| CHMONTH=true;;			# : months
+		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar diagnostic data (L/C/N)
+		L)	[ $LCOMMON ]	&& unset LCOMMON	|| LCOMMON=true;;			#: common
+		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#: Chinese
+		N)	[ $CHMONTH ]	&& unset CHMONTH	|| CHMONTH=true;;			#: months
 
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'"; done \
@@ -144,13 +148,12 @@ done
 
 # Initialize
 is_leap_year $year
-[ $year -le 0 ] && echo "$(basename $0): Date must be positive." && exit 1
-[ $month -lt 1 -o $month -gt 12 ] && echo "$(basename $0): Month not within range." && exit 1
-[ $day -lt 1 -o $day -gt 31 ] && echo "$(basename $0): Day not within range." && exit 1
-[ $day -gt 30 ] && [ $month -eq 9 -o $month -eq 4 -o $month -eq 6 -o $month -eq 11 ] && 
-	echo "$(basename $0): Day not within range." && exit 1
-[   $_LEAP_YEAR ] && [ $month -eq 2 -a $day -gt 29 ] && echo "$(basename $0): Day not within range." && exit 1
-[ ! $_LEAP_YEAR ] && [ $month -eq 2 -a $day -gt 28 ] && echo "$(basename $0): Day not within range." && exit 1
+[ $year -le 0 ] && NWR
+[ $month -lt 1 -o $month -gt 12 ] && NWR
+[ $day -lt 1 -o $day -gt 31 ] && NWR
+[ $day -gt 30 ] && [ $month -eq 9 -o $month -eq 4 -o $month -eq 6 -o $month -eq 11 ] && NWR
+[   $_LEAP_YEAR ] && [ $month -eq 2 -a $day -gt 29 ] && NWR
+[ ! $_LEAP_YEAR ] && [ $month -eq 2 -a $day -gt 28 ] && NWR
 
 month=$(printf "%02d" $((10#$month)))
 day=$(printf "%02d" $((10#$day)))
@@ -308,7 +311,7 @@ fi
 [[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
 
 (( rome=year+romconvert ))
-[[ 10#$jdoy -ge 10#$(date -d "1 Jan  $year" +%j) ]] && (( rome+=1 ))
+[[ 10#$jdoy -ge 1 ]] && (( rome+=1 ))
 
 # ARC
 (( arc=year+arcconvert ))
