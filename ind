@@ -98,15 +98,15 @@ displaynone() {
 
 setdate today # set today's date
 
-while getopts ":anfcotejMrzuxiqby:m:d:hHvlLCNDU?" OPTION
+while getopts ":anfcpejMrzuxiqby:m:d:hHvlLCNDU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
-		f)	[ $FULLCE ]		&& unset FULLCE		|| FULLCE=true;;			# full date
+		f)	[ $FULLCE ]		&& unset FULLCE		|| FULLCE=true;;			# date
 		c)	[ $COMMON ] 	&& unset COMMON 	|| COMMON=true;;			# common year
-		t)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
-		e)	[ $DDATE ]		&& unset DDATE		|| DDATE=true;;				# Discordian
+		p)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
+		e)	[ $DDATE ]		&& unset DDATE		|| DDATE=true;;				# Erisian
 		j)	[ $HEBREW ] 	&& unset HEBREW 	|| HEBREW=true;;			# Hebrew
 		M)	[ $MASORETIC ]	&& unset MASORETIC	|| MASORETIC=true;;			# Masoretic
 		r)	[ $ROME ] 		&& unset ROME 		|| ROME=true;;				# Roman
