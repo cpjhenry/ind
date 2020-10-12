@@ -13,20 +13,23 @@ COMMON=true
 DDATE=
 HHPC=
 HEBREW=
-BYZANTINE=
+
+MASORETIC=
 ROME=
+BYZANTINE=
 
 ARC=
 CHINALY=
 BUDDHIST=
 JULIANPRD=
 JAPANIY=
-MASORETIC=
 
 hol=true
 
-byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
+masconvert=4000	# Masoretic Text; 4000 BCE
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
+byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
+
 arcconvert=1352 # A.R.C., March 21th, 1:06 a.m. ET; 1353 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
 rocconvert=1911 # ROC year; 1912 CE
@@ -34,7 +37,6 @@ rocconvert=1911 # ROC year; 1912 CE
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 jiyconvert=660	# Japanese Imperial year; 660 BCE
-masconvert=4000	# Masoretic Text; 4000 BCE
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -158,13 +160,13 @@ is_leap_year $year
 month=$(printf "%02d" $((10#$month)))
 day=$(printf "%02d" $((10#$day)))
 ymd=$year-$month-$day
-hms=$(date +%H:%M:%S)
+hms=$(date +%T)
 dow=$(date -d $ymd +%w)
 
 doy=$(date -d $ymd +%-j) 	# day of year
 iwn=$(date -d $ymd +%-V) 	# ISO week no
 tz=$(date -d $ymd +%Z)		# time zone
-utc=$(date -ud "$ymd $hms $tz" "+%F %H:%M:%S")
+utc=$(date -ud "$ymd $hms $tz" "+%F %T")
 
 # Julian calendar has 13 day delta for 20th/21st centuries
 jymd=$(date -d "$ymd - 13 days" +%F)
@@ -311,7 +313,7 @@ fi
 [[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
 
 (( rome=year+romconvert ))
-[[ 10#$jdoy -ge 1 ]] && (( rome+=1 ))
+[[ 10#$jdoy -ge 1 ]] && (( rome+=1 )) # January 1st
 
 # ARC
 (( arc=year+arcconvert ))
@@ -348,10 +350,11 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $MASORETIC ]	&& printf "Masoretic          AL %d\n" $masor
 [ $ROME ]		&& printf "City of Rome       au %d\n" $rome
 [ $BYZANTINE ]	&& printf "Byzantine (%2d%s)   AM %d\n" $byzind $bord $byzantine
+
 [ $JULIANPRD ]	&& printf "Julian Period         %d\n" $julp
 [ $ARC ]		&& printf "A.R.C.                %d\n" $arc
 [ $JAPANIY ]	&& printf "Japanese Imperial     %d\n" $jiy
-[ $CHINALY ]	&& printf "Chinese Lunar   (%3d) %d\n" $roc $cly
+[ $CHINALY ]	&& printf "Chinese Lunar (%3d)   %d\n" $roc $cly
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
