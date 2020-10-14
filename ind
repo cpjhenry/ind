@@ -18,11 +18,12 @@ MASORETIC=
 ROME=
 BYZANTINE=
 
+JULIANPRD=
 ARC=
+
+JAPANIY=
 CHINALY=
 BUDDHIST=
-JULIANPRD=
-JAPANIY=
 
 hol=true
 
@@ -30,13 +31,14 @@ masconvert=4000	# Masoretic Text; 4000 BCE
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 
+jupconvert=4713	# Julian Period; 4713 BCE
 arcconvert=1352 # A.R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+
+jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
 rocconvert=1911 # ROC year; 1912 CE
 
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
-jupconvert=4713	# Julian Period; 4713 BCE
-jiyconvert=660	# Japanese Imperial year; 660 BCE
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -107,14 +109,18 @@ do
 		n)	displaynone;;													# display none
 		f)	[ $FULLCE ]		&& unset FULLCE		|| FULLCE=true;;			# date
 		c)	[ $COMMON ] 	&& unset COMMON 	|| COMMON=true;;			# common year
+
 		p)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
 		e)	[ $DDATE ]		&& unset DDATE		|| DDATE=true;;				# Erisian
 		j)	[ $HEBREW ] 	&& unset HEBREW 	|| HEBREW=true;;			# Hebrew
+
 		M)	[ $MASORETIC ]	&& unset MASORETIC	|| MASORETIC=true;;			# Masoretic
 		r)	[ $ROME ] 		&& unset ROME 		|| ROME=true;;				# Roman
 		z)	[ $BYZANTINE ] 	&& unset BYZANTINE 	|| BYZANTINE=true;;			# Byzantine
+
 		u)	[ $JULIANPRD ]	&& unset JULIANPRD	|| JULIANPRD=true;;			# Julian period
 		x)	[ $ARC ]		&& unset ARC		|| ARC=true;;				# A.R.C.
+
 		i)	[ $JAPANIY ] 	&& unset JAPANIY	|| JAPANIY=true;;			# Japanese Imperial
 		q)	[ $CHINALY ]	&& unset CHINALY	|| CHINALY=true;;			# Chinese Lunar
 		b)	[ $BUDDHIST ] 	&& unset BUDDHIST 	|| BUDDHIST=true;;			# Buddhist
@@ -353,6 +359,7 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 
 [ $JULIANPRD ]	&& printf "Julian Period         %d\n" $julp
 [ $ARC ]		&& printf "A.R.C.                %d\n" $arc
+
 [ $JAPANIY ]	&& printf "Japanese Imperial     %d\n" $jiy
 [ $CHINALY ]	&& printf "Chinese Lunar (%3d)   %d\n" $roc $cly
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
