@@ -84,16 +84,16 @@ NWR() { # Not within range
 }
 displayall() {
 	COMMON=true;
-	HHPC=true; DDATE=true; MASORETIC=true;
-	HEBREW=true; ROME=true; JULIANPRD=true;
-	BYZANTINE=true; ARC=true; JAPANIY=true;
+	HHPC=true; DDATE=true; HEBREW=true; 
+	MASORETIC=true; ROME=true; BYZANTINE=true;
+	JULIANPRD=true; ARC=true; JAPANIY=true;
 	CHINALY=true; BUDDHIST=true;
 }
 displaynone() {
 	unset FULLCE; unset PARTCE; unset COMMON;
-	unset HHPC; unset DDATE; unset MASORETIC;
-	unset HEBREW; unset ROME; unset JULIANPRD;
-	unset BYZANTINE; unset ARC; unset JAPANIY;
+	unset HHPC; unset DDATE; unset HEBREW;
+	unset MASORETIC; unset ROME; unset BYZANTINE;
+	unset JULIANPRD; unset ARC; unset JAPANIY;
 	unset CHINALY; unset BUDDHIST; 
 
 	unset LUNAR; unset LCOMMON; unset CHINESE; unset CMONTH;
@@ -144,7 +144,7 @@ do
 				[ $(which $line) ] || echo "Install '$line'"; done \
 			< <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
-		U)	cp -uv $HOME/bin/ind $HOME/src/ind/								#! update git repository
+		U)	cp -uv $HOME/bin/ind $HOME/src/ind/								#- update git repository
 			cp -uv $HOME/bin/getusage $HOME/src/ind/
 			cp -uv $HOME/bin/rnum $HOME/src/ind/
 			cp -uv $HOME/share/man/man1/ind.1 $HOME/src/ind/
