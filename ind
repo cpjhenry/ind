@@ -309,17 +309,17 @@ else
 fi
 
 # Simple year calculations
-(( buddhist=year+budconvert ))
+(( masor=year+masconvert ))
 (( julp=year+jupconvert ))
 (( jiy=year+jiyconvert ))
-(( masor=year+masconvert ))
+(( buddhist=year+budconvert ))
 
-# Byzantine & Roman calendars are aligned to Julian calendar
-(( byzantine=year+byzconvert ))
-[[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
-
+# Roman & Byzantine calendars are aligned to Julian calendar
 (( rome=year+romconvert ))
 [[ 10#$jdoy -ge 1 ]] && (( rome+=1 )) # January 1st
+
+(( byzantine=year+byzconvert ))
+[[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
 
 # ARC
 (( arc=year+arcconvert ))
