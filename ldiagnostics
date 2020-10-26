@@ -1,0 +1,34 @@
+# Lunar diagnostic data
+if [ $LUNAR ]; then
+	if [ $moonset ]; then
+		echo "Moon phases for ${MONTHL[10#$month]} $year:"
+		for i in 0 2; do
+			[ ${moonphase[$i]} ] && dmoo+=$(printf "%s  %s|" ${moonphase[$i]} "${PHASES[$i]}")
+		done
+		[ "$bkmoon" ] && dmoo+=$(printf "%s  Black Moon|" $bkmoon)
+		[ "$blmoon" ] && dmoo+=$(printf "%s  Blue Moon |" $blmoon)
+
+		echo -en "$dmoo" | sed 's/|/\n/g' | sort
+	fi	
+	if [ $LCOMMON ]; then
+		dobs+=$(printf "%s  Advent, first season of the liturgical year|" $(advent $year))
+		dobs+=$(printf "$year-07-%02d  Vassa, Buddhist monastic retreat|" $vsday)
+	fi
+	if [ $CHINESE ]; then
+		dobs+=$(printf "%s  Spring Festival (Year of the %s)|" $cny ${ZODIAC[10#$yearof]})
+		dobs+=$(printf "%s  Qingming Festival, tomb sweeping|" $qingming)
+		dobs+=$(printf "%s  Mid-Autumn Festival, moon feast|" $midautumn)
+	fi
+	if [ "$dobs" ]; then
+		[ "$dmoo" ] && echo
+		echo "Lunar Holidays & Observances:"
+		echo -en "$dobs" | sed 's/|/\n/g' | sort
+	fi
+	if [ $CHMONTH ]; then
+		echo
+		echo "Chinese Months:"
+		for i in {1..6}; do 
+			printf "%2d ${lunarmonth[$i]}  |  %2d ${lunarmonth[$i+6]}\n" $i $(($i+6))
+		done
+	fi
+fi

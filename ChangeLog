@@ -233,3 +233,24 @@ ChangeLog
 
 2020-10-14 v3.9.3
 	- tweaks
+
+2020-10-24 v3.9.4
+	- tweaks
+
+2020-10-25 v3.10
+	- remove idiosyncratic events
+	- remove Easter-related calculations. As with Hebrew holidays, there are far better tools
+	> One such tool is `calendar`. Config as follows:
+	
+	Easter-47	Carnival
+	Easter-46	Lent
+	Easter-7	Palm Sunday
+	Easter+0	Easter
+	Easter+39	Ascension
+	Easter+49	Pentecost
+	Paskha+0	Orthodox Easter
+
+	- other related tweaking
+	- remove Hebrew holidays
+	- add 'Advent' switch
+	- offload lunar diagnostics
