@@ -254,3 +254,6 @@ ChangeLog
 	- remove Hebrew holidays
 	- add 'Advent' switch
 	- offload lunar diagnostics
+
+2020-10-29 v3.10.1
+	- tweaks
