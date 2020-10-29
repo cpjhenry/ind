@@ -6,7 +6,8 @@
 
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$(basename $0): 'coreutils' is required." && exit 1
 
-ldiag=$HOME/src/ind/ldiagnostics
+GITREP=$HOME/src/ind
+LDIAG=$GITREP/ldiagnostics
 
 FULLCE=
 PARTCE=
@@ -98,23 +99,22 @@ displayall() {
 	COMMON=true;
 	HHPC=true; DDATE=true; HEBREW=true; 
 	MASORETIC=true; ROME=true; BYZANTINE=true;
-	JULIANPRD=true; ARC=true; JAPANIY=true;
-	CHINALY=true; BUDDHIST=true;
+	JULIANPRD=true; ARC=true;
+	JAPANIY=true; CHINALY=true; BUDDHIST=true;
 }
 displaynone() {
 	unset FULLCE; unset PARTCE; unset COMMON;
 	unset HHPC; unset DDATE; unset HEBREW;
 	unset MASORETIC; unset ROME; unset BYZANTINE;
-	unset JULIANPRD; unset ARC; unset JAPANIY;
-	unset CHINALY; unset BUDDHIST; 
+	unset JULIANPRD; unset ARC;
+	unset JAPANIY; unset CHINALY; unset BUDDHIST; 
 
-	unset LUNAR; unset LCOMMON; unset CHINESE; unset CMONTH;
-	unset VERBOSE;
+	unset LUNAR; unset CHINESE; unset VERBOSE;
 }
 
 setdate today # set today's date
 
-while getopts ":anfcpejMrzuxAiqby:m:d:hHvlLCNDU?" OPTION
+while getopts ":anfcpejMrzuxAiqby:m:d:hHvlCDU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
@@ -142,27 +142,24 @@ do
 		y)	year=$OPTARG;;													# set year
 		m)	month=$OPTARG;;													# set month
 		d)	day=$OPTARG														# set day
-			[ "$(egrep [[:alpha:][:blank:]-] <<< $day)" != "" ] &&
-				setdate "$day";;
+			[ "$(egrep [[:alpha:][:blank:]-] <<< $day)" ] && setdate "$day";;
 
 		h)	unset hol;;														# disable holidays
 		H)	bold="**" ; italics="_";;										# highlight
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| VERBOSE=true;;			# verbose
 
-		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar diagnostic data (L/C/N)
-		L)	[ $LCOMMON ]	&& unset LCOMMON	|| LCOMMON=true;;			#: common
-		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#: Chinese
-		N)	[ $CHMONTH ]	&& unset CHMONTH	|| CHMONTH=true;;			#: months
+		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar diagnostic data
+		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'"; done \
 			< <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
-		U)	cp -uv $HOME/bin/ind $HOME/src/ind/								#- update git repository
-			cp -uv $HOME/bin/getusage $HOME/src/ind/
-			cp -uv $HOME/bin/rnum $HOME/src/ind/
-			cp -uv $HOME/share/man/man1/ind.1 $HOME/src/ind/
-			cp -uv $HOME/share/man/man7/uposatha.7 $HOME/src/ind/
+		U)	cp -uv $HOME/bin/ind $GITREP/									#- update git repository
+			cp -uv $HOME/bin/getusage $GITREP/
+			cp -uv $HOME/bin/rnum $GITREP/
+			cp -uv $HOME/share/man/man1/ind.1 $GITREP/
+			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
 	esac
@@ -204,6 +201,11 @@ else
 	unset rdie
 fi
 
+# Set Roman numeral year; DEP rnum
+if [ $(which rnum) ]; then
+	rnyear=$(rnum $year)
+else rnyear="/"; fi
+
 # Set Hanke-Henry date; DEP hh
 if [ $(which hh) ] && [ $year -ge 2018 ]; then
 	hhdate=$(hh -W -d$day -m$month -y$year)
@@ -215,15 +217,9 @@ if [ $(which ddate) ]; then
 	dischol=$(ddate +'%N%H' $day $month $year)
 else unset DDATE; fi
 
-# Set Roman numeral year; DEP rnum
-if [ $(which rnum) ]; then
-	rnyear=$(rnum $year)
-else rnyear="/"; fi
-
 # Hebrew calendar; DEP hebcal
 if [ $(which hebcal) ]; then
 	hebdate=$(hebcal -h $month $day $year | sed "s/$ymd //")
-	#hebrhol=$(hebcal -x $month $day $year | sed "1d;s/$ymd //")
 else unset HEBREW; fi
 
 # Lunar and Lunisolar Calculations
@@ -248,20 +244,20 @@ if [ $(which phases) ]; then
 		done < <( phases $year $i 1 )
 	done
 	for i in "${newmoon[@]}"; do
-		[ "${i:5:2}" = "$month" ] && [ $moonset ] && bkmoon=$i
-		[ "${i:5:2}" = "$month" ] && [ ! $moonset ] && moonphase[0]=$i && moonset=yes
+		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && bkmoon=$i
+		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[0]=$i && MOONSET=true
 		[ "$i" = "$ymd" ] && moon=${PHASES[0]}
 		[ "$bkmoon" = "$ymd" ] && moon="Black Moon"
 	done
-	unset moonset
+	unset MOONSET
 	for i in "${fullmoon[@]}"; do
-		[ "${i:5:2}" = "$month" ] && [ $moonset ] && blmoon=$i
-		[ "${i:5:2}" = "$month" ] && [ ! $moonset ] && moonphase[2]=$i && moonset=yes
-		[ "$i" = "$ymd" ] && moon=${PHASES[2]} && full=yes
-		[ "$blmoon" = "$ymd" ] && moon="Blue Moon" && unset full
+		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && blmoon=$i
+		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[2]=$i && MOONSET=true
+		[ "$i" = "$ymd" ] && moon=${PHASES[2]} && FULL=true
+		[ "$blmoon" = "$ymd" ] && moon="Blue Moon" && unset FULL
 	done
-	[ ! $moonset ] && moonset=yes # February is shorter than a standard lunation
-	[ $full ] && [ $month -eq 9 ] && moon="Harvest Moon"
+	[ ! $MOONSET ] && MOONSET=true # February is shorter than a standard lunation
+	[ $FULL ] && [ $month -eq 9 ] && moon="Harvest Moon"
 
 	# Vassa
 	vsday=$(date -d "$(phases $year 7 1 | sed -n 1p) + 1 day" +%d)
@@ -305,11 +301,11 @@ if [ $(which phases) ]; then
 	esac
 
 	# Diagnostics
-	[ $LUNAR ] && [ -f $ldiag ] && . $ldiag && exit
+	[ $CHINESE ] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} && exit
+	[ $LUNAR ] && [ -f $LDIAG ] && . $LDIAG && exit
 else
-	unset moonset
+	unset MOONSET
 	unset CHINALY
-	unset CHINESE
 fi
 
 # Simple year calculations
@@ -369,20 +365,16 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
-	[ $cny ] 	&& printf "Chinese New Year "
-	if [ $CHINESE ]; then printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]}
-	else [ $cny ] && printf "     %s\n" ${cny:5:5} | sed 's/-/\//'
+	[ $cny ] 		&& printf "Chinese New Year      %s\n" ${cny:5:5} | sed 's/-/\//'
+	[ $_LEAP_YEAR ] && printf "Leap year             %s\n" $year
+	[ "$moon" ]		&& printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
 
-		[ $_LEAP_YEAR ] && printf "Leap year             %s\n" $year
-		[ "$moon" ]		&& printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
-
-		printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
-		printf "Julian day of year    %03d\n" $jdoy
-		printf "Dominical letter      %s\n" $dom
-		printf "Epact                 %s\n" ${EPACTS[$golden]}
-		printf "Golden number         %s\n" $golden
-		printf "Ides                  %d\n" $ides
-	fi
+	printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
+	printf "Julian day of year    %03d\n" $jdoy
+	printf "Dominical letter      %s\n" $dom
+	printf "Epact                 %s\n" ${EPACTS[$golden]}
+	printf "Golden number         %s\n" $golden
+	printf "Ides                  %d\n" $ides
 fi
 
 # Lunar observances and holidays
@@ -395,14 +387,11 @@ if [ $hol ]; then
 		[ "$ymd" = "$qingming"	] && dhol+=$(echo "Tomb Sweeping Festival|")
 		[ "$ymd" = "$midautumn"	] && dhol+=$(echo "Mid-Autumn Moon Festival|")
 	fi
-
-	#[ $HEBREW ] && [ "$hebrhol" ] && dhol+=$(echo "$hebrhol|")
-
 	if [ $BUDDHIST ]; then
-		[ "$moon" != "" ] && observance="$moon Uposatha"
+		[ "$moon" ] && observance="$moon Uposatha"
 		
 		# only the first full moon
-		if [ $full ] ; then
+		if [ $FULL ] ; then
 			[ $month -eq 2  ] && observance="Sangha day"
 			[ $month -eq 5  ] && observance="Buddha day"
 			[ $month -eq 7  ] && observance="Dhamma day (Vassa begins tomorrow)"
@@ -410,7 +399,7 @@ if [ $hol ]; then
 			[ $month -eq 11 ] && observance="Anapanasati day"
 		fi
 		[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && observance="Vassa"
-		[ "$observance" != "" ] && dhol+=$(echo "$observance|")
+		[ "$observance" ] && dhol+=$(echo "$observance|")
 	fi
 
 	# Fixed non-lunar holidays
