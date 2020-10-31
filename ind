@@ -94,7 +94,6 @@ advent() {
 	(( xmasadj=(xmaswks * 7) + xmasdow ))
 	date -d "$1-12-25 - $xmasadj days" +%F
 }
-
 displayall() {
 	COMMON=true;
 	HHPC=true; DDATE=true; HEBREW=true; 
@@ -192,13 +191,13 @@ jdoy=$(date -d "$jymd" +%-j)
 
 # Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
 if [ $(which jday) ] ; then
-	mjd=$( echo "$(jday -d $utc)-2400000.5" | bc )
-	tjd=$( echo "$(jday -d $utc)-2440000.5" | bc | cut -f1 -d"." )
-	rdie=$(echo "$(jday -d $utc)-1721424.5" | bc | cut -f1 -d"." )
+	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc )
+	tjd=$(echo "$(jday -d $utc)-2440000.5" | bc | cut -f1 -d"." )
+	rdi=$(echo "$(jday -d $utc)-1721424.5" | bc | cut -f1 -d"." )
 else 
 	unset mjd
 	unset tjd
-	unset rdie
+	unset rdi
 fi
 
 # Set Roman numeral year; DEP rnum
@@ -342,12 +341,13 @@ ordinal $(( 10#$day )) 		# set standard ordinal
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
 [ $PARTCE ]		&& printf "$bold%s %d%s %s$bold\n" ${DOWL[$dow]} $(( 10#$day )) $ord ${MONTHL[10#$month]}
 
-[ $COMMON ]		&& printf "$bold" && printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord && echo "$bold"
-[ $COMMON ]		&& printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
-[ $COMMON ] && [ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
-[ $COMMON ] && [ $tjd ] && printf "TJD %5s " $tjd
-[ $COMMON ] && [ $rdie ] && printf "/ RD %s\n" $rdie
-[ $COMMON ] && [ $tjd ] && [ ! $rdie ] && printf "\n"
+if [ $COMMON ]; then
+				printf "$bold"; printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord; echo "$bold"
+				printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
+	[ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
+	[ $tjd ] && printf "TJD %5s " $tjd
+	[ $rdi ] && printf "/ RD %s\n" $rdi; [ $tjd ] && [ ! $rdi ] && printf "\n"
+fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
@@ -388,18 +388,17 @@ if [ $hol ]; then
 		[ "$ymd" = "$midautumn"	] && dhol+=$(echo "Mid-Autumn Moon Festival|")
 	fi
 	if [ $BUDDHIST ]; then
-		[ "$moon" ] && observance="$moon Uposatha"
-		
+		[ "$moon" ] && observe=$(echo "$moon Uposatha|")
+
 		# only the first full moon
 		if [ $FULL ] ; then
-			[ $month -eq 2  ] && observance="Sangha day"
-			[ $month -eq 5  ] && observance="Buddha day"
-			[ $month -eq 7  ] && observance="Dhamma day (Vassa begins tomorrow)"
-			[ $month -eq 10 ] && observance="Pavarana (Vassa ends)"
-			[ $month -eq 11 ] && observance="Anapanasati day"
+			[ $month -eq 2  ] && observe=$(echo "Sangha day|")
+			[ $month -eq 5  ] && observe=$(echo "Buddha day|")
+			[ $month -eq 7  ] && observe=$(echo "Dhamma day|")
+			[ $month -eq 10 ] && observe=$(echo "Pavarana|")
 		fi
-		[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && observance="Vassa"
-		[ "$observance" ] && dhol+=$(echo "$observance|")
+		[ "$observe" ] && dhol+=$observe
+		[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+=$(echo "Vassa|")
 	fi
 
 	# Fixed non-lunar holidays
