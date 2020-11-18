@@ -131,7 +131,7 @@ do
 
 		u)	[ $JULIANPRD ]	&& unset JULIANPRD	|| JULIANPRD=true;;			# Julian period
 		x)	[ $ARC ]		&& unset ARC		|| ARC=true;;				# A.R.C.
-		A)	printf "%s* Advent\n" "$(date -d $(advent $year) "+%e %b")"		# Advent
+		A)	printf "%s*\tAdvent\n" "$(date -d $(advent $year) "+%e %b")"	# Advent
 			exit;;
 
 		i)	[ $JAPANIY ] 	&& unset JAPANIY	|| JAPANIY=true;;			# Japanese Imperial
