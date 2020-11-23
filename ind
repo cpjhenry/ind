@@ -380,7 +380,7 @@ fi
 # Lunar observances and holidays
 if [ $hol ]; then
 	if [ $COMMON ]; then	
-		[ "$ymd" = "$(advent $year)" ] && dhol+=$(echo "Advent|")
+		:
 	fi
 	if [ $CHINALY ]; then
 		[ "$ymd" = "$cny" 		] && dhol+=$(echo "Spring Festival (Year of the ${ZODIAC[10#$yearof]})|")
