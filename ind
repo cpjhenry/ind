@@ -218,7 +218,7 @@ else unset DDATE; fi
 
 # Hebrew calendar; DEP hebcal
 if [ $(which hebcal) ]; then
-	hebdate=$(hebcal -h $month $day $year | sed "s/$ymd //")
+	hebdate=$(hebcal -rh $month $day $year | cut -f2)
 else unset HEBREW; fi
 
 # Lunar and Lunisolar Calculations
