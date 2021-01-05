@@ -265,3 +265,6 @@ ChangeLog
 2020-11-22 v3.10.3
 	- documentation tweaks
 	- remove Advent
+
+2021-01-05 v3.10.4
+	- added 'mob' (movable observations) script to repository
