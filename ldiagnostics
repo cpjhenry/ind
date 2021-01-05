@@ -9,7 +9,6 @@ done
 
 echo -en "$dmoo" | sed 's/|/\n/g' | sort
 
-dobs+=$(printf "%s  Advent, first season of the liturgical year|" $(advent $year))
 dobs+=$(printf "$year-07-%02d  Vassa, Buddhist monastic retreat|" $vsday)
 dobs+=$(printf "%s  Spring Festival (Year of the %s)|" $cny ${ZODIAC[10#$yearof]})
 dobs+=$(printf "%s  Qingming Festival, tomb sweeping|" $qingming)
