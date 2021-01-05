@@ -85,15 +85,6 @@ NWR() { # Not within range
 	echo "$(basename $0): Y-M-D not within range."
 	exit 1
 }
-advent() {
-	local xmasdow
-	local xmasadj
-	xmasdow=$(date -d "$1-12-25" +%w)
-	xmaswks=3
-	[ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
-	(( xmasadj=(xmaswks * 7) + xmasdow ))
-	date -d "$1-12-25 - $xmasadj days" +%F
-}
 displayall() {
 	COMMON=true;
 	HHPC=true; DDATE=true; HEBREW=true; 
@@ -113,7 +104,7 @@ displaynone() {
 
 setdate today # set today's date
 
-while getopts ":anfcpejMrzuxAiqby:m:d:hHvlCDU?" OPTION
+while getopts ":anfcpejMrzuxiqby:m:d:hHvlCDU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
@@ -131,8 +122,6 @@ do
 
 		u)	[ $JULIANPRD ]	&& unset JULIANPRD	|| JULIANPRD=true;;			# Julian period
 		x)	[ $ARC ]		&& unset ARC		|| ARC=true;;				# A.R.C.
-		A)	printf "%s*\tAdvent\n" "$(date -d $(advent $year) "+%e %b")"	# Advent
-			exit;;
 
 		i)	[ $JAPANIY ] 	&& unset JAPANIY	|| JAPANIY=true;;			# Japanese Imperial
 		q)	[ $CHINALY ]	&& unset CHINALY	|| CHINALY=true;;			# Chinese Lunar
@@ -159,6 +148,8 @@ do
 			cp -uv $HOME/bin/rnum $GITREP/
 			cp -uv $HOME/share/man/man1/ind.1 $GITREP/
 			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/
+
+			cp -uv $HOME/bin/mob $GITREP/
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
 	esac
