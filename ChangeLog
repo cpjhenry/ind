@@ -267,4 +267,8 @@ ChangeLog
 	- remove Advent
 
 2021-01-05 v3.10.4
-	- added 'mob' (movable observations) script to repository
+	- added 'mob' (movable observances) script to repository
+
+2021-01-09 v3.10.5
+	- tweaks
+	- added observances diagnostics
