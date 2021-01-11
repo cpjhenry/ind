@@ -9,7 +9,7 @@
 [ $# == 0 ] && echo $(basename $0): Please specify filename. && exit 1
 [ ! -f $1 ] && echo $(basename $0): File not found. && exit 1 
 
-blok=$(sed '/^\s*while getopts/,/^\s*done/!d' $1)
+blok=$(sed '/^\s*while getopts/,/^\s*done$/!d' $1)
 args=$(sed '/getopts/!d;s/.* \"//;s/\".*//;s/://g' <<< "$blok")
 opts=$(sed '/# /!d;s/^\s*/  -/;s/)\s.*# /    /' <<< "$blok")
 

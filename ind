@@ -101,6 +101,16 @@ displaynone() {
 
 	unset LUNAR; unset CHINESE; unset VERBOSE;
 }
+testall() {
+	unset testallvar
+	[ $FULLCE ]		&& testallvar=true; [ $PARTCE ]		&& testallvar=true
+	[ $COMMON ]		&& testallvar=true; [ $HHPC ]		&& testallvar=true
+	[ $DDATE ]		&& testallvar=true; [ $HEBREW ]		&& testallvar=true
+	[ $MASORETIC ]	&& testallvar=true; [ $ROME ]		&& testallvar=true
+	[ $BYZANTINE ]	&& testallvar=true; [ $JULIANPRD ]	&& testallvar=true
+	[ $ARC ]		&& testallvar=true; [ $JAPANIY ]	&& testallvar=true
+	[ $CHINALY ]	&& testallvar=true; [ $BUDDHIST ]	&& testallvar=true
+}
 
 setdate today # set today's date
 
@@ -138,11 +148,12 @@ do
 
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
-		O)	for m in {01..12}; do											#- Observance diagnostics
-				for i in {01..31}; do
-					ind -bex -m$m -d$i | sed "1,8d;s/^/$m\/$i\t/;s/- //";done;done
-			exit;;
 
+		O)	for m in {01..12}; do											#- Observance diagnostics
+				for d in {01..31}; do
+					ind -c -m$m -d$d |sed "/^ind:/d;s/^/$m\/$d\t/;s/- //"
+				done;done
+			exit;;
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'";done \
 			< <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
@@ -208,7 +219,6 @@ else unset HHPC; fi
 # Set Discordian date; DEP ddate
 if [ $(which ddate) ]; then
 	discord=$(ddate +'%{%e %B%} %Y' $day $month $year | sed 's/The //')
-	dischol=$(ddate +'%N%H' $day $month $year)
 else unset DDATE; fi
 
 # Hebrew calendar; DEP hebcal
@@ -274,25 +284,27 @@ if [ $(which phases) ]; then
 	[[ 10#$doy -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
 	(( roc=year-rocconvert ))
 
-	# Chinese festivals
-
-	# A leap month is inserted if there are 13 New Moons from the start of the 11th
-	# month in the first year to the start of the 11th month in the following year.
-
-	lm=0; thnm=(2020 2023 2025 2028)
-	for i in "${thnm[@]}"; do
-		[ $year -eq $i ] && lm=1
-	done
-
-	qingming="$year-04-05"
-	midautumn=$(date -d "${lunarmonth[8+$lm]} + 14 days" +%F)
-
 	# 'year of'
 	case 1 in
 		$(($year< 2020))) (( yearof=$year-2008 )) ;;
 		$(($year< 2032))) (( yearof=$year-2020 )) ;;
 		$(($year< 2044))) (( yearof=$year-2032 )) ;;
 	esac
+
+	# Chinese festivals
+
+	# A leap month is inserted if there are 13 New Moons from the start of the 11th
+	# month in the first year to the start of the 11th month in the following year.
+
+	if [ $CHINALY ]; then
+		lm=0; thnm=(2020 2023 2025 2028)
+		for i in "${thnm[@]}"; do
+			[ $year -eq $i ] && lm=1
+		done
+
+		qingming="$year-04-05"
+		midautumn=$(date -d "${lunarmonth[8+$lm]} + 14 days" +%F)
+	fi
 
 	# Diagnostics
 	[ $CHINESE ] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} && exit
@@ -373,52 +385,48 @@ if [ $VERBOSE ]; then
 fi
 
 if [ $hol ]; then
-	# Lunar observances and holidays
+	# Buddhist observances
+	[ "$moon" ] && observe=$(echo "$moon Uposatha|")
+	if [ $FULL ] ; then # only the first full moon
+		[ $month -eq 2  ] && observe=$(echo "Sangha Day|")
+		[ $month -eq 5  ] && observe=$(echo "Buddha Day|")
+		[ $month -eq 7  ] && observe=$(echo "Dhamma Day|")
+		[ $month -eq 10 ] && observe=$(echo "Pavarana|")
+	fi; [ "$observe" ] && dhol+=$observe
+	[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+=$(echo "Vassa|")
+
+	# Fixed non-lunar holidays
+	[ $day -eq $ides ]				 && dhol+=$(echo "Ides of ${MONTHL[10#$month]}|")
+	[ $month -eq 5 -a $day -eq 25 ]  && dhol+=$(echo "Towel Day|")
+	[ $month -eq 7 -a $day -eq 5 ]	 && dhol+=$(echo "X-Day|")
+
+	# Quarter Days
+	[ $month -eq 3 -a $day -eq 25 ]	 && dhol+=$(echo "Lady Day|")
+	[ $month -eq 6 -a $day -eq 24 ]  && dhol+=$(echo "Midsummer Day|")
+	[ $month -eq 9 -a $day -eq 29 ]	 && dhol+=$(echo "Michaelmas|")
+	[ $month -eq 12 -a $day -eq 25 ] && dhol+=$(echo "Quarter Day|")
+
+	# Cross Quarter Days
+	[ $month -eq 2 -a $day -eq 2 ]   && dhol+=$(echo "Candlemas|")
+	[ $month -eq 5 -a $day -eq 1 ]   && dhol+=$(echo "May Day|")
+	[ $month -eq 8 -a $day -eq 1 ]	 && dhol+=$(echo "Lammas|")
+	[ $month -eq 11 -a $day -eq 1 ]	 && dhol+=$(echo "All Saints'|")
+
+	# Scottish Term Days
+	[ $month -eq 5 -a $day -eq 15 ]  && dhol+=$(echo "Whitsun|")
+	[ $month -eq 11 -a $day -eq 11 ] && dhol+=$(echo "Martinmas|")
+
+	# Chinese holidays
+	[ "$ymd" = "$cny" ]				 && dhol+=$(echo "Year of the ${ZODIAC[10#$yearof]}|")
+
 	if [ $CHINALY ]; then
-		[ "$ymd" = "$cny" 		] && dhol+=$(echo "Spring Festival (Year of the ${ZODIAC[10#$yearof]})|")
 		[ "$ymd" = "$qingming"	] && dhol+=$(echo "Tomb Sweeping Festival|")
 		[ "$ymd" = "$midautumn"	] && dhol+=$(echo "Mid-Autumn Moon Festival|")
 	fi
-	if [ $BUDDHIST ]; then
-		[ "$moon" ] && observe=$(echo "$moon Uposatha|")
 
-		# only the first full moon
-		if [ $FULL ] ; then
-			[ $month -eq 2  ] && observe=$(echo "Sangha Day|")
-			[ $month -eq 5  ] && observe=$(echo "Buddha Day|")
-			[ $month -eq 7  ] && observe=$(echo "Dhamma Day|")
-			[ $month -eq 10 ] && observe=$(echo "Pavarana|")
-		fi
-		[ "$observe" ] && dhol+=$observe
-		[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+=$(echo "Vassa|")
+	# Display results
+	if [ "$dhol" ]; then
+		testall; [ $testallvar ] && echo
+		echo -en "$dhol" | sed 's/|/\n/g' | sed "s/^/$italics/;s/$/$italics/;s/^/- /"
 	fi
-
-	# Fixed non-lunar holidays
-	[ $DDATE ] && [ "$dischol" ] 				&& dhol+=$(echo "$bold$dischol$bold|")
-	[ $ARC ] && [ $month -eq 3 -a $day -eq 21 ]	&& dhol+=$(echo "R+C New Year Feast|")
-	[ $ARC ] && [ $month -eq 9 -a $day -eq 23 ]	&& dhol+=$(echo "R+C Outdoor Fete|")
-
-	if [ $COMMON ]; then
-		[ $day -eq $ides ]				 && dhol+=$(echo "Ides of ${MONTHL[10#$month]}|")
-		[ $month -eq 5 -a $day -eq 25 ]  && dhol+=$(echo "Towel Day|")
-		[ $month -eq 7 -a $day -eq 5 ]	 && dhol+=$(echo "X-Day|")
-
-		# Quarter Days
-		[ $month -eq 3 -a $day -eq 25 ]	 && dhol+=$(echo "Lady Day|")
-		[ $month -eq 6 -a $day -eq 24 ]  && dhol+=$(echo "Midsummer Day|")
-		[ $month -eq 9 -a $day -eq 29 ]	 && dhol+=$(echo "Michaelmas|")
-		[ $month -eq 12 -a $day -eq 25 ] && dhol+=$(echo "Quarter Day|")
-
-		# Cross Quarter Days
-		[ $month -eq 2 -a $day -eq 2 ]   && dhol+=$(echo "Candlemas|")
-		[ $month -eq 5 -a $day -eq 1 ]   && dhol+=$(echo "May Day|")
-		[ $month -eq 8 -a $day -eq 1 ]	 && dhol+=$(echo "Lammas|")
-		[ $month -eq 11 -a $day -eq 1 ]	 && dhol+=$(echo "All Saints'|")
-
-		# Scottish Term Days
-		[ $month -eq 5 -a $day -eq 15 ]  && dhol+=$(echo "Whitsun|")
-		[ $month -eq 11 -a $day -eq 11 ] && dhol+=$(echo "Martinmas|")
-	fi
-
-	[ "$dhol" ] && echo && echo -en "$dhol" | sed 's/|/\n/g' | sed "s/^/$italics/;s/$/$italics/;s/^/- /"
 fi
