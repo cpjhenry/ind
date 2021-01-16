@@ -264,7 +264,7 @@ ChangeLog
 
 2020-11-22 v3.10.3
 	- documentation tweaks
-	- remove Advent
+	- remove Advent (move to helper app)
 
 2021-01-05 v3.10.4
 	- added 'mob' (movable observances) script to repository
@@ -272,3 +272,7 @@ ChangeLog
 2021-01-09 v3.10.5
 	- tweaks
 	- added observances diagnostics
+
+2021-01-16 v3.10.6
+	- remove Chinese festivals (save CNY & 'year of')
+	> use `ccalendar` (instead of `calendar`) https://github.com/cpjhenry/ccalendar

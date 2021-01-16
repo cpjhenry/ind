@@ -163,7 +163,6 @@ do
 			cp -uv $HOME/bin/rnum $GITREP/
 			cp -uv $HOME/share/man/man1/ind.1 $GITREP/
 			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/
-
 			cp -uv $HOME/bin/mob $GITREP/
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
@@ -291,21 +290,6 @@ if [ $(which phases) ]; then
 		$(($year< 2044))) (( yearof=$year-2032 )) ;;
 	esac
 
-	# Chinese festivals
-
-	# A leap month is inserted if there are 13 New Moons from the start of the 11th
-	# month in the first year to the start of the 11th month in the following year.
-
-	if [ $CHINALY ]; then
-		lm=0; thnm=(2020 2023 2025 2028)
-		for i in "${thnm[@]}"; do
-			[ $year -eq $i ] && lm=1
-		done
-
-		qingming="$year-04-05"
-		midautumn=$(date -d "${lunarmonth[8+$lm]} + 14 days" +%F)
-	fi
-
 	# Diagnostics
 	[ $CHINESE ] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} && exit
 	[ $LUNAR ] && [ -f $LDIAG ] && . $LDIAG && exit
@@ -416,13 +400,8 @@ if [ $hol ]; then
 	[ $month -eq 5 -a $day -eq 15 ]  && dhol+=$(echo "Whitsun|")
 	[ $month -eq 11 -a $day -eq 11 ] && dhol+=$(echo "Martinmas|")
 
-	# Chinese holidays
+	# Chinese festivals
 	[ "$ymd" = "$cny" ]				 && dhol+=$(echo "Year of the ${ZODIAC[10#$yearof]}|")
-
-	if [ $CHINALY ]; then
-		[ "$ymd" = "$qingming"	] && dhol+=$(echo "Tomb Sweeping Festival|")
-		[ "$ymd" = "$midautumn"	] && dhol+=$(echo "Mid-Autumn Moon Festival|")
-	fi
 
 	# Display results
 	if [ "$dhol" ]; then

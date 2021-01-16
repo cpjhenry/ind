@@ -4,15 +4,15 @@ echo "Moon phases for ${MONTHL[10#$month]} $year:"
 for i in 0 2; do
 	[ ${moonphase[$i]} ] && dmoo+=$(printf "%s  %s|" ${moonphase[$i]} "${PHASES[$i]}")
 done
-[ "$bkmoon" ] && dmoo+=$(printf "%s  Black Moon|" $bkmoon)
-[ "$blmoon" ] && dmoo+=$(printf "%s  Blue Moon |" $blmoon)
+[ "$bkmoon"  ] && dmoo+=$(printf "%s  Black Moon|" $bkmoon)
+[ "$blmoon"  ] && dmoo+=$(printf "%s  Blue Moon |" $blmoon)
 
 echo -en "$dmoo" | sed 's/|/\n/g' | sort
 
-dobs+=$(printf "$year-07-%02d  Vassa, Buddhist monastic retreat|" $vsday)
-dobs+=$(printf "%s  Spring Festival (Year of the %s)|" $cny ${ZODIAC[10#$yearof]})
-dobs+=$(printf "%s  Qingming Festival, tomb sweeping|" $qingming)
-dobs+=$(printf "%s  Mid-Autumn Festival, moon feast|" $midautumn)
+[ $vsday     ] && dobs+=$(printf "$year-07-%02d  Vassa, Buddhist monastic retreat|" $vsday)
+[ $cny       ] && dobs+=$(printf "%s  Spring Festival (Year of the %s)|" $cny ${ZODIAC[10#$yearof]})
+[ $qingming  ] && dobs+=$(printf "%s  Qingming Festival, tomb sweeping|" $qingming)
+[ $midautumn ] && dobs+=$(printf "%s  Mid-Autumn Festival, moon feast|" $midautumn)
 
 if [ "$dobs" ]; then
 	[ "$dmoo" ] && echo
@@ -20,8 +20,10 @@ if [ "$dobs" ]; then
 	echo -en "$dobs" | sed 's/|/\n/g' | sort
 fi
 
-[ "$dmoo" -o "$dobs" ] && echo
-echo "Chinese Months:"
-for i in {1..6}; do 
-	printf "%2d ${lunarmonth[$i]}  |  %2d ${lunarmonth[$i+6]}\n" $i $(($i+6))
-done
+if [ $CHINALY ]; then
+	[ "$dmoo" -o "$dobs" ] && [ ${lunarmonth[2]} ] && echo
+	echo "Chinese Months:"
+	for i in {1..6}; do 
+		printf "%2d ${lunarmonth[$i]}  |  %2d ${lunarmonth[$i+6]}\n" $i $(($i+6))
+	done
+fi
