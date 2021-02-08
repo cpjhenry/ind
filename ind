@@ -7,7 +7,6 @@
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$(basename $0): 'coreutils' is required." && exit 1
 
 GITREP=$HOME/src/ind
-LDIAG=$GITREP/ldiagnostics
 
 FULLCE=
 PARTCE=
