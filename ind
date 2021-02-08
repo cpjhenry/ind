@@ -260,7 +260,10 @@ if [ $(which phases) ]; then
 		[ "$blmoon" = "$ymd" ] && moon="Blue Moon" && unset FULL
 	done
 	[ ! $MOONSET ] && MOONSET=true # February is shorter than a standard lunation
+	[ $FULL ] && [ $month -eq 2 ] && moon="Snow Moon"
+	[ $FULL ] && [ $month -eq 4 ] && moon="Breaking Ice Moon"
 	[ $FULL ] && [ $month -eq 9 ] && moon="Harvest Moon"
+	[ $FULL ] && [ $month -eq 11 ] && moon="Beaver Moon"
 
 	# Vassa
 	vsday=$(date -d "$(phases $year 7 1 | sed -n 1p) + 1 day" +%d)
@@ -270,9 +273,7 @@ if [ $(which phases) ]; then
 		if [ $cstep -eq 1 ]; then
 			[ "${i:5:2}" == "01" -a "${i:8:2}" -ge 21 ] && lunarmonth[$cstep]=$i && ((cstep++))
 			[ "${i:5:2}" == "02" ] && lunarmonth[$cstep]=$i && ((cstep++))
-		else
-			lunarmonth[$cstep]=$i
-			((cstep++))
+		#else lunarmonth[$cstep]=$i; ((cstep++))
 		fi
 	done
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)
@@ -292,7 +293,19 @@ if [ $(which phases) ]; then
 
 	# Diagnostics
 	[ $CHINESE ] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} && exit
-	[ $LUNAR ] && [ -f $LDIAG ] && . $LDIAG && exit
+
+	# Lunar diagnostic data
+	if [ $LUNAR ]; then
+		echo "Moon phases for ${MONTHL[10#$month]} $year:"
+		for i in 0 2; do
+			[ ${moonphase[$i]} ] && dmoo+=$(printf "%s  %s|" ${moonphase[$i]} "${PHASES[$i]}")
+		done
+		[ "$bkmoon"  ] && dmoo+=$(printf "%s  Black Moon|" $bkmoon)
+		[ "$blmoon"  ] && dmoo+=$(printf "%s  Blue Moon |" $blmoon)
+
+		echo -en "$dmoo" | sed 's/|/\n/g' | sort
+		exit
+	fi
 else
 	unset MOONSET
 	unset CHINALY
@@ -306,7 +319,7 @@ fi
 
 # Roman & Byzantine calendars are aligned to Julian calendar
 (( rome=year+romconvert ))
-[[ 10#$jdoy -ge 1 ]] && (( rome+=1 )) # January 1st
+[[ 10#$jdoy -ge 1 ]] && (( rome+=1 )) # January 1st (Day 1)
 
 (( byzantine=year+byzconvert ))
 [[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
@@ -356,16 +369,18 @@ fi
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
-	[ $cny ] 		&& printf "Chinese New Year      %s\n" ${cny:5:5} | sed 's/-/\//'
-	[ $_LEAP_YEAR ] && printf "Leap year             %s\n" $year
-	[ "$moon" ]		&& printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
-
-	printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
-	printf "Julian day of year    %03d\n" $jdoy
 	printf "Dominical letter      %s\n" $dom
 	printf "Epact                 %s\n" ${EPACTS[$golden]}
 	printf "Golden number         %s\n" $golden
 	printf "Ides                  %d\n" $ides
+	printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
+	printf "Julian day of year    %03d\n" $jdoy
+
+	[ $_LEAP_YEAR ] && printf "Leap year             %s\n" $year
+	[ "$moon" ]		&& printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
+	[ $cny ] 		&& printf "Chinese New Year      %s\n" ${cny:5:5} | sed 's/-/\//' &&
+					   printf "(Year of the)         %s\n" ${ZODIAC[10#$yearof]}
+	[ $vsday ]		&& printf "Vassa                 07/%02d\n" $vsday
 fi
 
 if [ $hol ]; then

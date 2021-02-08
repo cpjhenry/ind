@@ -276,3 +276,7 @@ ChangeLog
 2021-01-16 v3.10.6
 	- remove Chinese festivals (save CNY & 'year of')
 	> use `ccalendar` (instead of `calendar`) https://github.com/cpjhenry/ccalendar
+
+2021-02-07 v3.10.7
+	- move lunar observance diagnostics to verbose mode
+	- re-add lunar phase diagnostics to main code
