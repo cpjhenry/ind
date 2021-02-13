@@ -280,3 +280,9 @@ ChangeLog
 2021-02-07 v3.10.7
 	- move lunar observance diagnostics to verbose mode
 	- re-add lunar phase diagnostics to main code
+
+2021-02-13 v3.10.8
+	- add "-o", monthly observance diagnostics 
+	- lunar tweaks and additions
+	- code optimizations
+	- documentation tweaks

@@ -109,11 +109,13 @@ testall() {
 	[ $BYZANTINE ]	&& testallvar=true; [ $JULIANPRD ]	&& testallvar=true
 	[ $ARC ]		&& testallvar=true; [ $JAPANIY ]	&& testallvar=true
 	[ $CHINALY ]	&& testallvar=true; [ $BUDDHIST ]	&& testallvar=true
+
+	[ $VERBOSE ]	&& testallvar=true
 }
 
 setdate today # set today's date
 
-while getopts ":anfcpejMrzuxiqby:m:d:hHvlCODU?" OPTION
+while getopts ":anfcpejMrzuxiqby:m:d:hHvlCoODU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
@@ -148,11 +150,12 @@ do
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 
-		O)	for m in {01..12}; do											#- Observance diagnostics
-				for d in {01..31}; do
-					ind -c -m$m -d$d |sed "/^ind:/d;s/^/$m\/$d\t/;s/- //"
-				done;done
-			exit;;
+		o)	for d in {01..31}; do											#- Observance diagnostics
+				ind -c -y$year -m$month -d$d |
+				sed "/^ind:/d;s/^/$month\/$d\t/;s/^0//;s/- //"
+			done;exit;;
+		O)	for m in {01..12}; do ind -y$year -m$m -o
+			done;exit;;
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'";done \
 			< <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
@@ -259,10 +262,14 @@ if [ $(which phases) ]; then
 		[ "$blmoon" = "$ymd" ] && moon="Blue Moon" && unset FULL
 	done
 	[ ! $MOONSET ] && MOONSET=true # February is shorter than a standard lunation
-	[ $FULL ] && [ $month -eq 2 ] && moon="Snow Moon"
-	[ $FULL ] && [ $month -eq 4 ] && moon="Breaking Ice Moon"
-	[ $FULL ] && [ $month -eq 9 ] && moon="Harvest Moon"
-	[ $FULL ] && [ $month -eq 11 ] && moon="Beaver Moon"
+	if [ $FULL ]; then
+		[ $month -eq 2  ] && moon="Snow Moon"
+		[ $month -eq 3  ] && moon="Lenten Moon"
+		[ $month -eq 4  ] && moon="Breaking Ice Moon"
+		[ $month -eq 9  ] && moon="Harvest Moon"
+		[ $month -eq 10 ] && moon="Hunter's Moon"
+		[ $month -eq 11 ] && moon="Beaver Moon"
+	fi
 
 	# Vassa
 	vsday=$(date -d "$(phases $year 7 1 | sed -n 1p) + 1 day" +%d)
@@ -293,7 +300,6 @@ if [ $(which phases) ]; then
 	# Diagnostics
 	[ $CHINESE ] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} && exit
 
-	# Lunar diagnostic data
 	if [ $LUNAR ]; then
 		echo "Moon phases for ${MONTHL[10#$month]} $year:"
 		for i in 0 2; do
@@ -375,22 +381,25 @@ if [ $VERBOSE ]; then
 	printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
 	printf "Julian day of year    %03d\n" $jdoy
 
-	[ $_LEAP_YEAR ] && printf "Leap year             %s\n" $year
-	[ "$moon" ]		&& printf "Moon                  %s\n" "$moon" | sed 's/ Moon//'
-	[ $cny ] 		&& printf "Chinese New Year      %s\n" ${cny:5:5} | sed 's/-/\//' &&
-					   printf "(Year of the)         %s\n" ${ZODIAC[10#$yearof]}
-	[ $vsday ]		&& printf "Vassa                 07/%02d\n" $vsday
+	[ $_LEAP_YEAR ]		&& printf "Leap year             %s\n" $year
+	[ "$moon" ]			&& printf "Phase                 %-17s\n" "$moon"
+	[ $cny ] 			&& printf "Chinese New Year      %s\n" ${cny:5:5} | sed 's/-/\//' &&
+						   printf "(Year of the)         %s\n" ${ZODIAC[10#$yearof]}
+	[ $vsday ]			&& printf "Vassa                 07/%02d\n" $vsday
 fi
 
 if [ $hol ]; then
 	# Buddhist observances
-	[ "$moon" ] && observe=$(echo "$moon Uposatha|")
-	if [ $FULL ] ; then # only the first full moon
-		[ $month -eq 2  ] && observe=$(echo "Sangha Day|")
-		[ $month -eq 5  ] && observe=$(echo "Buddha Day|")
-		[ $month -eq 7  ] && observe=$(echo "Dhamma Day|")
-		[ $month -eq 10 ] && observe=$(echo "Pavarana|")
-	fi; [ "$observe" ] && dhol+=$observe
+	if [ "$moon" ]; then
+		moon=$(echo "$moon Uposatha|")
+		if [ $FULL ] ; then # only the first full moon
+			[ $month -eq 2  ] && moon=$(echo "Sangha Day|")
+			[ $month -eq 5  ] && moon=$(echo "Buddha Day|")
+			[ $month -eq 7  ] && moon=$(echo "Dhamma Day|")
+			[ $month -eq 10 ] && moon=$(echo "Pavarana|")
+		fi
+		dhol+=$moon
+	fi
 	[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+=$(echo "Vassa|")
 
 	# Fixed non-lunar holidays
