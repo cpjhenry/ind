@@ -154,7 +154,8 @@ do
 				ind -c -y$year -m$month -d$d |
 				sed "/^ind:/d;s/^/$month\/$d\t/;s/^0//;s/- //"
 			done;exit;;
-		O)	for m in {01..12}; do ind -y$year -m$m -o
+		O)	for m in {01..12}; do
+				ind -y$year -m$m -o
 			done;exit;;
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'";done \
@@ -248,20 +249,23 @@ if [ $(which phases) ]; then
 		    fullmoon+=( "$(date -d "$line UTC" +%F)" )
 		done < <( phases $year $i 1 )
 	done
+
 	for i in "${newmoon[@]}"; do
-		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && bkmoon=$i
+		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && BLKMOON=$i
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[0]=$i && MOONSET=true
-		[ "$i" = "$ymd" ] && moon=${PHASES[0]}
-		[ "$bkmoon" = "$ymd" ] && moon="Black Moon"
 	done
+	[ $MOONSET ] && [ $ymd = ${moonphase[0]} ] && moon=${PHASES[0]}
+	[ $BLKMOON ] && [ $ymd = $BLKMOON ] && moon="Black Moon"
 	unset MOONSET
+
 	for i in "${fullmoon[@]}"; do
-		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && blmoon=$i
+		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && BLUMOON=$i
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[2]=$i && MOONSET=true
-		[ "$i" = "$ymd" ] && moon=${PHASES[2]} && FULL=true
-		[ "$blmoon" = "$ymd" ] && moon="Blue Moon" && unset FULL
 	done
-	[ ! $MOONSET ] && MOONSET=true # February is shorter than a standard lunation
+	[ $MOONSET ] && [ $ymd = ${moonphase[2]} ] && moon=${PHASES[2]} && FULL=true
+	[ $BLUMOON ] && [ $ymd = $BLUMOON ] && moon="Blue Moon" && unset FULL
+	# February is shorter than a standard lunation (e.g. Feb. 2037)
+
 	if [ $FULL ]; then
 		[ $month -eq 2  ] && moon="Snow Moon"
 		[ $month -eq 3  ] && moon="Lenten Moon"
@@ -305,14 +309,13 @@ if [ $(which phases) ]; then
 		for i in 0 2; do
 			[ ${moonphase[$i]} ] && dmoo+=$(printf "%s  %s|" ${moonphase[$i]} "${PHASES[$i]}")
 		done
-		[ "$bkmoon"  ] && dmoo+=$(printf "%s  Black Moon|" $bkmoon)
-		[ "$blmoon"  ] && dmoo+=$(printf "%s  Blue Moon |" $blmoon)
+		[ "$BLKMOON" ] && dmoo+=$(printf "%s  Black Moon|" $BLKMOON)
+		[ "$BLUMOON" ] && dmoo+=$(printf "%s  Blue Moon |" $BLUMOON)
 
 		echo -en "$dmoo" | sed 's/|/\n/g' | sort
 		exit
 	fi
 else
-	unset MOONSET
 	unset CHINALY
 fi
 
@@ -424,7 +427,7 @@ if [ $hol ]; then
 	[ $month -eq 11 -a $day -eq 11 ] && dhol+=$(echo "Martinmas|")
 
 	# Chinese festivals
-	[ "$ymd" = "$cny" ]				 && dhol+=$(echo "Year of the ${ZODIAC[10#$yearof]}|")
+	[ $ymd = $cny ]					 && dhol+=$(echo "Year of the ${ZODIAC[10#$yearof]}|")
 
 	# Display results
 	if [ "$dhol" ]; then

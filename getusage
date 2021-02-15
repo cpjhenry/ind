@@ -1,6 +1,6 @@
 #!/bin/bash
 # Self-documenting help system
-# 2018-03-16/pjh
+# 2018-03-16
 
 # Usage: 	Setup 'getopts' while loop, and add comments after each option:
 #			s)	<code> # comment
