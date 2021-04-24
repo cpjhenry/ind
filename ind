@@ -407,6 +407,7 @@ if [ $hol ]; then
 
 	# Fixed non-lunar holidays
 	[ $day -eq $ides ]				 && dhol+=$(echo "Ides of ${MONTHL[10#$month]}|")
+	[ $month -eq 5 -a $day -eq 23 ]  && dhol+=$(echo "Eris Day|")
 	[ $month -eq 5 -a $day -eq 25 ]  && dhol+=$(echo "Towel Day|")
 	[ $month -eq 7 -a $day -eq 5 ]	 && dhol+=$(echo "X-Day|")
 
