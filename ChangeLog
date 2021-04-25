@@ -292,3 +292,4 @@ ChangeLog
 
 2021-04-24 v3.10.10
 	- new observance
+	- add "close to" code hook to mob

@@ -5,13 +5,15 @@
 app=$(basename $0)
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$app: 'coreutils' is required." && exit 1
 for i in calendar hebcal; do [ ! $(which $i) ] && echo "$app: '$i' is required." && exit 1; done
+cond_source() { [ -f $1 ] && . $1; }
 
 year=$(date +%Y)
 DATEFMT="%d %b"
 HEADER=true
 HEBREW=true
+CLOSE=true
 
-while getopts ":cejlYAy:?" OPTION; do
+while getopts ":cejlYACy:?" OPTION; do
 	case $OPTION in
 		c)	# calendar-formatted dates
 			DATEFMT="%m/%d"
@@ -34,7 +36,8 @@ while getopts ":cejlYAy:?" OPTION; do
 		Y)	# list yahrzeits
 			YAHR=true;;
 		A)	# Advent
-			ADVENT=true;;
+			[ $ADVENT ] && unset ADVENT || ADVENT=true;;
+		C)	[ $CLOSE  ] && unset CLOSE  || CLOSE=true;;
 
 		y)	# set year
 			year=$OPTARG;;
@@ -79,3 +82,5 @@ if [ $ADVENT ]; then
 	xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
 	printf "%s*\tAdvent\n" "$(date -d "$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
 fi
+
+[ $CLOSE ] && cond_source $HOME/bin/close
