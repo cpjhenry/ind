@@ -37,7 +37,7 @@ while getopts ":cejlYAPy:?" OPTION; do
 			YAHR=true;;
 		A)	# Advent
 			[ $ADVENT ] && unset ADVENT || ADVENT=true;;
-		P)	# toggle dates calculated by proximity
+		P)	# toggle proximity dates
 			[ $PROXIM ] && unset PROXIM || PROXIM=true;;
 
 		y)	# set year
