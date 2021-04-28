@@ -11,9 +11,9 @@ year=$(date +%Y)
 DATEFMT="%d %b"
 HEADER=true
 HEBREW=true
-CLOSE=true
+PROXIM=true
 
-while getopts ":cejlYACy:?" OPTION; do
+while getopts ":cejlYAPy:?" OPTION; do
 	case $OPTION in
 		c)	# calendar-formatted dates
 			DATEFMT="%m/%d"
@@ -37,7 +37,8 @@ while getopts ":cejlYACy:?" OPTION; do
 			YAHR=true;;
 		A)	# Advent
 			[ $ADVENT ] && unset ADVENT || ADVENT=true;;
-		C)	[ $CLOSE  ] && unset CLOSE  || CLOSE=true;;
+		P)	# toggle dates calculated by proximity
+			[ $PROXIM ] && unset PROXIM || PROXIM=true;;
 
 		y)	# set year
 			year=$OPTARG;;
@@ -83,4 +84,4 @@ if [ $ADVENT ]; then
 	printf "%s*\tAdvent\n" "$(date -d "$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
 fi
 
-[ $CLOSE ] && cond_source $HOME/bin/close
+[ $PROXIM ] && cond_source $HOME/bin/close
