@@ -293,3 +293,8 @@ ChangeLog
 2021-04-24 v3.10.10
 	- new observance
 	- add "close to" code hook to mob
+
+2021-07-16 v3.10.12
+	- added more Masoretic-style dates
+	- merged ARC with Masoretic
+	- documentation tweaks & code cleanup

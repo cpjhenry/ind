@@ -16,12 +16,11 @@ DDATE=
 HHPC=
 HEBREW=
 
-MASORETIC=
 ROME=
 BYZANTINE=
+JULIANP=
 
-JULIANPRD=
-ARC=
+MASORETIC=
 
 JAPANIY=
 CHINALY=
@@ -29,18 +28,22 @@ BUDDHIST=
 
 hol=true
 
-masconvert=4000	# Masoretic Text; 4000 BCE
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
-
 jupconvert=4713	# Julian Period; 4713 BCE
-arcconvert=1352 # A.R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+
+masconvert=4000	# Masoretic; 4000 BCE
+arcconvert=1352 # Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+yodconvert=530	# Anno Inventionis; 530 BCE
+mktconvert=1118 # Anno Ordinis; 1118 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
 rocconvert=1911 # ROC year; 1912 CE
 
+# Hebrew Era (AM); 3760 BCE
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
+osgconvert=1326 # Order of St. George; 1326 CE
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -87,16 +90,18 @@ NWR() { # Not within range
 displayall() {
 	COMMON=true;
 	HHPC=true; DDATE=true; HEBREW=true; 
-	MASORETIC=true; ROME=true; BYZANTINE=true;
-	JULIANPRD=true; ARC=true;
-	JAPANIY=true; CHINALY=true; BUDDHIST=true;
+	ROME=true; BYZANTINE=true;
+	JULIANP=true; MASORETIC=true; 
+	JAPANIY=true; CHINALY=true;
+	BUDDHIST=true;
 }
 displaynone() {
 	unset FULLCE; unset PARTCE; unset COMMON;
 	unset HHPC; unset DDATE; unset HEBREW;
-	unset MASORETIC; unset ROME; unset BYZANTINE;
-	unset JULIANPRD; unset ARC;
-	unset JAPANIY; unset CHINALY; unset BUDDHIST; 
+	unset ROME; unset BYZANTINE;
+	unset JULIANP; unset MASORETIC; 
+	unset JAPANIY; unset CHINALY;
+	unset BUDDHIST; 
 
 	unset LUNAR; unset CHINESE; unset VERBOSE;
 }
@@ -105,17 +110,17 @@ testall() {
 	[ $FULLCE ]		&& testallvar=true; [ $PARTCE ]		&& testallvar=true
 	[ $COMMON ]		&& testallvar=true; [ $HHPC ]		&& testallvar=true
 	[ $DDATE ]		&& testallvar=true; [ $HEBREW ]		&& testallvar=true
-	[ $MASORETIC ]	&& testallvar=true; [ $ROME ]		&& testallvar=true
-	[ $BYZANTINE ]	&& testallvar=true; [ $JULIANPRD ]	&& testallvar=true
-	[ $ARC ]		&& testallvar=true; [ $JAPANIY ]	&& testallvar=true
-	[ $CHINALY ]	&& testallvar=true; [ $BUDDHIST ]	&& testallvar=true
+	[ $ROME ]		&& testallvar=true; [ $BYZANTINE ]	&& testallvar=true
+	[ $JULIANP ]	&& testallvar=true; [ $MASORETIC ]	&& testallvar=true
+	[ $JAPANIY ]	&& testallvar=true; [ $CHINALY ]	&& testallvar=true
+	[ $BUDDHIST ]	&& testallvar=true
 
 	[ $VERBOSE ]	&& testallvar=true
 }
 
 setdate today # set today's date
 
-while getopts ":anfcpejMrzuxiqby:m:d:hHvlCoODU?" OPTION
+while getopts ":anfcpejrzuxiqby:m:d:hHvlCoODU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
@@ -127,12 +132,11 @@ do
 		e)	[ $DDATE ]		&& unset DDATE		|| DDATE=true;;				# Erisian
 		j)	[ $HEBREW ] 	&& unset HEBREW 	|| HEBREW=true;;			# Hebrew
 
-		M)	[ $MASORETIC ]	&& unset MASORETIC	|| MASORETIC=true;;			# Masoretic
 		r)	[ $ROME ] 		&& unset ROME 		|| ROME=true;;				# Roman
 		z)	[ $BYZANTINE ] 	&& unset BYZANTINE 	|| BYZANTINE=true;;			# Byzantine
+		u)	[ $JULIANP ]	&& unset JULIANP	|| JULIANP=true;;			# Julian period
 
-		u)	[ $JULIANPRD ]	&& unset JULIANPRD	|| JULIANPRD=true;;			# Julian period
-		x)	[ $ARC ]		&& unset ARC		|| ARC=true;;				# A.R.C.
+		x)	[ $MASORETIC ]	&& unset MASORETIC	|| MASORETIC=true;;			# Masoretic
 
 		i)	[ $JAPANIY ] 	&& unset JAPANIY	|| JAPANIY=true;;			# Japanese Imperial
 		q)	[ $CHINALY ]	&& unset CHINALY	|| CHINALY=true;;			# Chinese Lunar
@@ -158,8 +162,8 @@ do
 				ind -y$year -m$m -o
 			done;exit;;
 		D)	while IFS= read -r line; do										# check dependencies
-				[ $(which $line) ] || echo "Install '$line'";done \
-			< <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
+				[ $(which $line) ] || echo "Install '$line'"
+			done < <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
 		U)	cp -uv $HOME/bin/ind $GITREP/									#- update git repository
 			cp -uv $HOME/bin/getusage $GITREP/
@@ -322,8 +326,11 @@ fi
 # Simple year calculations
 (( masor=year+masconvert ))
 (( julp=year+jupconvert ))
+(( yod=year+yodconvert ))
+(( mkt=year-mktconvert ))
 (( jiy=year+jiyconvert ))
 (( buddhist=year+budconvert ))
+(( osg=year-osgconvert ))
 
 # Roman & Byzantine calendars are aligned to Julian calendar
 (( rome=year+romconvert ))
@@ -365,12 +372,16 @@ fi
 [ $DDATE ]		&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
 [ $HEBREW ]		&& printf "%-18s AM %d\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)}
 
-[ $MASORETIC ]	&& printf "Masoretic          AL %d\n" $masor
 [ $ROME ]		&& printf "City of Rome       au %d\n" $rome
 [ $BYZANTINE ]	&& printf "Byzantine (%2d%s)   AM %d\n" $byzind $bord $byzantine
 
-[ $JULIANPRD ]	&& printf "Julian Period         %d\n" $julp
-[ $ARC ]		&& printf "A.R.C.                %d\n" $arc
+[ $JULIANP ]	&& printf "Julian Period         %d\n" $julp
+
+[ $MASORETIC ]	&& printf "Anno Lucis            %d\n" $masor
+[ $MASORETIC ]	&& printf "Anno R.C.             %d\n" $arc
+[ $MASORETIC ]	&& printf "Anno Inventionis      %d\n" $yod
+[ $MASORETIC ]	&& printf "Anno Ordinis          %4d\n" $mkt
+#[ $MASORETIC ]	&& printf "Order St George       %4d\n" $osg
 
 [ $JAPANIY ]	&& printf "Japanese Imperial     %d\n" $jiy
 [ $CHINALY ]	&& printf "Chinese Lunar (%3d)   %d\n" $roc $cly
