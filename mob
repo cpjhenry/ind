@@ -27,7 +27,7 @@ while getopts ":cejlYAPy:?" OPTION; do
 			printf "Purim              Feast, defeat of an extermination plot\n"
 			printf "Pesach (Passover)  Pilgrimage, the Exodus from Egypt\n"
 			printf "Shavuot            Pilgrimage, the giving of the Torah\n"
-			printf "Tish'a B'Av        Day of Mourning, destruction of the Temple\n"
+			printf "Tish'a B'Av        Day of Mourning, destruction of the Temples\n"
 			printf "Rosh Hashana       New Year for years\n"
 			printf "Yom Kippur         Day of Atonement\n"
 			printf "Sukkot             Pilgrimage, the wandering in the desert\n"
