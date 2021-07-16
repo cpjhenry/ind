@@ -381,7 +381,6 @@ fi
 [ $MASORETIC ]	&& printf "Anno R.C.             %d\n" $arc
 [ $MASORETIC ]	&& printf "Anno Inventionis      %d\n" $yod
 [ $MASORETIC ]	&& printf "Anno Ordinis          %4d\n" $mkt
-#[ $MASORETIC ]	&& printf "Order St George       %4d\n" $osg
 
 [ $JAPANIY ]	&& printf "Japanese Imperial     %d\n" $jiy
 [ $CHINALY ]	&& printf "Chinese Lunar (%3d)   %d\n" $roc $cly
