@@ -41,9 +41,7 @@ jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
 rocconvert=1911 # ROC year; 1912 CE
 
-# Hebrew Era (AM); 3760 BCE
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
-osgconvert=1326 # Order of St. George; 1326 CE
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -324,13 +322,12 @@ else
 fi
 
 # Simple year calculations
-(( masor=year+masconvert ))
 (( julp=year+jupconvert ))
+(( masor=year+masconvert ))
 (( yod=year+yodconvert ))
 (( mkt=year-mktconvert ))
 (( jiy=year+jiyconvert ))
 (( buddhist=year+budconvert ))
-(( osg=year-osgconvert ))
 
 # Roman & Byzantine calendars are aligned to Julian calendar
 (( rome=year+romconvert ))
