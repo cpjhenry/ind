@@ -298,3 +298,8 @@ ChangeLog
 	- added more Masoretic-style dates
 	- merged ARC with Masoretic
 	- documentation tweaks & code cleanup
+
+2021-08-14 v3.10.13
+	- added creation of cache file to speed up display
+	  of holidays when printed separately
+	- tweaks
