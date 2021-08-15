@@ -401,6 +401,7 @@ if [ $VERBOSE ]; then
 fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
+
 # Buddhist observances
 if [ "$moon" ]; then
 	moon=$(echo "$moon Uposatha|")
