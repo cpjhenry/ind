@@ -303,3 +303,12 @@ ChangeLog
 	- added creation of cache file to speed up display
 	  of holidays when printed separately
 	- tweaks
+
+2021-08-19 v3.10.14
+	- added Japanese Eras (for modern Japan)
+	- tweaks to parenthetical variable display
+	- improved proleptic range and error checking
+	- fixed January 1st 1895 display bug
+	- cleanup of superfluous variables
+	- (preference for in-line over variables used only once)
+	- tweaks to Julian Dates

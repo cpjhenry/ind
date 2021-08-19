@@ -10,7 +10,6 @@ GITREP=$HOME/src/ind
 HOLTMP=/tmp/ind_holidays
 
 FULLCE=
-PARTCE=
 COMMON=true
 
 DDATE=
@@ -46,6 +45,7 @@ budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
+ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
 EPACTS=(0 29 10 21 2 13 24 5 16 27 8 19 30 11 22 3 14 25 6 17)
 DOMINI=(G A B C D E F)
@@ -57,11 +57,12 @@ DOWS=(Sun Mon Tue Wed Thu Fri Sat)
 DOWL=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
-	year=$(date -d "$1" +%Y)
-	month=$(date -d "$1" +%0m)
-	day=$(date -d "$1" +%0d)
+	year=$(date -d "$1 00:18" +%Y)
+	month=$(date -d "$1 00:18" +%0m)
+	day=$(date -d "$1 00:18" +%0d)
 }
 ordinal() {
+	local ord
 	case "$1" in
 		1)	ord="st";;
 		2)	ord="nd";;	
@@ -71,14 +72,15 @@ ordinal() {
 		23)	ord="rd";;
 		31)	ord="st";;
 		*)	ord="th";;
-	esac
+	esac; echo $ord
 }
 is_leap_year() { ## USAGE: is_leap_year [year]
+	local ily_year
 	ily_year=${1:-$(date +%Y)}
 	case $ily_year in
-		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LEAP_YEAR=1
+		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LY=1
 		return 0 ;;
-		*) unset _LEAP_YEAR
+		*) unset _LY
 		return 1 ;;
 	esac
 }
@@ -95,7 +97,7 @@ displayall() {
 	BUDDHIST=true;
 }
 displaynone() {
-	unset FULLCE; unset PARTCE; unset COMMON;
+	unset FULLCE; unset COMMON;
 	unset HHPC; unset DDATE; unset HEBREW;
 	unset ROME; unset BYZANTINE;
 	unset JULIANP; unset MASORETIC; 
@@ -106,9 +108,9 @@ displaynone() {
 }
 testall() {
 	unset testallvar
-	[ $FULLCE ]		&& testallvar=true; [ $PARTCE ]		&& testallvar=true
-	[ $COMMON ]		&& testallvar=true; [ $HHPC ]		&& testallvar=true
-	[ $DDATE ]		&& testallvar=true; [ $HEBREW ]		&& testallvar=true
+	[ $FULLCE ]		&& testallvar=true; [ $COMMON ]		&& testallvar=true
+	[ $HHPC ]		&& testallvar=true; [ $DDATE ]		&& testallvar=true
+	[ $HEBREW ]		&& testallvar=true
 	[ $ROME ]		&& testallvar=true; [ $BYZANTINE ]	&& testallvar=true
 	[ $JULIANP ]	&& testallvar=true; [ $MASORETIC ]	&& testallvar=true
 	[ $JAPANIY ]	&& testallvar=true; [ $CHINALY ]	&& testallvar=true
@@ -182,30 +184,36 @@ is_leap_year $year
 [ $month -lt 1 -o $month -gt 12 ] && NWR
 [ $day -lt 1 -o $day -gt 31 ] && NWR
 [ $day -gt 30 ] && [ $month -eq 9 -o $month -eq 4 -o $month -eq 6 -o $month -eq 11 ] && NWR
-[   $_LEAP_YEAR ] && [ $month -eq 2 -a $day -gt 29 ] && NWR
-[ ! $_LEAP_YEAR ] && [ $month -eq 2 -a $day -gt 28 ] && NWR
+[   $_LY ] && [ $month -eq 2 -a $day -gt 29 ] && NWR
+[ ! $_LY ] && [ $month -eq 2 -a $day -gt 28 ] && NWR
 
 month=$(printf "%02d" $((10#$month)))
 day=$(printf "%02d" $((10#$day)))
-ymd=$year-$month-$day
+ymd="$year-$month-$day 00:18"
 hms=$(date +%T)
-dow=$(date -d $ymd +%w)
+dow=$(date -d "$ymd" +%w)
 
-doy=$(date -d $ymd +%-j) 	# day of year
-iwn=$(date -d $ymd +%-V) 	# ISO week no
-tz=$(date -d $ymd +%Z)		# time zone
-utc=$(date -ud "$ymd $hms $tz" "+%F %T")
+doy=$(date -d "$ymd" +%-j) 	# day of year
+iwn=$(date -d "$ymd" +%-V) 	# ISO week no
+tz=$( date -d "$ymd" +%Z)	# time zone
+
+[ "$tz" != "LMT" ] && utc=$(date -ud "${ymd:0:10} $hms $tz" "+%F %T")
 
 # Julian calendar has 13 day delta for 20th/21st centuries
-jymd=$(date -d "$ymd - 13 days" +%F)
+if [ $year -lt 1901 ]
+	then jdelta=12; [ $month -gt 2 -a $year -eq 1900 ] && jdelta=13
+	else jdelta=13; fi
+[ $year -eq 1895 -a $month -eq 1 -a $day -eq 1 ] && mymd="1895-01-02 - 1 day" || mymd=${ymd:0:10}
+
+jymd=$(date -d "$mymd - $jdelta days" +%F)
 jdoy=$(date -d "$jymd" +%-j)
-[ $month -eq 1 -a $day -le 13 ] && jdoy=0
+[ $month -eq 1 -a $day -le $jdelta ] && jdoy=0
 
 # Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
-if [ $(which jday) ] ; then
-	mjd=$(echo "$(jday -d $utc)-2400000.5" | bc )
-	tjd=$(echo "$(jday -d $utc)-2440000.5" | bc | cut -f1 -d"." )
-	rdi=$(echo "$(jday -d $utc)-1721424.5" | bc | cut -f1 -d"." )
+if [ $(which jday) ] && [ "$utc" ]; then
+	mjd=$(echo "$(jday -d $utc)-2400000.5" |bc)
+	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
+	rdi=$(echo "$(jday -d $utc)-1721424.5" |bc |cut -f1 -d".")
 else 
 	unset mjd
 	unset tjd
@@ -236,7 +244,7 @@ else unset HEBREW; fi
 (( golden=year%19+1 ))
 (( dominical=((year-1)%100%4*2+(year-1)%100%7*4+(year-1)/100%4*2)%7 ))
 
-if [ $_LEAP_YEAR ]; then
+if [ $_LY ]; then
 	if [ $dominical -eq 0 ]; then dom="${DOMINI[$dominical]}${DOMINI[6]}"
 	else dom="${DOMINI[$dominical]}${DOMINI[$dominical-1]}"; fi
 else dom="${DOMINI[$dominical]}"; fi
@@ -258,16 +266,16 @@ if [ $(which phases) ]; then
 		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && BLKMOON=$i
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[0]=$i && MOONSET=true
 	done
-	[ $MOONSET ] && [ $ymd = ${moonphase[0]} ] && moon=${PHASES[0]}
-	[ $BLKMOON ] && [ $ymd = $BLKMOON ] && moon="Black Moon"
+	[ $MOONSET ] && [ ${ymd:0:10} = ${moonphase[0]} ] && moon=${PHASES[0]}
+	[ $BLKMOON ] && [ ${ymd:0:10} = $BLKMOON ] && moon="Black Moon"
 	unset MOONSET
 
 	for i in "${fullmoon[@]}"; do
 		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && BLUMOON=$i
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[2]=$i && MOONSET=true
 	done
-	[ $MOONSET ] && [ $ymd = ${moonphase[2]} ] && moon=${PHASES[2]} && FULL=true
-	[ $BLUMOON ] && [ $ymd = $BLUMOON ] && moon="Blue Moon" && unset FULL
+	[ $MOONSET ] && [ ${ymd:0:10} = ${moonphase[2]} ] && moon=${PHASES[2]} && FULL=true && unset MOONSET
+	[ $BLUMOON ] && [ ${ymd:0:10} = $BLUMOON ] && moon="Blue Moon" && unset FULL
 	# February is shorter than a standard lunation (e.g. Feb. 2037)
 
 	if [ $FULL ]; then
@@ -283,7 +291,8 @@ if [ $(which phases) ]; then
 	vsday=$(date -d "$(phases $year 7 1 | sed -n 1p) + 1 day" +%d)
 
 	# Chinese calendar
-	cstep=1; for i in "${chinesemoon[@]}"; do
+	cstep=1
+	for i in "${chinesemoon[@]}"; do
 		if [ $cstep -eq 1 ]; then
 			[ "${i:5:2}" == "01" -a "${i:8:2}" -ge 21 ] && lunarmonth[$cstep]=$i && ((cstep++))
 			[ "${i:5:2}" == "02" ] && lunarmonth[$cstep]=$i && ((cstep++))
@@ -296,10 +305,15 @@ if [ $(which phases) ]; then
 	cny=${lunarmonth[1]}	
 	(( cly=year+chiconvert ))
 	[[ 10#$doy -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
-	(( roc=year-rocconvert ))
+	(( roc=year-rocconvert )); [ $roc -le 0 ] && roc="" || roc="($roc)"
 
 	# 'year of'
 	case 1 in
+		$(($year< 1969))) unset cny ;;
+		$(($year< 1972))) (( yearof=$year-1960 )) ;;
+		$(($year< 1984))) (( yearof=$year-1972 )) ;;
+		$(($year< 1996))) (( yearof=$year-1984 )) ;;
+		$(($year< 2008))) (( yearof=$year-1996 )) ;;
 		$(($year< 2020))) (( yearof=$year-2008 )) ;;
 		$(($year< 2032))) (( yearof=$year-2020 )) ;;
 		$(($year< 2044))) (( yearof=$year-2032 )) ;;
@@ -338,33 +352,40 @@ fi
 (( byzantine=year+byzconvert ))
 [[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
 
-# ARC
-(( arc=year+arcconvert ))
-[[ 10#$doy -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
+# Indictions and ordinals
+(( byzind=$byzantine%15 ))	# set Byzantine indiction
+[ $byzind -eq "0" ] && byzind=15
+byzind="($byzind$(ordinal $byzind))"
+
+(( ind=($year+2)%15+1 ))	# set Gregorian indiction
+ind="$ind$(ordinal $ind)"
 
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
-# Indictions and ordinals
-(( ind=($year+2)%15+1 ))	# set Gregorian indiction
-ordinal $ind; gord=$ord 	# set Gregorian ordinal
+# ARC
+(( arc=year+arcconvert ))
+[[ 10#$doy -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
 
-(( byzind=$byzantine%15 ))	# set Byzantine indiction
-[ $byzind -eq "0" ] && byzind=15
-ordinal $byzind; bord=$ord	# set Byzantine ordinal
-
-ordinal $(( 10#$day )) 		# set standard ordinal
+# Japanese Era Name
+case 1 in
+	$(($year>=2019))) ERANUM=5;jenconvert=2019;;
+	$(($year>=1989))) ERANUM=4;jenconvert=1989;;
+	$(($year>=1926))) ERANUM=3;jenconvert=1926;;
+	$(($year>=1912))) ERANUM=2;jenconvert=1912;;
+	$(($year>=1868))) ERANUM=1;jenconvert=1868;;
+	$(($year<1868)))  ERANUM=0;;
+esac
+[ $ERANUM -eq 0 ] && jen="" || jen="($(( jen=year-(jenconvert-1) )))"
 
 # main()
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
-[ $PARTCE ]		&& printf "$bold%s %d%s %s$bold\n" ${DOWL[$dow]} $(( 10#$day )) $ord ${MONTHL[10#$month]}
-
 if [ $COMMON ]; then
-				printf "$bold"; printf "CE %d %s %2d%s Ind." $year $rnyear $ind $gord; echo "$bold"
+				printf "$bold"; printf "CE %d %s %s Ind." $year $rnyear $ind; echo "$bold"
 				printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
 	[ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
-	[ $tjd ] && printf "TJD %5s " $tjd
-	[ $rdi ] && printf "/ RD %s\n" $rdi; [ $tjd ] && [ ! $rdi ] && printf "\n"
+	[ $tjd ] && printf "TJD %-5s   " $tjd
+	[ $rdi ] && printf "RD %s\n" $rdi; [ $tjd ] && [ ! $rdi ] && printf "\n"
 fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
@@ -372,7 +393,7 @@ fi
 [ $HEBREW ]		&& printf "%-18s AM %d\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)}
 
 [ $ROME ]		&& printf "City of Rome       au %d\n" $rome
-[ $BYZANTINE ]	&& printf "Byzantine (%2d%s)   AM %d\n" $byzind $bord $byzantine
+[ $BYZANTINE ]	&& printf "Byzantine %-6s   AM %d\n" $byzind $byzantine
 
 [ $JULIANP ]	&& printf "Julian Period         %d\n" $julp
 
@@ -381,8 +402,8 @@ fi
 [ $MASORETIC ]	&& printf "Anno Inventionis      %d\n" $yod
 [ $MASORETIC ]	&& printf "Anno Ordinis          %4d\n" $mkt
 
-[ $JAPANIY ]	&& printf "Japanese Imperial     %d\n" $jiy
-[ $CHINALY ]	&& printf "Chinese Lunar (%3d)   %d\n" $roc $cly
+[ $JAPANIY ]	&& printf "Japanese Imp. %-5s   %d\n" "$jen" $jiy
+[ $CHINALY ]	&& printf "Chinese Lunar %-5s   %d\n" "$roc" $cly
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
@@ -390,14 +411,14 @@ if [ $VERBOSE ]; then
 	printf "Epact                 %s\n" ${EPACTS[$golden]}
 	printf "Golden number         %s\n" $golden
 	printf "Ides                  %d\n" $ides
-	printf "Julian calendar       %s\n" ${jymd:5:5} | sed 's/-/\//'
+	printf "Julian calendar (%d)  %s\n" $jdelta ${jymd:5:5} | sed 's/-/\//'
 	printf "Julian day of year    %03d\n" $jdoy
 
-	[ $_LEAP_YEAR ]		&& printf "Leap year             %s\n" $year
-	[ "$moon" ]			&& printf "Phase                 %-17s\n" "$moon"
-	[ $cny ] 			&& printf "Chinese New Year      %s\n" ${cny:5:5} | sed 's/-/\//' &&
-						   printf "(Year of the)         %s\n" ${ZODIAC[10#$yearof]}
-	[ $vsday ]			&& printf "Vassa                 07/%02d\n" $vsday
+	[ $_LY ]	&& printf "Leap year             %s\n" $year
+	[ "$moon" ]	&& printf "Phase                 %-17s\n" "$moon"
+	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]}"
+	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" $(echo ${cny:5:5}|sed 's/-/\//') ${ZODIAC[10#$yearof]}
+	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $vsday
 fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
@@ -409,10 +430,8 @@ if [ "$moon" ]; then
 		[ $month -eq 2  ] && moon=$(echo "Sangha Day|")
 		[ $month -eq 5  ] && moon=$(echo "Buddha Day|")
 		[ $month -eq 7  ] && moon=$(echo "Dhamma Day|")
-		[ $month -eq 10 ] && moon=$(echo "Pavarana|")
-	fi
-	dhol+=$moon
-fi
+		[ $month -eq 10 ] && moon=$(echo "Pavarana|"); fi
+	dhol+=$moon; fi
 [ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+=$(echo "Vassa|")
 
 # Fixed non-lunar holidays
@@ -438,7 +457,7 @@ fi
 [ $month -eq 11 -a $day -eq 11 ] && dhol+=$(echo "Martinmas|")
 
 # Chinese festivals
-[ $ymd = $cny ]					 && dhol+=$(echo "Year of the ${ZODIAC[10#$yearof]}|")
+[ $cny ] && [ ${ymd:0:10} = $cny ] && dhol+=$(echo "Year of the ${ZODIAC[10#$yearof]}|")
 
 # Display results
 if [ "$dhol" ]; then
