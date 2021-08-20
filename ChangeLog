@@ -310,5 +310,6 @@ ChangeLog
 	- improved proleptic range and error checking
 	- fixed January 1st 1895 display bug
 	- cleanup of superfluous variables
-	- (preference for in-line over variables used only once)
+	- (preference for in-line over variables used once)
 	- tweaks to Julian Dates
+	- optimized leap year calculations

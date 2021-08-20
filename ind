@@ -75,13 +75,9 @@ ordinal() {
 	esac; echo $ord
 }
 is_leap_year() { ## USAGE: is_leap_year [year]
-	local ily_year
-	ily_year=${1:-$(date +%Y)}
-	case $ily_year in
-		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LY=1
-		return 0 ;;
-		*) unset _LY
-		return 1 ;;
+	case ${1:-$(date +%Y)} in
+		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LY=1; return 0 ;;
+		*) unset _LY; return 1 ;;
 	esac
 }
 NWR() { # Not within range
@@ -107,16 +103,16 @@ displaynone() {
 	unset LUNAR; unset CHINESE; unset VERBOSE;
 }
 testall() {
-	unset testallvar
-	[ $FULLCE ]		&& testallvar=true; [ $COMMON ]		&& testallvar=true
-	[ $HHPC ]		&& testallvar=true; [ $DDATE ]		&& testallvar=true
-	[ $HEBREW ]		&& testallvar=true
-	[ $ROME ]		&& testallvar=true; [ $BYZANTINE ]	&& testallvar=true
-	[ $JULIANP ]	&& testallvar=true; [ $MASORETIC ]	&& testallvar=true
-	[ $JAPANIY ]	&& testallvar=true; [ $CHINALY ]	&& testallvar=true
-	[ $BUDDHIST ]	&& testallvar=true
+	unset test_var
+	[ $FULLCE ]		&& test_var=true; [ $COMMON ]		&& test_var=true
+	[ $HHPC ]		&& test_var=true; [ $DDATE ]		&& test_var=true
+	[ $HEBREW ]		&& test_var=true
+	[ $ROME ]		&& test_var=true; [ $BYZANTINE ]	&& test_var=true
+	[ $JULIANP ]	&& test_var=true; [ $MASORETIC ]	&& test_var=true
+	[ $JAPANIY ]	&& test_var=true; [ $CHINALY ]		&& test_var=true
+	[ $BUDDHIST ]	&& test_var=true
 
-	[ $VERBOSE ]	&& testallvar=true
+	[ $VERBOSE ]	&& test_var=true
 }
 
 setdate today # set today's date
@@ -339,9 +335,6 @@ fi
 
 # Simple year calculations
 (( julp=year+jupconvert ))
-(( masor=year+masconvert ))
-(( yod=year+yodconvert ))
-(( mkt=year-mktconvert ))
 (( jiy=year+jiyconvert ))
 (( buddhist=year+budconvert ))
 
@@ -353,19 +346,23 @@ fi
 [[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
 
 # Indictions and ordinals
-(( byzind=$byzantine%15 ))	# set Byzantine indiction
+(( byzind=$byzantine%15 ))	# Byzantine
 [ $byzind -eq "0" ] && byzind=15
 byzind="($byzind$(ordinal $byzind))"
 
-(( ind=($year+2)%15+1 ))	# set Gregorian indiction
+(( ind=($year+2)%15+1 ))	# Gregorian
 ind="$ind$(ordinal $ind)"
 
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
-# ARC
+# Masoretic
 (( arc=year+arcconvert ))
 [[ 10#$doy -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
+
+(( masor=year+masconvert ))
+(( yod=year+yodconvert ))
+(( mkt=year-mktconvert ))
 
 # Japanese Era Name
 case 1 in
@@ -464,5 +461,5 @@ if [ "$dhol" ]; then
 	dhol=$(echo -en "$dhol" |sed 's/|/\n/g' |sed 's/^/- /g')
 	[ $HOLCACHE ] && unset HOLDISP && echo "$dhol">$HOLTMP
 	if [ $HOLDISP ]; then
-		testall; [ $testallvar ] && echo
+		testall; [ $test_var ] && echo
 		echo "$dhol" |sed "s/^- /&$italics/;s/$/$italics/"; fi; fi
