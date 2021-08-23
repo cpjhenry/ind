@@ -8,6 +8,7 @@
 
 GITREP=$HOME/src/ind
 HOLTMP=/tmp/ind_holidays
+MTZ=EST
 
 FULLCE=
 COMMON=true
@@ -76,8 +77,8 @@ ordinal() {
 }
 is_leap_year() { ## USAGE: is_leap_year [year]
 	case ${1:-$(date +%Y)} in
-		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LY=1; return 0 ;;
-		*) unset _LY; return 1 ;;
+		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LY=1;;
+		*) unset _LY;;
 	esac
 }
 NWR() { # Not within range
@@ -86,21 +87,23 @@ NWR() { # Not within range
 }
 displayall() {
 	COMMON=true;
-	HHPC=true; DDATE=true; HEBREW=true; 
+	HHPC=true; DDATE=true;
+	HEBREW=true;
 	ROME=true; BYZANTINE=true;
-	JULIANP=true; MASORETIC=true; 
+	JULIANP=true; MASORETIC=true;
 	JAPANIY=true; CHINALY=true;
 	BUDDHIST=true;
 }
 displaynone() {
 	unset FULLCE; unset COMMON;
-	unset HHPC; unset DDATE; unset HEBREW;
+	unset HHPC; unset DDATE;
+	unset HEBREW;
 	unset ROME; unset BYZANTINE;
-	unset JULIANP; unset MASORETIC; 
+	unset JULIANP; unset MASORETIC;
 	unset JAPANIY; unset CHINALY;
-	unset BUDDHIST; 
+	unset BUDDHIST;
 
-	unset LUNAR; unset CHINESE; unset VERBOSE;
+	unset VERBOSE; unset LUNAR; unset CHINESE;
 }
 testall() {
 	unset test_var
@@ -193,7 +196,8 @@ doy=$(date -d "$ymd" +%-j) 	# day of year
 iwn=$(date -d "$ymd" +%-V) 	# ISO week no
 tz=$( date -d "$ymd" +%Z)	# time zone
 
-[ "$tz" != "LMT" ] && utc=$(date -ud "${ymd:0:10} $hms $tz" "+%F %T")
+[ "$tz" != "LMT" ] && utc=$(date -ud "${ymd:0:10} $hms $tz" "+%F %T") ||
+					  utc=$(date -ud "${ymd:0:10} $hms $MTZ" "+%F %T")
 
 # Julian calendar has 13 day delta for 20th/21st centuries
 if [ $year -lt 1901 ]
@@ -207,10 +211,10 @@ jdoy=$(date -d "$jymd" +%-j)
 
 # Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
 if [ $(which jday) ] && [ "$utc" ]; then
-	mjd=$(echo "$(jday -d $utc)-2400000.5" |bc)
+	mjd=$(echo "$(jday -d $utc)-2400000.5" |bc |xargs printf '%.1f' |sed '/\-/d')
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
-	rdi=$(echo "$(jday -d $utc)-1721424.5" |bc |cut -f1 -d".")
-else 
+	rdi=$(echo "$(jday -d $utc)-1721424.5" |bc |cut -f1 -d"." |sed '/\-/d')
+else
 	unset mjd
 	unset tjd
 	unset rdi
@@ -380,7 +384,7 @@ esac
 if [ $COMMON ]; then
 				printf "$bold"; printf "CE %d %s %s Ind." $year $rnyear $ind; echo "$bold"
 				printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
-	[ $mjd ] && printf "MJD %s %s UTC\n" ${mjd:0:7} "${utc:5:5}" | sed 's/-/\//'
+	[ $mjd ] && printf "MJD %-7s %s UTC\n" $mjd "${utc:5:5}" | sed 's/-/\//'
 	[ $tjd ] && printf "TJD %-5s   " $tjd
 	[ $rdi ] && printf "RD %s\n" $rdi; [ $tjd ] && [ ! $rdi ] && printf "\n"
 fi
