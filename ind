@@ -386,7 +386,7 @@ if [ $COMMON ]; then
 				printf "Day %3d / Week %2d %3s\n" $doy $iwn $tz
 	[ $mjd ] && printf "MJD %-7s %s UTC\n" $mjd "${utc:5:5}" | sed 's/-/\//'
 	[ $tjd ] && printf "TJD %-7s" $tjd
-	[ $rdi ] && printf "R.D %s\n" $rdi; [ $tjd ] && [ ! $rdi ] && printf "\n"
+	[ $rdi ] && printf "RD  %s\n" $rdi; [ $tjd ] && [ ! $rdi ] && printf "\n"
 fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
