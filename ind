@@ -212,7 +212,7 @@ jdoy=$(date -d "$jymd" +%-j)
 # Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
 if [ $(which jday) ] && [ "$utc" ]; then
 	mjd=$(echo "$(jday -d $utc)-2400000.5" |bc |xargs printf '%.1f' |sed '/\-/d')
-	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
+	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d'); [ $tjd -gt 65535 ] && unset tjd
 	rdi=$(echo "$(jday -d $utc)-1721424.5" |bc |cut -f1 -d"." |sed '/\-/d')
 else
 	unset mjd

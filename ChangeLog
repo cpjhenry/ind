@@ -315,4 +315,5 @@ ChangeLog
 	- (preference for in-line over variables used once)
 	- optimized leap year calculations
 	- improved Julian Date proleptic display
+	- (and cap TJD at 16 bits - 65535, per PB-5J)
 	- tweaky tweaks
