@@ -322,3 +322,7 @@ ChangeLog
 	- new helper app - 'klock'
 	- added Erisian Time Values
 	- added Swatch .beat
+
+2021-09-30 v3.11.1
+	- documentation updates
+	- swat bugs

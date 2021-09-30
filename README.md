@@ -53,7 +53,8 @@ Installing the following helper apps will enable additional features:
 - **hebcal** provides Hebrew calculations (https://www.hebcal.com)
 - **hh** provides Hanke-Henry date support (https://github.com/cpjhenry/hh)
 - **jday** provides Julian Date (https://sourceforge.net/projects/jday/)
+- **klock** provides Erisian Time (https://github.com/cpjhenry/klock)
 
 ## Author
 Paul J Henry <cpjhenry@gmail.com>  
-12 September 2020
+30 September 2021

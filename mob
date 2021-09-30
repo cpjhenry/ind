@@ -29,7 +29,7 @@ while getopts ":cejlYAPy:?" OPTION; do
 			printf "Shavuot            Pilgrimage, the giving of the Torah\n"
 			printf "Tish'a B'Av        Day of Mourning, destruction of the Temples\n"
 			printf "Rosh Hashana       New Year for years\n"
-			printf "Yom Kippur         Day of Atonement\n"
+			printf "Yom Kippur         Day of Atonement, fasting\n"
 			printf "Sukkot             Pilgrimage, the wandering in the desert\n"
 			printf "Chanukah           Festival of Lights, rededication of the Temple\n"
 			exit;;		
