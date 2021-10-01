@@ -108,15 +108,15 @@ displaynone() {
 }
 testall() {
 	unset t_var
-	[ $FULLCE ]		&& t_var=true; [ $COMMON ]		&& t_var=true
-	[ $HHPC ]		&& t_var=true; [ $ERISIAN ]		&& t_var=true
-	[ $HEBREW ]		&& t_var=true
-	[ $ROME ]		&& t_var=true; [ $BYZANTINE ]	&& t_var=true
-	[ $JULIANP ]	&& t_var=true; [ $MASORETIC ]	&& t_var=true
-	[ $JAPANIY ]	&& t_var=true; [ $CHINALY ]		&& t_var=true
-	[ $BUDDHIST ]	&& t_var=true
+	[ $FULLCE ]		&& t_var=true; [ $COMMON ]		&& t_var=true;
+	[ $HHPC ]		&& t_var=true; [ $ERISIAN ]		&& t_var=true;
+	[ $HEBREW ]		&& t_var=true;
+	[ $ROME ]		&& t_var=true; [ $BYZANTINE ]	&& t_var=true;
+	[ $JULIANP ]	&& t_var=true; [ $MASORETIC ]	&& t_var=true;
+	[ $JAPANIY ]	&& t_var=true; [ $CHINALY ]		&& t_var=true;
+	[ $BUDDHIST ]	&& t_var=true;
 
-	[ $VERBOSE ]	&& t_var=true
+	[ $VERBOSE ]	&& t_var=true;
 }
 
 setdate today # set today's date
@@ -151,7 +151,7 @@ do
 
 		h)	unset HOLDISP;;													# holiday display
 		F)	[ $HOLCACHE ]	&& unset HOLCACHE	|| HOLCACHE=true;;			# holiday cache
-		H)	bold="**" ; italics="_";;										# highlight
+		H)	bold="**"; italics="_";;										# highlight
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| VERBOSE=true;;			# verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
@@ -170,11 +170,11 @@ do
 			exit;;
 		U)	cp -uv $HOME/bin/$(basename $0) $GITREP/						#- update git repository
 			cp -uv $HOME/share/man/man1/$(basename $0).1 $GITREP/
+			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/
 
 			cp -uv $HOME/bin/getusage $GITREP/
 			cp -uv $HOME/bin/mob $GITREP/
 			cp -uv $HOME/bin/rnum $GITREP/
-			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
 	esac
@@ -189,6 +189,9 @@ is_leap_year $year
 [   $_LY ] && [ $month -eq 2 -a $day -gt 29 ] && NWR
 [ ! $_LY ] && [ $month -eq 2 -a $day -gt 28 ] && NWR
 
+tod=$(date +%F)
+hms=$(date +%T)
+
 month=$(printf "%02d" $((10#$month)))
 day=$(printf "%02d" $((10#$day)))
 ymd="$year-$month-$day"
@@ -197,7 +200,6 @@ tz=$( date -d "$ymd 00:18" +%Z)
 dow=$(date -d "$ymd 00:18" +%w) 	# day of week
 doy=$(date -d "$ymd 00:18" +%-j)	# day of year
 iwn=$(date -d "$ymd 00:18" +%-V)	# ISO week no
-hms=$(date +%T)
 
 [ "$tz" != "LMT" ] && utc=$(date -ud "$ymd $hms $tz" "+%F %T") ||
 					  utc=$(date -ud "$ymd $hms $MTZ" "+%F %T")
@@ -240,11 +242,11 @@ if [ $ERISIAN ] && [ $(which ddate) ]; then
 else unset ERISIAN; fi
 
 # Set Erisian time; DEP klock
+[ $ymd != $tod ] && unset KLOCK
 if [ $KLOCK ] && [ $(which klock) ]; then
 	klo=$(klock -d$ymd)
 	beat=$(klock -d$ymd -kb)
-else unset klo beat; fi
-[ ! $rdi ] || [ $rdi -lt 729685 ] && unset beat # 23 October 1998
+else unset KLOCK; fi
 
 # Hebrew calendar; DEP hebcal
 if [ $HEBREW ] && [ $(which hebcal) ]; then
