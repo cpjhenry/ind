@@ -239,7 +239,7 @@ ChangeLog
 
 2020-10-25 v3.10
 	- remove idiosyncratic events
-	- remove Easter-related calculations. As with Hebrew holidays, there are far better tools
+	- remove Easter-related calculations. As with Hebrew holidays, there are far better tools.
 	> One such tool is `calendar`. Config as follows:
 	
 	Easter-47	Carnival
@@ -320,10 +320,13 @@ ChangeLog
 
 2021-08-28 v3.11
 	- new helper app - 'klock'
-	- added Erisian Time Values
-	- added Swatch .beat
+		- added Erisian Time Values
+		- added Swatch .beat
 
 2021-09-30 v3.11.1
 	- documentation updates
 	- swat bugs
 	- additional tweaks
+
+2021-10-16 v3.11.2
+	- tweaks and code optimizations
