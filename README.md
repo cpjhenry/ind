@@ -3,7 +3,8 @@ ind
 
 **ind** is a bash script which calculates the Byzantine year, indiction for
 current and Byzantine year, the Buddhist year, the year from the founding of
-the City of Rome, the Masoretic year, and the Japanese Imperial year.
+the City of Rome, Masoretic (and related) years, and the Japanese Imperial
+year.
 
 Lunar-solar calculations include: metonic cycle, epact, dominical year,
 Chinese year and New Year, and Buddhist observances in the Theravadan
