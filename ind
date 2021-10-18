@@ -262,16 +262,10 @@ if [ $VERBOSE ]; then
 
 # Moons; DEP phases
 if [ $(which phases) ]; then
-	for i in {1..12}; do
-		while IFS= read -r line; do
-		    newmoon+=( "$(date -d "$line UTC" +%F)" )
-		    chinesemoon+=( "$(TZ=Asia/Shanghai date -d "$line UTC" +%F)" )
-		done < <( phases $year $i 0 )
-
-		while IFS= read -r line; do
-		    fullmoon+=( "$(date -d "$line UTC" +%F)" )
-		done < <( phases $year $i 1 )
-	done
+	while IFS= read -r line; do newmoon+=( "$(date -d "$line UTC" +%F)"); done < <(phases $year $month 0)
+	while IFS= read -r line; do fullmoon+=("$(date -d "$line UTC" +%F)"); done < <(phases $year $month 1)
+	for i in {1..2}; do while IFS= read -r line
+		do chinesemoon+=( "$(TZ=Asia/Shanghai date -d "$line UTC" +%F)"); done < <(phases $year $i 0); done
 
 	for i in "${newmoon[@]}"; do
 		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && BLKMOON=$i
@@ -305,7 +299,7 @@ if [ $(which phases) ]; then
 	for i in "${chinesemoon[@]}"; do
 		if [ $cstep -eq 1 ]; then
 			[ "${i:5:2}" == "01" -a "${i:8:2}" -ge 21 ] && lunarmonth[$cstep]=$i && ((cstep++))
-			[ "${i:5:2}" == "02" ] && lunarmonth[$cstep]=$i && ((cstep++)) #else lunarmonth[$cstep]=$i;((cstep++))
+			[ "${i:5:2}" == "02" ] && lunarmonth[$cstep]=$i && ((cstep++))
 		fi
 	done
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)

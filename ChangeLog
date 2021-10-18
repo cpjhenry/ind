@@ -331,3 +331,6 @@ ChangeLog
 2021-10-16 v3.11.2
 	- tweaks and code optimizations
 	- display tweaks
+
+2021-10-18 v3.11.3
+	- optimized lunar phase calculation
