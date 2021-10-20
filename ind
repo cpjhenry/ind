@@ -45,18 +45,18 @@ rocconvert=1911 # ROC year; 1912 CE
 
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
 
-ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
-CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
-ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
+MONTHL=(- January February March April May June July August September October November December)
+DOWL=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+MONTHS=(- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
+DOWS=(Sun Mon Tue Wed Thu Fri Sat)
 
 EPACTS=(0 29 10 21 2 13 24 5 16 27 8 19 30 11 22 3 14 25 6 17)
 DOMINI=(G A B C D E F)
 PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
 
-MONTHS=(- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
-MONTHL=(- January February March April May June July August September October November December)
-DOWS=(Sun Mon Tue Wed Thu Fri Sat)
-DOWL=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
+ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
+CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
+ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	year=$(date -d "$1 00:18" +%Y)
@@ -148,7 +148,7 @@ do
 		y)	year=$OPTARG;;													# set year
 		m)	month=$OPTARG;;													# set month
 		d)	day=$OPTARG														# set day
-			[ "$(egrep [[:alpha:][:blank:]-] <<< $day)" ] && setdate "$day";;
+			[ "$(grep -E "[[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
 
 		h)	unset HOLDISP;;													# holiday display
 		F)	[ $HOLCACHE ]	&& unset HOLCACHE	|| HOLCACHE=true;;			# holiday cache
@@ -267,7 +267,7 @@ if [ $(which phases) ]; then
 
 	# Diagnostics
 	if [ $CHINESE ]; then
-		[ $year -le 2038] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]}
+		[ $year -le 2038 ] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]}
 		exit; fi
 
 	if [ $LUNAR ]; then
