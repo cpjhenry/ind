@@ -238,7 +238,7 @@ if [ $(which phases) ]; then
 
 	# Chinese calendar
 	for i in {1..2}; do while IFS= read -r line; do
-		chinesemoon+=( "$(TZ=Asia/Shanghai date -d "$line UTC" +%F)"); done < <(phases $year $i 0)
+		chinesemoon+=("$(TZ=Asia/Shanghai date -d "$line UTC" +%F)"); done < <(phases $year $i 0)
 		done; cstep=1
 	for i in "${chinesemoon[@]}"; do
 		if [ $cstep -eq 1 ]; then
