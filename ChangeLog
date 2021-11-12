@@ -340,3 +340,4 @@ ChangeLog
 	- optimized / re-ordered calculations
 	- (date/time, lunar, internal, dependencies)
 	- lint checking (shellcheck)
+	- tweaks

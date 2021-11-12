@@ -20,7 +20,7 @@ aficionado of horology, I went looking for a tool which would easily calculate
 the Byzantine (and common era) indictions. Finding none, I created my own.
 
 Like all good programs, **ind** has expanded beyond its original scope. In
-keeping with Linux tradition, significant blocks of specific task code has
+keeping with Linux tradition, significant blocks of specific task code have
 been spun off as separate tools or turned over to helper apps.
 
 Please see ChangeLog for a history of changes to this script.
