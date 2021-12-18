@@ -341,3 +341,7 @@ ChangeLog
 	- (date/time, lunar, internal, dependencies)
 	- lint checking (shellcheck)
 	- tweaks
+
+2021-12-11 v3.11.5
+	- added MGL calculation
+	- tweaks to 'mob'

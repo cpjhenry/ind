@@ -9,6 +9,7 @@ cond_source() { [ -f $1 ] && . $1; }
 
 year=$(date +%Y)
 DATEFMT="%d %b"
+YAHRFILE="$HOME/.calendar/deaths"
 HEADER=true
 HEBREW=true
 PROXIM=true
@@ -73,8 +74,8 @@ fi
 
 if [ $HEBREW ]; then echo -en "$dispheb" |sed 's/|/\n/g' |sort -Mk2; fi
 
-if [ $YAHR ]; then [ -e ~/.calendar/deaths ] &&
-	hebcal -hY ~/.calendar/deaths $year |sed -e 's/^....-..-..\s/$(date -d& +"$DATEFMT")*/' |
+if [ $YAHR ]; then [ -e $YAHRFILE ] &&
+	hebcal -hY $YAHRFILE $year |sed -e 's/^....-..-..\s/$(date -d& +"$DATEFMT")*/' |
 	while read -r line; do eval echo -e "$line" |sed 's/\*/*\t☠ /'; done
 fi
 

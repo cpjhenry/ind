@@ -35,6 +35,7 @@ byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 
 masconvert=4000	# Masoretic; 4000 BCE
+mglconvert=1717 # MGL year; 1717 CE
 arcconvert=1352 # Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
 yodconvert=530	# Anno Inventionis; 530 BCE
 mktconvert=1118 # Anno Ordinis; 1118 CE
@@ -367,6 +368,7 @@ ind="$ind$(ordinal $ind)"
 [[ 10#$doy -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
 
 (( masor=year+masconvert ))
+(( mgl=year-mglconvert )); mgl="($mgl)"
 (( yod=year+yodconvert ))
 (( mkt=year-mktconvert ))
 
@@ -402,7 +404,7 @@ fi
 
 [ $JULIANP ]	&& printf "Julian Period         %d\n" $julp
 
-[ $MASORETIC ]	&& printf "Anno Lucis            %d\n" $masor
+[ $MASORETIC ]	&& printf "Anno Lucis %-5s      %d\n" $mgl $masor
 [ $MASORETIC ]	&& printf "Anno R.C.             %d\n" $arc
 [ $MASORETIC ]	&& printf "Anno Inventionis      %d\n" $yod
 [ $MASORETIC ]	&& printf "Anno Ordinis          %4d\n" $mkt
