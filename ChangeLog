@@ -345,3 +345,7 @@ ChangeLog
 2021-12-11 v3.11.5
 	- added MGL calculation
 	- tweaks to 'mob'
+
+2022-01-01 v3.11.6
+	- added calculation of vernal equinox
+	- tweaks

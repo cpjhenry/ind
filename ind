@@ -167,7 +167,7 @@ do
 			done;exit;;
 		D)	while IFS= read -r line; do										# check dependencies
 				[ $(which $line) ] || echo "Install '$line'"
-			done < <(grep "DEP" $0 | sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
+			done < <(grep "DEP" $0 |sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
 		U)	cp -uv $HOME/bin/$(basename $0) $GITREP/						#- update git repository
 			cp -uv $HOME/share/man/man1/$(basename $0).1 $GITREP/
@@ -235,7 +235,7 @@ if [ $(which phases) ]; then
 		[ $month -eq 11 ] && moon="Beaver Moon"; fi
 
 	# Vassa
-	vsday=$(date -d "$(phases $year 7 1 | sed -n 1p) + 1 day" +%d)
+	vsday=$(date -d "$(phases $year 7 1 |sed -n 1p) + 1 day" +%d)
 
 	# Chinese calendar
 	for i in {1..2}; do while IFS= read -r line; do
@@ -279,7 +279,7 @@ if [ $(which phases) ]; then
 		[ "$BLKMOON" ] && dmoo+=$(printf "%s  Black Moon|" $BLKMOON)
 		[ "$BLUMOON" ] && dmoo+=$(printf "%s  Blue Moon |" $BLUMOON)
 
-		echo -en "$dmoo" | sed 's/|/\n/g' | sort
+		echo -en "$dmoo" |sed 's/|/\n/g' |sort
 		exit; fi
 else
 	unset CHINALY
@@ -287,13 +287,12 @@ fi
 
 # Lunar and Lunisolar Calculations
 if [ $VERBOSE ]; then
-	(( golden=year%19+1 ))
 	(( dominical=((year-1)%100%4*2+(year-1)%100%7*4+(year-1)/100%4*2)%7 ))
-
 	if [ $_LY ]; then
-		if [ $dominical -eq 0 ]; then dom="${DOMINI[$dominical]}${DOMINI[6]}"
-		else dom="${DOMINI[$dominical]}${DOMINI[$dominical-1]}"; fi
-	else dom="${DOMINI[$dominical]}"; fi; fi
+		if [ $dominical -eq 0 ]; then dominical="${DOMINI[$dominical]}${DOMINI[6]}"
+		else dominical="${DOMINI[$dominical]}${DOMINI[$dominical-1]}"; fi
+	else dominical="${DOMINI[$dominical]}"; fi
+	(( golden=year%19+1 )); fi
 
 # Julian calendar has 13 day delta for 20th/21st centuries
 if [ $year -lt 1901 ]
@@ -328,7 +327,7 @@ else unset HHPC; fi
 
 # Set Erisian date; DEP ddate
 if [ $ERISIAN ] && [ $(which ddate) ]; then
-	discord=$(ddate +'%{%e %B%} %Y' $day $month $year | sed 's/The //')
+	discord=$(ddate +'%{%e %B%} %Y' $day $month $year |sed 's/The //')
 else unset ERISIAN; fi
 
 # Set Erisian time; DEP klock
@@ -340,7 +339,7 @@ else unset KLOCK; fi
 
 # Hebrew calendar; DEP hebcal
 if [ $HEBREW ] && [ $(which hebcal) ]; then
-	hebdate=$(hebcal -rh $month $day $year | cut -f2)
+	hebdate=$(hebcal -rh $month $day $year |cut -f2)
 else unset HEBREW; fi
 
 # Simple year calculations
@@ -363,9 +362,13 @@ byzind="($byzind$(ordinal $byzind))"
 (( ind=($year+2)%15+1 ))	# Gregorian
 ind="$ind$(ordinal $ind)"
 
-# Masoretic
+# Masoretic; DEP gcal
 (( arc=year+arcconvert ))
-[[ 10#$doy -ge 10#$(date -d "21 March $year" +%j) ]] && (( arc+=1 ))
+if [ $(which gcal) ]; then
+	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' 3 $year |
+	grep -m1 'Equinox' |sed 's/.* - //;s/ =.*//')
+else equinox="$year-03-20"; fi
+[[ 10#$doy -ge 10#$(date -d "$equinox" +%j) ]] && (( arc+=1 ))
 
 (( masor=year+masconvert ))
 (( mgl=year-mglconvert )); mgl="($mgl)"
@@ -389,7 +392,7 @@ if [ $COMMON ]; then
 				   printf "$bold"; printf "CE %d %s %s Ind." $year $rnyear $ind; echo "$bold"
 				   printf "Day %3d / Week %2d %3s " $doy $iwn $tz
 	[ $kloc ]	&& printf "%s" "$kloc"; printf "\n"
-	[ $mjd ]	&& printf "MJD %-7s %s UTC " $mjd $(echo ${utc:5:5} | sed 's/-/\//')
+	[ $mjd ]	&& printf "MJD %-7s %s UTC " $mjd $(echo ${utc:5:5} |sed 's/-/\//')
 	[ $beat ]	&& printf "%s" $beat; [ $mjd ] || [ $beat ] && printf "\n"
 	[ $tjd ]	&& printf "TJD %-7s" $tjd
 	[ $rdi ]	&& printf "RD  %s" $rdi; [ $tjd ] || [ $rdi ] && printf "\n"
@@ -414,12 +417,13 @@ fi
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n" $buddhist
 
 if [ $VERBOSE ]; then
-				   printf "Dominical letter      %s\n" $dom
+				   printf "Dominical letter      %s\n" $dominical
 				   printf "Epact                 %s\n" ${EPACTS[$golden]}
 				   printf "Golden number         %s\n" $golden
-				   printf "Ides                  %d\n" $ides
-				   printf "Julian calendar (%d)  %s\n" $jdelta ${jymd:5:5} | sed 's/-/\//'
+				   printf "Equinox               %s\n" ${equinox:5} |sed 's/-/\//'
+				   printf "Julian calendar (%d)  %s\n" $jdelta ${jymd:5:5} |sed 's/-/\//'
 				   printf "Julian day of year    %03d\n" $jdoy
+				   printf "Ides                  %d\n" $ides
 
 	[ $_LY ]	&& printf "Leap year             %s\n" $year
 	[ "$moon" ]	&& printf "Phase                 %-17s\n" "$moon"
