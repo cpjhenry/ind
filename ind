@@ -362,12 +362,11 @@ byzind="($byzind$(ordinal $byzind))"
 (( ind=($year+2)%15+1 ))	# Gregorian
 ind="$ind$(ordinal $ind)"
 
-# Masoretic; DEP gcal
+# Masoretic
 (( arc=year+arcconvert ))
-if [ $(which gcal) ]; then
-	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' 3 $year |
-	grep -m1 'Equinox' |sed 's/.* - //;s/ =.*//')
-else equinox="$year-03-20"; fi
+equinox="$year-03-20" # Equinox is 3/20 from 2021 to 2038
+#[ $(which gcal) ] && equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' 3 $year |
+#	grep -m1 'Equinox' |sed 's/.* - //;s/ =.*//')
 [[ 10#$doy -ge 10#$(date -d "$equinox" +%j) ]] && (( arc+=1 ))
 
 (( masor=year+masconvert ))
