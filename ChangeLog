@@ -292,7 +292,7 @@ ChangeLog
 
 2021-04-24 v3.10.10
 	- new observance
-	- add "close to" code hook to mob
+	- add "close to" code hook to 'mob'
 
 2021-07-16 v3.10.12
 	- added more Masoretic-style dates
@@ -347,5 +347,8 @@ ChangeLog
 	- tweaks to 'mob'
 
 2022-01-01 v3.11.6
-	- experimented with calculation of vernal equinox
+	- added calculation of vernal equinox
+	- align ARC to vernal equinox
 	- tweaks
+	- base-10 bug swats
+	- 'mob' now exits cleanly if code hook not present

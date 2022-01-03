@@ -9,6 +9,7 @@
 GITREP=$HOME/src/ind
 HOLTMP=/tmp/ind_holidays
 MTZ=EST
+TOF="-4"
 
 FULLCE=
 COMMON=true
@@ -362,11 +363,11 @@ byzind="($byzind$(ordinal $byzind))"
 (( ind=($year+2)%15+1 ))	# Gregorian
 ind="$ind$(ordinal $ind)"
 
-# Masoretic
+# Masoretic; DEP gcal
 (( arc=year+arcconvert ))
-equinox="$year-03-20" # Equinox is 3/20 from 2021 to 2038
-#[ $(which gcal) ] && equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' 3 $year |
-#	grep -m1 'Equinox' |sed 's/.* - //;s/ =.*//')
+[ $(which gcal) ] && 
+	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' --time-offset=$TOF: 3 $year|
+	grep -m1 'Equinox' |sed 's/.* - //;s/ =.*//') || equinox="$year-03-20"
 [[ 10#$doy -ge 10#$(date -d "$equinox" +%j) ]] && (( arc+=1 ))
 
 (( masor=year+masconvert ))
@@ -428,7 +429,7 @@ if [ $VERBOSE ]; then
 	[ "$moon" ]	&& printf "Phase                 %-17s\n" "$moon"
 	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" $(echo ${cny:5:5}|sed 's/-/\//') ${ZODIAC[10#$yearof]}
-	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $vsday
+	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $((10#$vsday))
 fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit

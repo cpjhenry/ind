@@ -85,4 +85,4 @@ if [ $ADVENT ]; then
 	printf "%s*\tAdvent\n" "$(date -d "$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
 fi
 
-[ $PROXIM ] && cond_source $HOME/bin/close
+[ $PROXIM ] && cond_source $HOME/bin/close || exit 0
