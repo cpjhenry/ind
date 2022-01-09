@@ -352,3 +352,5 @@ ChangeLog
 	- tweaks
 	- base-10 bug swats
 	- 'mob' now exits cleanly if code hook not present
+	- 'GNU sed' required warning
+	- (control character sequences are not POSIX)

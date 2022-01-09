@@ -5,6 +5,7 @@
 # See ChangeLog for changes.
 
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$(basename $0): 'coreutils' is required." && exit 1
+[ $(uname) = 'Darwin' ] && [ ! $(which gsed)  ] && echo "$(basename $0): 'GNU sed' is required." && exit 1
 
 GITREP=$HOME/src/ind
 HOLTMP=/tmp/ind_holidays
