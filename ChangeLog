@@ -377,3 +377,4 @@ ChangeLog
 	11/11	Martinmas
 
 	- tweaks and documentation updates
+	- automate calculation of standard timezone and time offset

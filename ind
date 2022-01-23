@@ -9,8 +9,6 @@
 
 GITREP=$HOME/src/ind
 HOLTMP=/tmp/ind_holidays
-MTZ=EST
-TOF="-4"
 
 FULLCE=
 COMMON=true
@@ -122,7 +120,7 @@ testall() {
 	[ $VERBOSE ]	&& t_var=true;
 }
 
-setdate today # set today's date
+setdate today			# set today's date
 
 while getopts ":anfcpekjrzuxiqby:m:d:hHFvlCoODU?" OPTION
 do
@@ -205,7 +203,7 @@ doy=$(date -d "$ymd 00:18" +%-j)	# day of year
 iwn=$(date -d "$ymd 00:18" +%-V)	# ISO week no
 
 [ "$tz" != "LMT" ] && utc=$(date -ud "$ymd $hms $tz" "+%F %T") ||
-					  utc=$(date -ud "$ymd $hms $MTZ" "+%F %T")
+					  utc=$(date -ud "$ymd $hms $(date -d01-01 +%Z)" "+%F %T")
 
 # Moons; DEP phases
 if [ $(which phases) ]; then
@@ -367,7 +365,8 @@ ind="$ind$(ordinal $ind)"
 # Masoretic; DEP gcal
 (( arc=year+arcconvert ))
 [ $(which gcal) ] && 
-	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' --time-offset=$TOF: 3 $year|
+	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' \
+	--time-offset=$(date -d$year-03-20 +%:z |cut -d":" -f1): 3 $year |
 	grep -m1 'Equinox' |sed 's/.* - //;s/ =.*//') || equinox="$year-03-20"
 [[ 10#$doy -ge 10#$(date -d "$equinox" +%j) ]] && (( arc+=1 ))
 
