@@ -354,3 +354,26 @@ ChangeLog
 	- 'mob' now exits cleanly if code hook not present
 	- 'GNU sed' required warning
 	- (control character sequences are not POSIX)
+
+2022-01-23 v3.11.7
+	- moved quarter / cross-quarter days to `calendar`. Config as follows:
+	
+	//  Quarter Days
+	03/25	Lady Day
+	06/24	Midsummer Day
+	09/29	Michaelmas
+	12/25	Quarter Day
+
+	//  Cross Quarter Days
+	02/02	Candlemas
+	05/01	May Day
+	08/01	Lammas
+	11/01	All Saints'
+
+	//  Scottish Term Days
+		//	Candlemas
+	05/15	Whitsun
+		//	Lammas
+	11/11	Martinmas
+
+	- tweaks and documentation updates

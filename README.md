@@ -12,7 +12,7 @@ tradition. Astronomical dating includes current Julian period, Modified
 Julian Date, and Rata Die.
 
 Other obscure and idiosyncratic dating system support, including unusual
-holidays, has also been added. Please see the man file for full list.
+observances, has also been added. Please see the man file for full list.
 
 ## History
 This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an

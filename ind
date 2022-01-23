@@ -435,6 +435,12 @@ fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
 
+# Non-lunar observances
+[ $day -eq $ides ] && dhol+="Ides of ${MONTHL[10#$month]}|"
+[ $month -eq 5 -a $day -eq 23 ]  && dhol+="Eris Day|"
+[ $month -eq 5 -a $day -eq 25 ]  && dhol+="Towel Day|"
+[ $month -eq 7 -a $day -eq 5 ]	 && dhol+="X-Day|"
+
 # Buddhist observances
 if [ "$moon" ]; then
 	moon="$moon Uposatha|"
@@ -446,29 +452,7 @@ if [ "$moon" ]; then
 	dhol+=$moon; fi
 [ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+="Vassa|"
 
-# Fixed non-lunar holidays
-[ $day -eq $ides ]				 && dhol+="Ides of ${MONTHL[10#$month]}|"
-[ $month -eq 5 -a $day -eq 23 ]  && dhol+="Eris Day|"
-[ $month -eq 5 -a $day -eq 25 ]  && dhol+="Towel Day|"
-[ $month -eq 7 -a $day -eq 5 ]	 && dhol+="X-Day|"
-
-# Quarter Days
-[ $month -eq 3 -a $day -eq 25 ]	 && dhol+="Lady Day|"
-[ $month -eq 6 -a $day -eq 24 ]  && dhol+="Midsummer Day|"
-[ $month -eq 9 -a $day -eq 29 ]	 && dhol+="Michaelmas|"
-[ $month -eq 12 -a $day -eq 25 ] && dhol+="Quarter Day|"
-
-# Cross Quarter Days
-[ $month -eq 2 -a $day -eq 2 ]   && dhol+="Candlemas|"
-[ $month -eq 5 -a $day -eq 1 ]   && dhol+="May Day|"
-[ $month -eq 8 -a $day -eq 1 ]	 && dhol+="Lammas|"
-[ $month -eq 11 -a $day -eq 1 ]	 && dhol+="All Saints'|"
-
-# Scottish Term Days
-[ $month -eq 5 -a $day -eq 15 ]  && dhol+="Whitsun|"
-[ $month -eq 11 -a $day -eq 11 ] && dhol+="Martinmas|"
-
-# Chinese festivals
+# Chinese observances
 [ $cny ] && [ $ymd = $cny ] && dhol+="Year of the ${ZODIAC[10#$yearof]}|"
 
 # Display results
