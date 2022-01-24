@@ -197,12 +197,12 @@ month=$(printf "%02d" $((10#$month)))
 day=$(printf "%02d" $((10#$day)))
 ymd="$year-$month-$day"
 
-tz=$( date -d "$ymd 00:18" +%Z)		# timezone
+ltz=$(date -d "$ymd 00:18" +%Z)		# timezone
 dow=$(date -d "$ymd 00:18" +%w) 	# day of week
 doy=$(date -d "$ymd 00:18" +%-j)	# day of year
 iwn=$(date -d "$ymd 00:18" +%-V)	# ISO week no
 
-[ "$tz" != "LMT" ] && utc=$(date -ud "$ymd $hms $tz" "+%F %T") ||
+[ "$ltz" != "LMT" ] && utc=$(date -ud "$ymd $hms $ltz" "+%F %T") ||
 					  utc=$(date -ud "$ymd $hms $(date -d01/01 +%Z)" "+%F %T")
 
 # Moons; DEP phases
@@ -390,7 +390,7 @@ case 1 in
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
 if [ $COMMON ]; then
 				   printf "$bold"; printf "CE %d %s %s Ind." $year $rnyear $ind; echo "$bold"
-				   printf "Day %3d / Week %2d %3s " $doy $iwn $tz
+				   printf "Day %3d / Week %2d %3s " $doy $iwn $ltz
 	[ $kloc ]	&& printf "%s" "$kloc"; printf "\n"
 	[ $mjd ]	&& printf "MJD %-7s %s UTC " $mjd $(echo ${utc:5:5} |sed 's/-/\//')
 	[ $beat ]	&& printf "%s" $beat; [ $mjd ] || [ $beat ] && printf "\n"
