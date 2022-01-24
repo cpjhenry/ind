@@ -203,7 +203,7 @@ doy=$(date -d "$ymd 00:18" +%-j)	# day of year
 iwn=$(date -d "$ymd 00:18" +%-V)	# ISO week no
 
 [ "$tz" != "LMT" ] && utc=$(date -ud "$ymd $hms $tz" "+%F %T") ||
-					  utc=$(date -ud "$ymd $hms $(date -d01-01 +%Z)" "+%F %T")
+					  utc=$(date -ud "$ymd $hms $(date -d01/01 +%Z)" "+%F %T")
 
 # Moons; DEP phases
 if [ $(which phases) ]; then
