@@ -29,10 +29,10 @@ ChangeLog
 	- changed moon phase to array
 
 2015-05-20	v1.9
-	- added more sophisticated Hebrew date calculations; tidied up `remind` calls
+	- added more sophisticated Hebrew date calculations; tidied up 'remind' calls
 
 2015-05-21	v2.0
-	- added relative date specification to -d option (see: `gdate` for format)
+	- added relative date specification to -d option (see: 'gdate' for format)
 
 2015-07-26	v2.1
 	- added blue / black moon calculations
@@ -56,7 +56,7 @@ ChangeLog
 	- added full vs part CE display
 	- added ordinal support
 	- added additional common era holidays
-	- moved self-documentation to `getusage`
+	- moved self-documentation to 'getusage'
 	- added support for Ides
 
 2018-08-07	v3.0
@@ -240,7 +240,7 @@ ChangeLog
 2020-10-25 v3.10
 	- remove idiosyncratic events
 	- remove Easter-related calculations. As with Hebrew holidays, there are far better tools.
-	> One such tool is `calendar`. Config as follows:
+	> One such tool is 'calendar'. Config as follows:
 	
 	Easter-47	Carnival
 	Easter-46	Lent
@@ -275,7 +275,7 @@ ChangeLog
 
 2021-01-16 v3.10.6
 	- remove Chinese festivals (save CNY & 'year of')
-	> use `ccalendar` (instead of `calendar`) https://github.com/cpjhenry/ccalendar
+	> use 'ccalendar' (instead of 'calendar') https://github.com/cpjhenry/ccalendar
 
 2021-02-07 v3.10.7
 	- move lunar observance diagnostics to verbose mode
@@ -356,7 +356,7 @@ ChangeLog
 	- (control character sequences are not POSIX)
 
 2022-01-23 v3.11.7
-	- moved quarter / cross-quarter days to `calendar`. Config as follows:
+	- moved quarter / cross-quarter days to 'calendar'. Config as follows:
 	
 	//  Quarter Days
 	03/25	Lady Day
@@ -378,3 +378,6 @@ ChangeLog
 
 	- tweaks and documentation updates
 	- automate calculation of standard timezone and time offset
+
+2022-01-29 v3.11.8
+	- tweaks and optimizations to 'mob'
