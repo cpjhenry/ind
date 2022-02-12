@@ -382,3 +382,7 @@ ChangeLog
 2022-01-29 v3.11.8
 	- tweaks and optimizations to 'mob'
 	- update documentation
+
+2022-02-12 v3.11.9
+	- fixed EWT
+	- tweaked JEN

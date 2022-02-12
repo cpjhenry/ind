@@ -202,6 +202,7 @@ dow=$(date -d "$ymd 00:18" +%w) 	# day of week
 doy=$(date -d "$ymd 00:18" +%-j)	# day of year
 iwn=$(date -d "$ymd 00:18" +%-V)	# ISO week no
 
+[ "$ltz" = "EWT" ]	&& ltz="EDT"	# 9 Feb 1942 to 30 Sep 1945
 [ "$ltz" != "LMT" ] && utc=$(date -ud "$ymd $hms $ltz" "+%F %T") ||
 					  utc=$(date -ud "$ymd $hms $(date -d01/01 +%Z)" "+%F %T")
 
@@ -344,7 +345,6 @@ else unset HEBREW; fi
 
 # Simple year calculations
 (( julp=year+jupconvert ))
-(( jiy=year+jiyconvert ))
 (( buddhist=year+budconvert ))
 
 # Roman & Byzantine calendars are aligned to Julian calendar
@@ -376,6 +376,7 @@ ind="$ind$(ordinal $ind)"
 (( mkt=year-mktconvert ))
 
 # Japanese Era Name
+(( jiy=year+jiyconvert ))
 case 1 in
 	$(($year>=2019))) ERANUM=5;jenconvert=2019;;
 	$(($year>=1989))) ERANUM=4;jenconvert=1989;;
@@ -384,7 +385,7 @@ case 1 in
 	$(($year>=1868))) ERANUM=1;jenconvert=1868;;
 	$(($year<1868)))  ERANUM=0;;
 	esac
-[ $ERANUM -eq 0 ] && jen="" || jen="($(( jen=year-(jenconvert-1) )))"
+[ $ERANUM -eq 0 ] && jen="" || jen="(${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) )))"
 
 # main()
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
