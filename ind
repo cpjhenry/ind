@@ -59,6 +59,8 @@ ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
+REGNAME=(- "Geo.6" "Eliz.2")
+
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	year=$(date -d "$1 00:18" +%Y)
 	month=$(date -d "$1 00:18" +%0m)
@@ -387,16 +389,30 @@ case 1 in
 	esac
 [ $ERANUM -eq 0 ] && jen="" || jen="(${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) )))"
 
+# Regnal Year
+case 1 in
+	$(($year>=1952)) ) REGNUM=2; REGDATE="Feb 6";  REGYEAR=1952;;
+	$(($year>=1936)) ) REGNUM=1; REGDATE="Dec 11"; REGYEAR=1936;;
+	$(($year<=1935))  ) REGNUM=0;;
+	esac
+if [ $REGNUM -ge 1 ]; then
+	(( reg=year-REGYEAR ))
+	[[ 10#$doy -ge 10#$(date -d"$REGDATE" +%j) ]] && (( reg+=1 ))
+	[ $reg -le 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
+else reg=""; fi
+
 # main()
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
 if [ $COMMON ]; then
-				   printf "$bold"; printf "CE %d %s %s Ind." $year $rnyear $ind; echo "$bold"
+				   printf "$bold"; printf "CE %d %s %s Ind. %s" $year $rnyear $ind "$reg"; echo "$bold"
 				   printf "Day %3d / Week %2d %3s " $doy $iwn $ltz
 	[ $kloc ]	&& printf "%s" "$kloc"; printf "\n"
 	[ $mjd ]	&& printf "MJD %-7s %s UTC " $mjd $(echo ${utc:5:5} |sed 's/-/\//')
 	[ $beat ]	&& printf "%s" $beat; [ $mjd ] || [ $beat ] && printf "\n"
 	[ $tjd ]	&& printf "TJD %-7s" $tjd
-	[ $rdi ]	&& printf "RD  %s" $rdi; [ $tjd ] || [ $rdi ] && printf "\n"
+	[ $rdi ]	&& printf "RD  %s " $rdi
+	#[ "$reg" ]	&& printf "/ %s" "$reg"; 
+	[ $tjd ] || [ $rdi ] || $reg && printf "\n"
 fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
