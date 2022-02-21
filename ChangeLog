@@ -384,6 +384,8 @@ ChangeLog
 	- update documentation
 
 2022-02-12 v3.11.9
-	- fixed EWT
+	- fixed EWT (Eastern War Time)
 	- tweaked JEN
 	- added Commonwealth regnal year
+	- toggle holiday display (default: off)
+	- tweaked 'mob'

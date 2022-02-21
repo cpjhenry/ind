@@ -91,7 +91,7 @@ fi
 if [ $PROXIM ]; then [ $outp ] && echo
 
 	# Black Friday (&c.)
-	hold="Nov $(ncal -m 11 |awk '/^Th/{print $5}')"
+	hold="Nov $(ncal -hm 11 |awk '/^Th/{print $5}')"
 	printf "%s*\tBlack Friday\n"	"$(date -d "$hold +1 day"  +"$DATEFMT")"
 	printf "%s*\tCyber Monday\n"	"$(date -d "$hold +4 days" +"$DATEFMT")"
 	printf "%s*\tGiving Tuesday\n" 	"$(date -d "$hold +5 days" +"$DATEFMT")"

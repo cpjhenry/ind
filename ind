@@ -28,7 +28,7 @@ JAPANIY=
 CHINALY=
 BUDDHIST=
 
-HOLDISP=true
+HOLDISP=
 
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
@@ -59,7 +59,9 @@ ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
-REGNAME=(- "Geo.6" "Eliz.2")
+REGNAME=(- "Edw 7" "Geo 5" "Edw 8" "Geo 6" "Eliz 2")
+REGDATE=(- "01/22" "05/06" "01/20" "12/11" "02/06")
+REGYEAR=(- "1901"  "1910"  "1936"  "1936"  "1952")
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	year=$(date -d "$1 00:18" +%Y)
@@ -153,7 +155,7 @@ do
 		d)	day=$OPTARG														# set day
 			[ "$(grep -E "[[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
 
-		h)	unset HOLDISP;;													# holiday display
+		h)	[ $HOLDISP ]	&& unset HOLDISP	|| HOLDISP=true;;			# holiday display
 		F)	[ $HOLCACHE ]	&& unset HOLCACHE	|| HOLCACHE=true;;			# holiday cache
 		H)	bold="**"; italics="_";;										# highlight
 
@@ -161,7 +163,7 @@ do
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 		o)	for d in {01..31}; do											#- Observance diagnostics
-				ind -c -y$year -m$month -d$d |
+				ind -ch -y$year -m$month -d$d |
 				sed "/^ind:/d;s/^/$month\/$d\t/;s/^0//;s/- //"
 			done;exit;;
 		O)	for m in {01..12}; do
@@ -391,15 +393,21 @@ case 1 in
 
 # Regnal Year
 case 1 in
-	$(($year>=1952)) ) REGNUM=2; REGDATE="Feb 6";  REGYEAR=1952;;
-	$(($year>=1936)) ) REGNUM=1; REGDATE="Dec 11"; REGYEAR=1936;;
-	$(($year<=1935))  ) REGNUM=0;;
+	$(($year>=1952)) ) REGNUM=5;;
+	$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=4 || REGNUM=3;;
+	$(($year>=1910)) ) REGNUM=2;;
+	$(($year>=1901)) ) REGNUM=1;;
+	*) REGNUM=0;;
 	esac
-if [ $REGNUM -ge 1 ]; then
-	(( reg=year-REGYEAR ))
-	[[ 10#$doy -ge 10#$(date -d"$REGDATE" +%j) ]] && (( reg+=1 ))
+
+if [ $COMMON ]; then
+	[ $REGNUM -eq 0 ] && REGDATE="$month/$day" && REGYEAR=$year
+	regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
+	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] && (( REGNUM-=1 ))
+	[ $REGNUM -gt 0 ] && (( reg=$year-${REGYEAR[REGNUM]} )) || reg=0
+	[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
 	[ $reg -le 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
-else reg=""; fi
+	fi
 
 # main()
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
@@ -413,7 +421,7 @@ if [ $COMMON ]; then
 	[ $rdi ]	&& printf "RD  %s " $rdi
 	#[ "$reg" ]	&& printf "/ %s" "$reg"; 
 	[ $tjd ] || [ $rdi ] || $reg && printf "\n"
-fi
+	fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}" ${hhdate:(-4)}
 [ $ERISIAN ]	&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
@@ -447,7 +455,7 @@ if [ $VERBOSE ]; then
 	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" $(echo ${cny:5:5}|sed 's/-/\//') ${ZODIAC[10#$yearof]}
 	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $((10#$vsday))
-fi
+	fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
 
