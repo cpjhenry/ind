@@ -238,8 +238,8 @@ ChangeLog
 	- tweaks
 
 2020-10-25 v3.10
-	- remove idiosyncratic events
-	- remove Easter-related calculations. As with Hebrew holidays, there are far better tools.
+	- removed idiosyncratic events
+	- removed Easter-related calculations. As with Hebrew holidays, there are far better tools.
 	> One such tool is 'calendar'. Config as follows:
 	
 	Easter-47	Carnival
@@ -251,8 +251,8 @@ ChangeLog
 	Paskha+0	Orthodox Easter
 
 	- other related tweaking
-	- remove Hebrew holidays
-	- add 'Advent' switch
+	- removed Hebrew holidays
+	- added 'Advent' switch
 	- offload lunar diagnostics
 
 2020-10-29 v3.10.1
@@ -264,7 +264,7 @@ ChangeLog
 
 2020-11-22 v3.10.3
 	- documentation tweaks
-	- remove Advent (move to helper app)
+	- removed Advent (move to helper app)
 
 2021-01-05 v3.10.4
 	- added 'mob' (movable observances) script to repository
@@ -278,11 +278,11 @@ ChangeLog
 	> use 'ccalendar' (instead of 'calendar') https://github.com/cpjhenry/ccalendar
 
 2021-02-07 v3.10.7
-	- move lunar observance diagnostics to verbose mode
+	- moved lunar observance diagnostics to verbose mode
 	- re-add lunar phase diagnostics to main code
 
 2021-02-13 v3.10.8
-	- add "-o", monthly observance diagnostics 
+	- added "-o", monthly observance diagnostics 
 	- lunar tweaks and additions
 	- code optimizations
 	- documentation tweaks
@@ -325,7 +325,7 @@ ChangeLog
 
 2021-09-30 v3.11.1
 	- documentation updates
-	- swat bugs
+	- bug fixes
 	- additional tweaks
 
 2021-10-16 v3.11.2
@@ -389,3 +389,8 @@ ChangeLog
 	- added Commonwealth regnal year
 	- toggle holiday display (default: off)
 	- tweaked 'mob'
+
+2022-02-21 v3.11.10
+	- added French Revolutionary calendar
+	- fixed proleptic regnal year bug
+	- tweaks
