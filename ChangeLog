@@ -392,5 +392,5 @@ ChangeLog
 
 2022-02-21 v3.11.10
 	- added French Revolutionary calendar
-	- fixed proleptic regnal year bug
+	- fixed proleptic regnal year
 	- tweaks
