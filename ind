@@ -61,9 +61,9 @@ ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
-REGNAME=(- "Edw 7" "Geo 5" "Edw 8" "Geo 6" "Eliz 2")
-REGDATE=(- "01/22" "05/06" "01/20" "12/11" "02/06")
-REGYEAR=(- "1901"  "1910"  "1936"  "1936"  "1952")
+REGNAME=(- "Geo 3"	"Geo 4" "Wm 4"	"Vict"	"Edw 7"	"Geo 5"	"Edw 8"	"Geo 6" "Eliz 2")
+REGDATE=(- "10/25"	"01/29"	"06/26" "06/20" "01/22"	"05/06"	"01/20"	"12/11"	"02/06")
+REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952")
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	year=$(date -d "$1 00:18" +%Y)
@@ -208,9 +208,13 @@ dow=$(date -d "$ymd 00:18" +%w) 	# day of week
 doy=$(date -d "$ymd 00:18" +%-j)	# day of year
 iwn=$(date -d "$ymd 00:18" +%-V)	# ISO week no
 
-[ "$ltz" = "EWT" ]	&& ltz="EDT"	# 9 Feb 1942 to 30 Sep 1945
-[ "$ltz" != "LMT" ] && utc=$(date -ud "$ymd $hms $ltz" "+%F %T") ||
-					  utc=$(date -ud "$ymd $hms $(date -d01/01 +%Z)" "+%F %T")
+if [ "$ltz" = "EWT" ]; then			# 9 Feb 1942 to 30 Sep 1945
+	utc=$(date -ud "$ymd $hms $(date -d06/01 +%Z)" "+%F %T")
+elif [ "$ltz" = "LMT" ]; then		# till 31 Dec 1894
+	utc=$(date -ud "$ymd $hms $(date -d01/01 +%Z)" "+%F %T")
+else
+	utc=$(date -ud "$ymd $hms $ltz" "+%F %T")
+fi
 
 # Moons; DEP phases
 if [ $(which phases) ]; then
@@ -398,12 +402,17 @@ case 1 in
 	esac
 [ $ERANUM -eq 0 ] && jen="" || jen="(${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) )))"
 
-# Regnal Year
+# Regnal Year (United Kingdom, from 1 Jan 1801)
 case 1 in
-	$(($year>=1952)) ) REGNUM=5;;
-	$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=4 || REGNUM=3;;
-	$(($year>=1910)) ) REGNUM=2;;
-	$(($year>=1901)) ) REGNUM=1;;
+	$(($year>=1952)) ) REGNUM=9;;
+	$(($year>=1937)) ) REGNUM=8;;
+	$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=8 || REGNUM=7;;
+	$(($year>=1910)) ) REGNUM=6;;
+	$(($year>=1901)) ) REGNUM=5;;
+	$(($year>=1837)) ) REGNUM=4;;
+	$(($year>=1830)) ) REGNUM=3;;
+	$(($year>=1820)) ) REGNUM=2;;
+	$(($year>=1801)) ) REGNUM=1;;
 	*) REGNUM=0;;
 	esac
 
@@ -423,14 +432,17 @@ if [ $COMMON ]; then
 [ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
 if [ $COMMON ]; then
 				   printf "$bold"; printf "CE %d %s %s Ind." $year $rnyear $ind; echo "$bold"
-				   printf "Day %3d / Week %2d %3s" $doy $iwn $ltz
-	[ $kloc ]	&& printf "%6s" "$kloc";	[ $kloc ]				&& printf "\n"
-	[ $mjd ]	&& printf "MJD %-7s %s UTC" $mjd $(echo ${utc:5:5} |sed 's/-/\//')
-	[ $beat ]	&& printf "%5s" "$beat"; 	[ $mjd ] || [ $beat ]	&& printf "\n"
-	[ $tjd ]	&& printf "TJD %-8s" $tjd
-	[ $rdi ]	&& printf "RD  %-7s" $rdi;	[ $tjd ] || [ $rdi ]	&& printf "\n"
-	[ "$reg" ]	&& printf "%-12s" "$reg"
-	[ $frc ]	&& printf "FRC %-9s" $frc;	[ "$reg" ] || [ $frc ]	&& printf "\n"
+				   printf "Day %d Week %d %3s" $doy $iwn $ltz
+	[ $kloc ]	&& printf " %s" "$kloc"
+	[ $beat ]	&& printf " %s" "$beat"; printf "\n"
+
+	[ $frc ]	&& printf "FRC %-10s" $frc
+	[ "$reg" ]	&& printf "%-12s" "$reg"; [ $frc ] || [ "$reg" ] && printf "\n"
+
+	[ $mjd ]	&& printf "MJD %-9s %s UTC\n" $mjd $(echo ${utc:5:5} |sed 's/-/\//')
+
+	[ $tjd ]	&& printf "TJD %-10s" $tjd
+	[ $rdi ]	&& printf "R.D %-10s" $rdi;	[ $tjd ] || [ $rdi ] && printf "\n"
 	fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n"	"${hhdate::${#hhdate}-5}"	${hhdate:(-4)}
@@ -461,7 +473,7 @@ if [ $VERBOSE ]; then
 				   printf "Ides                  %d\n"	$ides
 
 	[ $_LY ]	&& printf "Leap year             %s\n"	$year
-	[ "$moon" ]	&& printf "Phase                 %-17s\n" "$moon"
+	[ "$moon" ]	&& printf "Phase                 %s\n" "$moon"
 	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" $(echo ${cny:5:5}|sed 's/-/\//') ${ZODIAC[10#$yearof]}
 	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $((10#$vsday))
