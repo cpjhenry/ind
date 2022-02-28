@@ -88,18 +88,19 @@ if [ $YAHR ]; then [ $outp ] && echo ; outp=true
 fi
 
 # Dates calculated by their proximity to another date
-xmasdow=$(date -d "$year-12-25" +%w)
-xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
-advent="$(date -d"$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
-dpr="$(date -d"$advent $year -11 days" +"$DATEFMT")"
-
-if [ $PROXIM ]; then [ $outp ] && echo
+if [ $PROXIM ]; then [ $outp ] && echo; outp=true
 	# Black Friday (&c.)
 	hold="Nov $(ncal -hm 11 |awk '/^Th/{print $5}')"
 	printf "%s*\tBlack Friday\n"	"$(date -d "$hold +1 day"  +"$DATEFMT")"
 	printf "%s*\tCyber Monday\n"	"$(date -d "$hold +4 days" +"$DATEFMT")"
 	printf "%s*\tGiving Tuesday\n" 	"$(date -d "$hold +5 days" +"$DATEFMT")"
+fi
+if [ $ADVENT ]; then [ $outp ] && echo
+	xmasdow=$(date -d "$year-12-25" +%w)
+	xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
+	advent="$(date -d"$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
+	dpr="$(date -d"$advent $year -11 days" +"$DATEFMT")"
 
 	printf "%s*\tDay of Prayer & Repentance\n" "$dpr"
+ 	printf "%s*\tAdvent\n" "$advent"
 fi
-[ $ADVENT ] && printf "%s*\tAdvent\n" "$advent"
