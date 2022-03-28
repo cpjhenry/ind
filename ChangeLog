@@ -394,3 +394,9 @@ ChangeLog
 	- added French Revolutionary calendar
 	- fixed proleptic and transitional regnal year
 	- tweaks
+	- tweak documentation
+
+2022-03-27 v3.11.11
+	- tweaks / error checking
+	- added proleptic halt for Gregorian calendar
+	- added auto display of O.S. dates for 1752 and earlier

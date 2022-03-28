@@ -196,6 +196,14 @@ is_leap_year $year
 [   $_LY ] && [ $month -eq 2 -a $day -gt 29 ] && NWR
 [ ! $_LY ] && [ $month -eq 2 -a $day -gt 28 ] && NWR
 
+if [ $year -lt 1583 ]; then ybg=true
+	if [ $year -eq 1582 ]; then
+		[ $month -eq 10 ] && [ $day -ge 15 ] && unset ybg
+		[ $month -gt 10 ] && unset ybg; fi
+	if [ $ybg ]; then
+		echo "$(basename $0): Proleptic dates prior to the start of the Gregorian calendar are disabled."
+		exit; fi; fi
+
 tod=$(date +%F)
 hms=$(date +%T)
 
@@ -307,10 +315,13 @@ if [ $VERBOSE ]; then
 
 # Julian calendar has 13 day delta for 20th/21st centuries
 if [ $year -lt 1901 ]
-	then jdelta=12; [ $month -gt 2 -a $year -eq 1900 ] && jdelta=13
-	else jdelta=13; fi
-[ $year -eq 1895 -a $month -eq 1 -a $day -eq 1 ] && mymd="1895-01-02 - 1 day" || mymd=$ymd
+	then jdelta=12; [ $month -gt 2 -a $year -eq 1900 ] && ((jdelta+=1)); else jdelta=13; fi
+if [ $year -lt 1801 ]
+	then jdelta=11; [ $month -gt 2 -a $year -eq 1800 ] && ((jdelta+=1)); fi
+if [ $year -lt 1701 ]
+	then jdelta=10; [ $month -gt 2 -a $year -eq 1700 ] && ((jdelta+=1)); fi
 
+[ $year -eq 1895 -a $month -eq 1 -a $day -eq 1 ] && mymd="1895-01-02 - 1 day" || mymd=$ymd
 jymd=$(date -d "$mymd - $jdelta days" +%F)
 jdoy=$(date -d "$jymd" +%-j)
 [ $month -eq 1 -a $day -le $jdelta ] && jdoy=0
@@ -321,7 +332,7 @@ jdoy=$(date -d "$jymd" +%-j)
 # Set Roman numeral year; DEP rnum
 if [ $COMMON ] && [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
-else rnyear="/"; fi
+else unset rnyear; fi
 
 # Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
 if [ $COMMON ] && [ $(which jday) ]; then
@@ -382,11 +393,11 @@ ind="$ind$(ordinal $ind)"
 [ $(which gcal) ] && 
 	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' \
 	--time-offset=$(date -d$year-03-20 +%:z |cut -d":" -f1): 3 $year |
-	grep -m1 'Equinox' |sed 's/.* - //;s/ =.*//') || equinox="$year-03-20"
+	grep 'Equinox' |sed 's/.* - //;s/ =.*//') || equinox="$year-03-20"
 [[ 10#$doy -ge 10#$(date -d "$equinox" +%j) ]] && (( arc+=1 ))
 
-(( masor=year+masconvert ))
-(( mgl=year-mglconvert )); mgl="($mgl)"
+(( mas=year+masconvert ))
+(( mgl=year-mglconvert )); [[ $mgl -gt 0 ]] && mgl="($mgl)" || unset mgl
 (( yod=year+yodconvert ))
 (( mkt=year-mktconvert ))
 
@@ -400,7 +411,7 @@ case 1 in
 	$(($year>=1868))) ERANUM=1;jenconvert=1868;;
 	$(($year<1868)))  ERANUM=0;;
 	esac
-[ $ERANUM -eq 0 ] && jen="" || jen="(${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) )))"
+[ $ERANUM -eq 0 ] && unset jen || jen="(${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) )))"
 
 # Regnal Year (United Kingdom, from 1 Jan 1801)
 case 1 in
@@ -429,20 +440,29 @@ if [ $COMMON ]; then
 	fi
 
 # main()
-[ $FULLCE ]		&& printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year
+if [ $FULLCE ]; then
+	case 1 in
+		$(($year == 1752)) )
+			[ $month -lt 9 ] && yos=true
+			[ $month -eq 9 ] && [ $day -lt 14 ] && yos=true;;
+		$(($year <  1752)) ) yos=true;; esac
+
+	if [ $yos ]; then printf "%s\n" "$(date -d "$jymd" +"%A %-e %B %Y O.S.")"
+	else printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year; fi; fi
+
 if [ $COMMON ]; then
-				   printf "$bold"; printf "CE %d %s %s Ind." $year $rnyear $ind; echo "$bold"
-				   printf "Day %d Week %d %3s" $doy $iwn $ltz
+				   printf "$bold"; printf "CE %d %s %s Ind." $year "$rnyear" "$ind"; echo "$bold"
+	[ ! $yos ]	&& printf "Day %d Week %d %3s" $doy $iwn "$ltz"
 	[ $kloc ]	&& printf " %s" "$kloc"
-	[ $beat ]	&& printf " %s" "$beat"; printf "\n"
+	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos -o "$kloc" -o "$beat" ] && printf "\n"
 
-	[ $frc ]	&& printf "FRC %-10s" $frc
-	[ "$reg" ]	&& printf "%-12s" "$reg"; [ $frc ] || [ "$reg" ] && printf "\n"
+	[ $frc ]	&& printf "FRC %-10s" "$frc"
+	[ "$reg" ]	&& printf "%-12s" "$reg"; [ "$frc" ] || [ "$reg" ] && printf "\n"
 
-	[ $mjd ]	&& printf "MJD %-9s %s UTC\n" $mjd $(echo ${utc:5:5} |sed 's/-/\//')
+	[ $mjd ]	&& printf "MJD %-9s %s UTC\n" "$mjd" "${utc:5:5}" |sed 's/-/\//'
 
-	[ $tjd ]	&& printf "TJD %-10s" $tjd
-	[ $rdi ]	&& printf "R.D %-10s" $rdi;	[ $tjd ] || [ $rdi ] && printf "\n"
+	[ $tjd ]	&& printf "TJD %-10s" "$tjd"
+	[ $rdi ]	&& printf "R.D %-10s" "$rdi"; [ "$tjd" ] || [ "$rdi" ] && printf "\n"
 	fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n"	"${hhdate::${#hhdate}-5}"	${hhdate:(-4)}
@@ -454,7 +474,7 @@ if [ $COMMON ]; then
 
 [ $JULIANP ]	&& printf "Julian Period         %d\n"	$julp
 
-[ $MASORETIC ]	&& printf "Anno Lucis %-5s      %d\n"	$mgl $masor
+[ $MASORETIC ]	&& printf "Anno Lucis %-5s      %d\n"	"$mgl" $mas
 [ $MASORETIC ]	&& printf "Anno R.C.             %d\n"	$arc
 [ $MASORETIC ]	&& printf "Anno Inventionis      %d\n"	$yod
 [ $MASORETIC ]	&& printf "Anno Ordinis          %4d\n"	$mkt
@@ -464,18 +484,18 @@ if [ $COMMON ]; then
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
-				   printf "Dominical letter      %s\n"	$dominical
-				   printf "Epact                 %s\n"	${EPACTS[$golden]}
-				   printf "Golden number         %s\n"	$golden
-				   printf "Equinox               %s\n"	${equinox:5} |sed 's/-/\//'
-				   printf "Julian calendar (%d)  %s\n"	$jdelta ${jymd:5:5} |sed 's/-/\//'
+	[ $_LY ]	&& printf "Leap year             ✓\n"
+				   printf "Dominical letter      %s\n"	"$dominical"
+				   printf "Epact                 %s\n"	"${EPACTS[$golden]}"
+				   printf "Golden number         %s\n"	"$golden"
+				   printf "Equinox               %s\n"	"${equinox:5}" |sed 's/-/\//'
+				   printf "Julian calendar (%d)  %s\n"	$jdelta "${jymd:5:5}" |sed 's/-/\//'
 				   printf "Julian day of year    %03d\n" $jdoy
 				   printf "Ides                  %d\n"	$ides
 
-	[ $_LY ]	&& printf "Leap year             %s\n"	$year
 	[ "$moon" ]	&& printf "Phase                 %s\n" "$moon"
-	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]}"
-	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" $(echo ${cny:5:5}|sed 's/-/\//') ${ZODIAC[10#$yearof]}
+	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]} $jen" |sed 's/(.//;s/)//'
+	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $((10#$vsday))
 	fi
 
