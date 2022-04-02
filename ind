@@ -436,7 +436,7 @@ if [ $COMMON ]; then
 		[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
 	else reg=0; fi
 
-	[ $reg -le 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
+	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
 	fi
 
 # main()
@@ -454,15 +454,15 @@ if [ $COMMON ]; then
 				   printf "$bold"; printf "CE %d %s %s Ind." $year "$rnyear" "$ind"; echo "$bold"
 	[ ! $yos ]	&& printf "Day %d Week %d %3s" $doy $iwn "$ltz"
 	[ $kloc ]	&& printf " %s" "$kloc"
-	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos -o "$kloc" -o "$beat" ] && printf "\n"
+	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos ] && printf "\n"
 
 	[ $frc ]	&& printf "FRC %-10s" "$frc"
-	[ "$reg" ]	&& printf "%-12s" "$reg"; [ "$frc" ] || [ "$reg" ] && printf "\n"
+	[ "$reg" ]	&& printf "%-12s" "$reg"; [ "$frc" -o "$reg" ] && printf "\n"
 
 	[ $mjd ]	&& printf "MJD %-9s %s UTC\n" "$mjd" "${utc:5:5}" |sed 's/-/\//'
 
 	[ $tjd ]	&& printf "TJD %-10s" "$tjd"
-	[ $rdi ]	&& printf "R.D %-10s" "$rdi"; [ "$tjd" ] || [ "$rdi" ] && printf "\n"
+	[ $rdi ]	&& printf "R.D %-10s" "$rdi"; [ "$tjd" -o "$rdi" ] && printf "\n"
 	fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n"	"${hhdate::${#hhdate}-5}"	${hhdate:(-4)}

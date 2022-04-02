@@ -400,3 +400,4 @@ ChangeLog
 	- tweaks / error checking
 	- added proleptic halt for Gregorian calendar
 	- added auto display of O.S. dates for 1752 and earlier
+	- 'klock' tweaks and fixes (no DST on .beats)
