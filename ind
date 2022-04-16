@@ -503,7 +503,7 @@ if [ $VERBOSE ]; then
 				   printf "Ides                  %d\n"	$ides
 
 				   printf "Spring Equinox        %s\n" "${equinox:5}" |sed 's/-/\//'
-	[ "$moon" ]	&& printf "Moon Phase            %s\n" "$moon"
+	[ "$moon" ]	&& printf "Moon phase            %s\n" "$moon"
 	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]} $jen" |sed 's/(.//;s/)//'
 	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $((10#$vsday))
