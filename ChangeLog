@@ -405,3 +405,4 @@ ChangeLog
 2022-04-16 v3.11.12
 	- flag dates which shift mid-year as new
 	- diagnostic display of Easter / Orthodox Easter
+	- tweaks
