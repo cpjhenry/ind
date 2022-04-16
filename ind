@@ -270,7 +270,9 @@ if [ $(which phases) ]; then
 	# Chinese Lunar Year
 	cny=${lunarmonth[1]}	
 	(( cly=year+chiconvert ))
-	[[ 10#$doy -ge 10#$(date -d "$cny" +%j) ]] && (( cly+=1 ))
+	doycmp=$(date -d "$cny" +%j)
+	[[ 10#$doy -ge 10#$doycmp ]] && (( cly+=1 ))
+	[[ 10#$doy -eq 10#$doycmp ]] && newchi="*"
 	(( roc=year-rocconvert )); [ $roc -le 0 ] && roc="" || roc="($roc)"
 
 	# 'year of'
@@ -362,6 +364,8 @@ else unset KLOCK; fi
 # Hebrew calendar; DEP hebcal
 if [ $HEBREW ] && [ $(which hebcal) ]; then
 	hebdate=$(hebcal -rh $month $day $year |cut -f2)
+	doycmp=$(date -d $(hebcal -rx Tishrey 1 $((3761+$year)) |sed -n 1p |cut -f1) +%j)
+	[[ 10#$doy -eq 10#$doycmp ]] && newheb="*"
 else unset HEBREW; fi
 
 # Simple year calculations
@@ -376,9 +380,12 @@ else unset HEBREW; fi
 # Roman & Byzantine calendars are aligned to Julian calendar
 (( rome=year+romconvert ))
 [[ 10#$jdoy -ge 1 ]] && (( rome+=1 )) # January 1st (Day 1)
+[[ 10#$jdoy -eq 1 ]] && newrom="*"
 
 (( byzantine=year+byzconvert ))
-[[ 10#$jdoy -ge 10#$(date -d "1 Sept $year" +%j) ]] && (( byzantine+=1 ))
+doycmp=$(date -d "1 Sept $year" +%j)
+[[ 10#$jdoy -ge 10#$doycmp ]] && (( byzantine+=1 ))
+[[ 10#$jdoy -eq 10#$doycmp ]] && newbyz="*"
 
 # Indictions and ordinals
 (( byzind=$byzantine%15 ))	# Byzantine
@@ -394,7 +401,9 @@ ind="$ind$(ordinal $ind)"
 	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' \
 	--time-offset=$(date -d$year-03-20 +%:z |cut -d":" -f1): 3 $year |
 	grep 'Equinox' |sed 's/.* - //;s/ =.*//') || equinox="$year-03-20"
-[[ 10#$doy -ge 10#$(date -d "$equinox" +%j) ]] && (( arc+=1 ))
+doycmp=$(date -d "$equinox" +%j)
+[[ 10#$doy -ge 10#$doycmp ]] && (( arc+=1 ))
+[[ 10#$doy -eq 10#$doycmp ]] && newarc="*"
 
 (( mas=year+masconvert ))
 (( mgl=year-mglconvert )); [[ $mgl -gt 0 ]] && mgl="($mgl)" || unset mgl
@@ -465,22 +474,22 @@ if [ $COMMON ]; then
 	[ $rdi ]	&& printf "R.D %-10s" "$rdi"; [ "$tjd" -o "$rdi" ] && printf "\n"
 	fi
 
-[ $HHPC ]		&& printf "%-17s H-H %4d\n"	"${hhdate::${#hhdate}-5}"	${hhdate:(-4)}
-[ $ERISIAN ]	&& printf "%-16s YOLD %d\n"	"${discord::${#discord}-5}"	${discord:(-4)}
-[ $HEBREW ]		&& printf "%-18s AM %d\n"	"${hebdate::${#hebdate}-6}"	${hebdate:(-4)}
+[ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
+[ $ERISIAN ]	&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
+[ $HEBREW ]		&& printf "%-18s AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
 
-[ $ROME ]		&& printf "City of Rome       au %d\n"	$rome
-[ $BYZANTINE ]	&& printf "Byzantine %-6s   AM %d\n"	$byzind $byzantine
+[ $ROME ]		&& printf "City of Rome       au %d%s\n" $rome "$newrom"
+[ $BYZANTINE ]	&& printf "Byzantine %-6s   AM %d%s\n"   $byzind $byzantine "$newbyz"
 
 [ $JULIANP ]	&& printf "Julian Period         %d\n"	$julp
 
 [ $MASORETIC ]	&& printf "Anno Lucis %-5s      %d\n"	"$mgl" $mas
-[ $MASORETIC ]	&& printf "Anno R.C.             %d\n"	$arc
+[ $MASORETIC ]	&& printf "Anno R.C.             %d%s\n" $arc "$newarc"
 [ $MASORETIC ]	&& printf "Anno Inventionis      %d\n"	$yod
 [ $MASORETIC ]	&& printf "Anno Ordinis          %4d\n"	$mkt
 
 [ $JAPANIY ]	&& printf "Japanese Imp. %-5s   %d\n"	"$jen" $jiy
-[ $CHINALY ]	&& printf "Chinese Lunar %-5s   %d\n"	"$roc" $cly
+[ $CHINALY ]	&& printf "Chinese Lunar %-5s   %d%s\n"	"$roc" $cly "$newchi"
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
@@ -488,9 +497,10 @@ if [ $VERBOSE ]; then
 				   printf "Dominical letter      %s\n"	"$dominical"
 				   printf "Epact                 %s\n"	"${EPACTS[$golden]}"
 				   printf "Golden number         %s\n"	"$golden"
+				   printf "Easter                %s %s\n" "$(date -d "$(ncal -e)" +%m/%d)"\
+				   											"$(date -d "$(ncal -o)" +%m/%d)"
 				   printf "Equinox               %s\n"	"${equinox:5}" |sed 's/-/\//'
-				   printf "Julian calendar (%d)  %s\n"	$jdelta "${jymd:5:5}" |sed 's/-/\//'
-				   printf "Julian day of year    %03d\n" $jdoy
+				   printf "Julian calendar (%d)  %s (%03d)\n" "$jdelta" "${jymd:5:5}" "$jdoy" |sed 's/-/\//'
 				   printf "Ides                  %d\n"	$ides
 
 	[ "$moon" ]	&& printf "Phase                 %s\n" "$moon"

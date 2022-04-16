@@ -401,3 +401,7 @@ ChangeLog
 	- added proleptic halt for Gregorian calendar
 	- added auto display of O.S. dates for 1752 and earlier
 	- 'klock' tweaks and fixes (no DST on .beats)
+
+2022-04-16 v3.11.12
+	- flag dates which shift mid-year as new
+	- diagnostic display of Easter / Orthodox Easter
