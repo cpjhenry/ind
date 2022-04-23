@@ -9,7 +9,7 @@
 
 #define		PI	3.1415926535897932384626433832795
 #define		RAD	(PI/180.0)
-#define         SMALL_FLOAT	(1e-12)
+#define     SMALL_FLOAT	(1e-12)
 
 typedef struct {
     int year,month,day;
@@ -175,14 +175,17 @@ int main(int argc, char *argv[])
     printf("month: "); fflush(stdout);
     scanf("%d", &m);    
 */
-    if (argc<4) {
-        printf("Too few arguments\n");
+
+    if (argc<3) {
+        printf("phases: <year> <month> [mode]\n");
         exit(1);
     }
 
     y=atoi(argv[1]);
     m=atoi(argv[2]);
-    mode=atoi(argv[3]);
+    if (argc>3) {
+        mode=atoi(argv[3]);
+    } else mode = 4;
 
     d = 1;
     m0 = m;
@@ -205,7 +208,7 @@ int main(int argc, char *argv[])
                     dmax = d;
                     hmax = h;
                 }
-                else if (pmax && mode==1) {
+                else if (pmax && mode==2) {
                     printf("%04d-%02d-%02d %02d:00\n", /* fullest */
                            ymax, mmax, dmax, hmax);
                     pmax = 0;
@@ -222,12 +225,10 @@ int main(int argc, char *argv[])
                            ymin, mmin, dmin, hmin);
                     pmin = 1.0;
                 }
-/*            
-                if (h == 16) {
+                if (h == 16 && mode==4) {
                     printf("%04d/%02d/%02d %02d:00 %5.1f%%   (%d)\n",
                            y, m, d, h, floor(p*1000+0.5)/10, ip);
                 }
-*/
             }
             else begun = 1;
 

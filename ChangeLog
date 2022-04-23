@@ -406,3 +406,11 @@ ChangeLog
 	- flag dates which shift mid-year as new
 	- diagnostic display of Easter / Orthodox Easter
 	- tweaks
+
+2022-04-23 v3.11.13
+	- tweaks
+	- diagnostic display of Lent
+	- verbose mode turns off display of other modes
+	- optimization of lunar diagnostics
+	- aligned 'phases' modes to ind's moon phases
+	- added mode 4 (display all) to 'phases'
