@@ -414,3 +414,4 @@ ChangeLog
 	- optimization of lunar diagnostics
 	- aligned 'phases' modes to ind's moon phases
 	- added mode 4 (display all) to 'phases'
+	- additional date error-checking

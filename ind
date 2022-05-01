@@ -66,10 +66,10 @@ REGDATE=(- "10/25"	"01/29"	"06/26" "06/20" "01/22"	"05/06"	"01/20"	"12/11"	"02/0
 REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952")
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
-	year=$(date -d "$1 00:18" +%Y)
+	year=$(date -d "$1 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
 	month=$(date -d "$1 00:18" +%0m)
 	day=$(date -d "$1 00:18" +%0d)
-}
+	}
 ordinal() {
 	local ord
 	case "$1" in
@@ -82,17 +82,17 @@ ordinal() {
 		31)	ord="st";;
 		*)	ord="th";;
 	esac; echo $ord
-}
+	}
 is_leap_year() { ## USAGE: is_leap_year [year]
 	case ${1:-$(date +%Y)} in
 		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LY=1;;
 		*) unset _LY;;
 	esac
-}
+	}
 NWR() { # Not within range
 	echo "$(basename $0): Y-M-D not within range."
 	exit 1
-}
+	}
 displayall() {
 	COMMON=true;
 	HHPC=true; ERISIAN=true;
@@ -101,7 +101,7 @@ displayall() {
 	JULIANP=true; MASORETIC=true;
 	JAPANIY=true; CHINALY=true;
 	BUDDHIST=true;
-}
+	}
 displaynone() {
 	unset FULLCE; unset COMMON;
 	unset HHPC; unset ERISIAN;
@@ -112,7 +112,7 @@ displaynone() {
 	unset BUDDHIST;
 
 	unset VERBOSE; unset LUNAR; unset CHINESE;
-}
+	}
 testall() {
 	unset t_var
 	[ $FULLCE ]		&& t_var=true; [ $COMMON ]		&& t_var=true;
@@ -124,7 +124,7 @@ testall() {
 	[ $BUDDHIST ]	&& t_var=true;
 
 	[ $VERBOSE ]	&& t_var=true;
-}
+	}
 
 setdate today			# set today's date
 
@@ -491,10 +491,10 @@ if [ $COMMON ]; then
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
+	[ $_LY ]	&& printf "Leap year             ✓\n"
 				   printf "Spring Equinox        %s\n" "${equinox:5}" |sed 's/-/\//'
 	[ "$moon" ]	&& printf "Moon phase            %s\n" "$moon"
 				   printf "Ides                  %d\n"	$ides
-	[ $_LY ]	&& printf "Leap year             ✓\n"
 
 				   printf "Dominical letter      %s\n"	"$dominical"
 				   printf "Epact                 %s\n"	"${EPACTS[$golden]}"
