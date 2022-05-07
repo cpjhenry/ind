@@ -161,7 +161,7 @@ do
 		F)	[ $HOLCACHE ]	&& unset HOLCACHE	|| HOLCACHE=true;;			# holiday cache
 		H)	bold="**"; italics="_";;										# highlight
 
- 		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;;	# verbose
+ 		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 		o)	for d in {01..31}; do											#- Observance diagnostics
@@ -204,12 +204,10 @@ if [ $year -lt 1583 ]; then ybg=true
 		echo "$(basename $0): Proleptic dates prior to the start of the Gregorian calendar are disabled."
 		exit; fi; fi
 
-tod=$(date +%F)
-hms=$(date +%T)
-
 month=$(printf "%02d" $((10#$month)))
 day=$(printf "%02d" $((10#$day)))
 ymd="$year-$month-$day"
+hms=$(date +%T)
 
 ltz=$(date -d "$ymd 00:18" +%Z)		# timezone
 dow=$(date -d "$ymd 00:18" +%w) 	# day of week
@@ -300,9 +298,7 @@ if [ $(which phases) ]; then
 
 		echo -en "$dmoo" |sed 's/|/\n/g' |sort
 		exit; fi
-else
-	unset CHINALY
-fi
+else unset CHINALY; fi
 
 # Lunar and Lunisolar Calculations
 if [ $VERBOSE ]; then
@@ -321,17 +317,43 @@ if [ $year -lt 1801 ]
 if [ $year -lt 1701 ]
 	then jdelta=10; [ $month -gt 2 -a $year -eq 1700 ] && ((jdelta+=1)); fi
 
-[ $year -eq 1895 -a $month -eq 1 -a $day -eq 1 ] && mymd="1895-01-02 - 1 day" || mymd=$ymd
-jymd=$(date -d "$mymd - $jdelta days" +%F)
-jdoy=$(date -d "$jymd" +%-j)
-[ $month -eq 1 -a $day -le $jdelta ] && jdoy=0
+jymd=$(date -d "$ymd - $jdelta days 00:18" +%F)
+jdoy=$(date -d "$jymd 00:18" +%-j)
+jdoycmp=$jdoy; [ $month -eq 1 -a $day -le $jdelta ] && jdoycmp=0
+
+# Roman & Byzantine calendars are aligned to Julian calendar
+(( rome=year+romconvert ))
+[[ 10#$jdoycmp -ge 1 ]] && (( rome+=1 )) # January 1st (Day 1)
+[[ 10#$jdoycmp -eq 1 ]] && newrom="*"
+
+(( byzantine=year+byzconvert ))
+doycmp=$(date -d "1 Sept $year" +%j)
+[[ 10#$jdoycmp -ge 10#$doycmp ]] && (( byzantine+=1 ))
+[[ 10#$jdoycmp -eq 10#$doycmp ]] && newbyz="*"
+
+# Indictions and ordinals
+(( byzind=$byzantine%15 ))	# Byzantine
+[ $byzind -eq "0" ] && byzind=15
+byzind="($byzind$(ordinal $byzind))"
+
+(( ind=($year+2)%15+1 ))	# Gregorian
+ind="$ind$(ordinal $ind)"
 
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
-# Set Roman numeral year; DEP rnum
+# Simple year calculations
+(( julp=year+jupconvert ))
+(( buddhist=year+budconvert ))
+
+# French Revolutionary Calendar
+(( frc=year-frcconvert ))
+[ $frc -le 0 ] && unset frc
+
+# Set Roman numeral years; DEP rnum
 if [ $COMMON ] && [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
+	[ $frc ] && frc=$(rnum $frc)
 else unset rnyear; fi
 
 # Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
@@ -353,7 +375,7 @@ if [ $ERISIAN ] && [ $(which ddate) ]; then
 else unset ERISIAN; fi
 
 # Set Erisian time; DEP klock
-[ $ymd != $tod ] && unset KLOCK
+[ $KLOCK ] && [ $ymd != $(date +%F) ] && unset KLOCK
 if [ $KLOCK ] && [ $(which klock) ]; then
 	kloc=$(klock -d$ymd)
 	beat=$(klock -d$ymd -kb)
@@ -362,36 +384,9 @@ else unset KLOCK; fi
 # Hebrew calendar; DEP hebcal
 if [ $HEBREW ] && [ $(which hebcal) ]; then
 	hebdate=$(hebcal -rh $month $day $year |cut -f2)
-	doycmp=$(date -d $(hebcal -rx Tishrey 1 $((3761+$year)) |sed -n 1p |cut -f1) +%j)
+	doycmp=$(date -d $(hebcal -rh Tishrey 1 $((3761+$year)) |cut -f1) +%j)
 	[[ 10#$doy -eq 10#$doycmp ]] && newheb="*"
 else unset HEBREW; fi
-
-# Simple year calculations
-(( julp=year+jupconvert ))
-(( buddhist=year+budconvert ))
-
-# French Revolutionary Calendar
-(( frc=year-frcconvert ))
-[ $frc -le 0 ] && unset frc
-[ $(which rnum) ] && [ $frc ] && frc=$(rnum $frc)
-
-# Roman & Byzantine calendars are aligned to Julian calendar
-(( rome=year+romconvert ))
-[[ 10#$jdoy -ge 1 ]] && (( rome+=1 )) # January 1st (Day 1)
-[[ 10#$jdoy -eq 1 ]] && newrom="*"
-
-(( byzantine=year+byzconvert ))
-doycmp=$(date -d "1 Sept $year" +%j)
-[[ 10#$jdoy -ge 10#$doycmp ]] && (( byzantine+=1 ))
-[[ 10#$jdoy -eq 10#$doycmp ]] && newbyz="*"
-
-# Indictions and ordinals
-(( byzind=$byzantine%15 ))	# Byzantine
-[ $byzind -eq "0" ] && byzind=15
-byzind="($byzind$(ordinal $byzind))"
-
-(( ind=($year+2)%15+1 ))	# Gregorian
-ind="$ind$(ordinal $ind)"
 
 # Masoretic; DEP gcal
 (( arc=year+arcconvert ))
@@ -491,7 +486,7 @@ if [ $COMMON ]; then
 [ $BUDDHIST ]	&& printf "Buddhist Era          %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
-	[ $_LY ]	&& printf "Leap year             ✓\n"
+	[ $_LY ]	&& printf "Leap year             %d\n"	$year
 				   printf "Spring Equinox        %s\n" "${equinox:5}" |sed 's/-/\//'
 	[ "$moon" ]	&& printf "Moon phase            %s\n" "$moon"
 				   printf "Ides                  %d\n"	$ides
@@ -500,8 +495,7 @@ if [ $VERBOSE ]; then
 				   printf "Epact                 %s\n"	"${EPACTS[$golden]}"
 				   printf "Golden number         %s\n"	"$golden"
 				   printf "Lent                  %s\n"	"$(date -d "$(ncal -d$year-$month -e) -46 days" +%m/%d)"
-				   printf "Easter                %s %s\n"	"$(date -d "$(ncal -d$year-$month -e)" +%m/%d)"\
-															"$(date -d "$(ncal -d$year-$month -o)" +%m/%d)"
+				   printf "Easter                %s\n"	"$(date -d "$(ncal -d$year-$month -e)" +%m/%d)"
 
 				   printf "Julian calendar (%d)  %s Day %03d\n" "$jdelta" "${jymd:5:5}" "$jdoy" |sed 's/-/\//'
 
