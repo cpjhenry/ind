@@ -419,3 +419,10 @@ ChangeLog
 2022-05-07 v3.11.14
 	- tweaks
 	- better Julian date error-checking
+
+2022-05-14 v3.11.15
+	- add display flag for Julian days
+	- remove MJD, preferring TJD
+	- 'klock' defaults as off
+	- tweaks
+	- update documentation

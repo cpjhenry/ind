@@ -12,10 +12,12 @@ HOLTMP=/tmp/ind_holidays
 
 FULLCE=
 COMMON=true
+JULIAND=
 
 HHPC=
 ERISIAN=
-KLOCK=true
+KLOCK=
+
 HEBREW=
 
 ROME=
@@ -94,7 +96,7 @@ NWR() { # Not within range
 	exit 1
 	}
 displayall() {
-	COMMON=true;
+	COMMON=true; JULIAND=true;
 	HHPC=true; ERISIAN=true;
 	KLOCK=true; HEBREW=true;
 	ROME=true; BYZANTINE=true;
@@ -103,7 +105,8 @@ displayall() {
 	BUDDHIST=true;
 	}
 displaynone() {
-	unset FULLCE; unset COMMON;
+	unset FULLCE;
+	unset COMMON; unset JULIAND;
 	unset HHPC; unset ERISIAN;
 	unset KLOCK; unset HEBREW;
 	unset ROME; unset BYZANTINE;
@@ -115,20 +118,15 @@ displaynone() {
 	}
 testall() {
 	unset t_var
-	[ $FULLCE ]		&& t_var=true; [ $COMMON ]		&& t_var=true;
-	[ $HHPC ]		&& t_var=true; [ $ERISIAN ]		&& t_var=true;
-	[ $HEBREW ]		&& t_var=true;
-	[ $ROME ]		&& t_var=true; [ $BYZANTINE ]	&& t_var=true;
-	[ $JULIANP ]	&& t_var=true; [ $MASORETIC ]	&& t_var=true;
-	[ $JAPANIY ]	&& t_var=true; [ $CHINALY ]		&& t_var=true;
-	[ $BUDDHIST ]	&& t_var=true;
-
-	[ $VERBOSE ]	&& t_var=true;
+	[ $FULLCE ]		||
+	[ $COMMON ]		|| [ $JULIAND ]	|| [ $HHPC ]		|| [ $ERISIAN ]	||
+	[ $HEBREW ]		|| [ $ROME ]	|| [ $BYZANTINE ]	|| [ $JULIANP ]	||
+	[ $MASORETIC ]	|| [ $JAPANIY ]	|| [ $CHINALY ]		|| [ $BUDDHIST ] && t_var=true
 	}
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:hHFvlCoODU?" OPTION
+while getopts ":anfcJpekjrzuxiqby:m:d:hHFvlCoODU?" OPTION
 do
 	case $OPTION in
 		a) 	displayall;;													# display all
@@ -136,10 +134,12 @@ do
 
 		f)	[ $FULLCE ]		&& unset FULLCE		|| FULLCE=true;;			# date
 		c)	[ $COMMON ] 	&& unset COMMON 	|| COMMON=true;;			# common year
+		J)	[ $JULIAND ]	&& unset JULIAND	|| JULIAND=true;;			# Julian days
 
 		p)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
 		e)	[ $ERISIAN ]	&& unset ERISIAN	|| ERISIAN=true;;			# Erisian
 		k)	[ $KLOCK ]		&& unset KLOCK		|| KLOCK=true;;				# Klock
+
 		j)	[ $HEBREW ] 	&& unset HEBREW 	|| HEBREW=true;;			# Hebrew
 
 		r)	[ $ROME ] 		&& unset ROME 		|| ROME=true;;				# Roman
@@ -251,7 +251,7 @@ if [ $(which phases) ]; then
 		[ $month -eq 11 ] && moon="Beaver Moon"; fi
 
 	# Vassa
-	vsday=$(date -d "$(phases $year 7 1 |sed -n 1p) + 1 day" +%d)
+	vsday=$(date -d "$(phases $year 7 2 |sed -n 1p) + 1 day" +%d)
 
 	# Chinese calendar
 	for i in {1..2}; do while IFS= read -r line; do
@@ -342,10 +342,6 @@ ind="$ind$(ordinal $ind)"
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
-# Simple year calculations
-(( julp=year+jupconvert ))
-(( buddhist=year+budconvert ))
-
 # French Revolutionary Calendar
 (( frc=year-frcconvert ))
 [ $frc -le 0 ] && unset frc
@@ -356,13 +352,39 @@ if [ $COMMON ] && [ $(which rnum) ]; then
 	[ $frc ] && frc=$(rnum $frc)
 else unset rnyear; fi
 
-# Set Modified Julian Date, Truncated Julian Date & Rata Die (UTC); DEP jday
-if [ $COMMON ] && [ $(which jday) ]; then
-	mjd=$(echo "$(jday -d $utc)-2400000.5" |bc |xargs printf '%.1f' |sed '/\-/d')
+# Regnal Year (United Kingdom, from 1 Jan 1801)
+case 1 in
+	$(($year>=1952)) ) REGNUM=9;;
+	$(($year>=1937)) ) REGNUM=8;;
+	$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=8 || REGNUM=7;;
+	$(($year>=1910)) ) REGNUM=6;;
+	$(($year>=1901)) ) REGNUM=5;;
+	$(($year>=1837)) ) REGNUM=4;;
+	$(($year>=1830)) ) REGNUM=3;;
+	$(($year>=1820)) ) REGNUM=2;;
+	$(($year>=1801)) ) REGNUM=1;;
+	*) REGNUM=0;;
+	esac
+
+if [ $COMMON ]; then
+	[ $REGNUM -eq 0 ] && REGDATE="$month/$day" && REGYEAR=$year
+	regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
+	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] && (( REGNUM-=1 ))
+	if [ $REGNUM -gt 0 ]; then
+		(( reg=$year-${REGYEAR[REGNUM]} ))
+		[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
+	else reg=0; fi
+
+	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
+	fi
+
+# Set Julian Period; Truncated Julian Date & Rata Die (UTC); DEP jday
+(( julp=year+jupconvert ))
+if [ $JULIAND ] && [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
 	rdi=$(echo "$(jday -d $utc)-1721424.5" |bc |cut -f1 -d"." |sed '/\-/d')
 	[ $tjd ] && [ $tjd -gt 65535 ] && unset tjd
-else unset mjd; unset tjd; unset rdi; fi
+else unset tjd; unset rdi; fi
 
 # Set Hanke-Henry date; DEP hh
 if [ $HHPC ] && [ $(which hh) ] && [ $year -ge 2018 ]; then
@@ -415,31 +437,8 @@ case 1 in
 	esac
 [ $ERANUM -eq 0 ] && unset jen || jen="(${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) )))"
 
-# Regnal Year (United Kingdom, from 1 Jan 1801)
-case 1 in
-	$(($year>=1952)) ) REGNUM=9;;
-	$(($year>=1937)) ) REGNUM=8;;
-	$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=8 || REGNUM=7;;
-	$(($year>=1910)) ) REGNUM=6;;
-	$(($year>=1901)) ) REGNUM=5;;
-	$(($year>=1837)) ) REGNUM=4;;
-	$(($year>=1830)) ) REGNUM=3;;
-	$(($year>=1820)) ) REGNUM=2;;
-	$(($year>=1801)) ) REGNUM=1;;
-	*) REGNUM=0;;
-	esac
-
-if [ $COMMON ]; then
-	[ $REGNUM -eq 0 ] && REGDATE="$month/$day" && REGYEAR=$year
-	regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
-	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] && (( REGNUM-=1 ))
-	if [ $REGNUM -gt 0 ]; then
-		(( reg=$year-${REGYEAR[REGNUM]} ))
-		[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
-	else reg=0; fi
-
-	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
-	fi
+# Buddhist year calculations
+(( buddhist=year+budconvert ))
 
 # main()
 if [ $FULLCE ]; then
@@ -458,13 +457,13 @@ if [ $COMMON ]; then
 	[ $kloc ]	&& printf " %s" "$kloc"
 	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos ] && printf "\n"
 
-	[ $frc ]	&& printf "FRC %-10s" "$frc"
-	[ "$reg" ]	&& printf "%-12s" "$reg"; [ "$frc" -o "$reg" ] && printf "\n"
+	[ $frc ]	&& printf "FRC %s" "$frc";	[ "$frc" -a "$reg" ] && printf "  "
+	[ "$reg" ]	&& printf "%s" "$reg";		[ "$frc" -o "$reg" ] && printf "\n"
+	fi
 
-	[ $mjd ]	&& printf "MJD %-9s %s UTC\n" "$mjd" "${utc:5:5}" |sed 's/-/\//'
-
-	[ $tjd ]	&& printf "TJD %-10s" "$tjd"
-	[ $rdi ]	&& printf "R.D %-10s" "$rdi"; [ "$tjd" -o "$rdi" ] && printf "\n"
+if [ $JULIAND ]; then
+	[ $tjd ]	&& printf "TJD %s" "$tjd";	[ "$tjd" -a "$rdi" ] && printf " "
+	[ $rdi ]	&& printf "R.D %s" "$rdi";	[ "$tjd" -o "$rdi" ] && printf "\n"
 	fi
 
 [ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
@@ -503,6 +502,7 @@ if [ $VERBOSE ]; then
 	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
 	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $((10#$vsday))
+	exit
 	fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
@@ -517,9 +517,9 @@ if [ $VERBOSE ]; then
 if [ "$moon" ]; then
 	moon="$moon Uposatha|"
 	if [ $FULL ] ; then # only the first full moon
-		[ $month -eq 2  ] && moon="Sangha Day|"
-		[ $month -eq 5  ] && moon="Buddha Day|"
-		[ $month -eq 7  ] && moon="Dhamma Day|"
+		[ $month -eq 2  ] && moon="Magha Puja (Sangha)|"
+		[ $month -eq 5  ] && moon="Vesak (Buddha)|"
+		[ $month -eq 7  ] && moon="Asalha Puja (Dharma)|"
 		[ $month -eq 10 ] && moon="Pavarana|"; fi
 	dhol+=$moon; fi
 [ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+="Vassa|"
