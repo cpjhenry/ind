@@ -98,7 +98,7 @@ NWR() { # Not within range
 displayall() {
 	COMMON=true; JULIAND=true;
 	HHPC=true; ERISIAN=true;
-	KLOCK=true; HEBREW=true;
+	HEBREW=true;
 	ROME=true; BYZANTINE=true;
 	JULIANP=true; MASORETIC=true;
 	JAPANIY=true; CHINALY=true;
@@ -270,7 +270,7 @@ if [ $(which phases) ]; then
 	doycmp=$(date -d "$cny" +%j)
 	[[ 10#$doy -ge 10#$doycmp ]] && (( cly+=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newchi="*"
-	(( roc=year-rocconvert )); [ $roc -le 0 ] && roc="" || roc="($roc)"
+	(( roc=year-rocconvert )); [ $roc -le 0 ] && unset roc
 
 	# 'year of'
 	case 1 in
@@ -334,7 +334,7 @@ doycmp=$(date -d "1 Sept $year" +%j)
 # Indictions and ordinals
 (( byzind=$byzantine%15 ))	# Byzantine
 [ $byzind -eq "0" ] && byzind=15
-byzind="($byzind$(ordinal $byzind))"
+byzind="$byzind$(ordinal $byzind)"
 
 (( ind=($year+2)%15+1 ))	# Gregorian
 ind="$ind$(ordinal $ind)"
@@ -421,9 +421,10 @@ doycmp=$(date -d "$equinox" +%j)
 [[ 10#$doy -eq 10#$doycmp ]] && newarc="*"
 
 (( mas=year+masconvert ))
-(( mgl=year-mglconvert )); [[ $mgl -gt 0 ]] && mgl="($mgl)" || unset mgl
+(( mgl=year-mglconvert ))
 (( yod=year+yodconvert ))
 (( mkt=year-mktconvert ))
+[[ $mgl -le 0 ]] && unset mgl
 
 # Japanese Era Name
 (( jiy=year+jiyconvert ))
@@ -435,7 +436,7 @@ case 1 in
 	$(($year>=1868))) ERANUM=1;jenconvert=1868;;
 	$(($year<1868)))  ERANUM=0;;
 	esac
-[ $ERANUM -eq 0 ] && unset jen || jen="(${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) )))"
+[ $ERANUM -eq 0 ] && unset jen || jen="${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) ))"
 
 # Buddhist year calculations
 (( buddhist=year+budconvert ))
@@ -466,42 +467,42 @@ if [ $JULIAND ]; then
 	[ $rdi ]	&& printf "R.D %s" "$rdi";	[ "$tjd" -o "$rdi" ] && printf "\n"
 	fi
 
-[ $HHPC ]		&& printf "%-17s H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
-[ $ERISIAN ]	&& printf "%-16s YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
-[ $HEBREW ]		&& printf "%-18s AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
+[ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
+[ $ERISIAN ]	&& printf "%-16s  YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
+[ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
 
-[ $ROME ]		&& printf "City of Rome       au %d%s\n" $rome "$newrom"
-[ $BYZANTINE ]	&& printf "Byzantine %-6s   AM %d%s\n"   $byzind $byzantine "$newbyz"
+[ $ROME ]		&& printf "City of Rome        au %d%s\n" $rome "$newrom"
+[ $BYZANTINE ]	&& printf "Byzantine %-9s AM %d%s\n"   "$byzind Ind." $byzantine "$newbyz"
 
-[ $JULIANP ]	&& printf "Julian Period         %d\n"	$julp
+[ $JULIANP ]	&& printf "Julian Period          %d\n"	$julp
 
-[ $MASORETIC ]	&& printf "Anno Lucis %-5s      %d\n"	"$mgl" $mas
-[ $MASORETIC ]	&& printf "Anno R.C.             %d%s\n" $arc "$newarc"
-[ $MASORETIC ]	&& printf "Anno Inventionis      %d\n"	$yod
-[ $MASORETIC ]	&& printf "Anno Ordinis          %4d\n"	$mkt
+[ $MASORETIC ]	&& printf "Anno Lucis %-4s        %d\n"	"$mgl" $mas
+[ $MASORETIC ]	&& printf "Anno R.C.              %d%s\n" $arc "$newarc"
+[ $MASORETIC ]	&& printf "Anno Inventionis       %d\n"	$yod
+[ $MASORETIC ]	&& printf "Anno Ordinis           %4d\n" $mkt
 
-[ $JAPANIY ]	&& printf "Japanese Imp. %-5s   %d\n"	"$jen" $jiy
-[ $CHINALY ]	&& printf "Chinese Lunar %-5s   %d%s\n"	"$roc" $cly "$newchi"
-[ $BUDDHIST ]	&& printf "Buddhist Era          %d\n"	$buddhist
+[ $JAPANIY ]	&& printf "Japanese Imp. %-4s     %d\n"	"$jen" $jiy
+[ $CHINALY ]	&& printf "Chinese Lunar %-4s     %d%s\n" "$roc" $cly "$newchi"
+[ $BUDDHIST ]	&& printf "Buddhist Era           %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
-	[ $_LY ]	&& printf "Leap year             %d\n"	$year
-				   printf "Spring Equinox        %s\n" "${equinox:5}" |sed 's/-/\//'
-	[ "$moon" ]	&& printf "Moon phase            %s\n" "$moon"
-				   printf "Ides                  %d\n"	$ides
+				   printf "Ides                   %d\n"	$ides
 
-				   printf "Dominical letter      %s\n"	"$dominical"
-				   printf "Epact                 %s\n"	"${EPACTS[$golden]}"
-				   printf "Golden number         %s\n"	"$golden"
-				   printf "Lent                  %s\n"	"$(date -d "$(ncal -d$year-$month -e) -46 days" +%m/%d)"
-				   printf "Easter                %s\n"	"$(date -d "$(ncal -d$year-$month -e)" +%m/%d)"
+				   printf "Dominical letter       %s\n"	"$dominical"
+				   printf "Epact                  %s\n"	"${EPACTS[$golden]}"
+				   printf "Golden number          %s\n"	"$golden"
+				   printf "Lent                   %s\n"	"$(date -d "$(ncal -d$year-$month -e) -46 days" +%m/%d)"
+				   printf "Easter                 %s\n"	"$(date -d "$(ncal -d$year-$month -e)" +%m/%d)"
 
-				   printf "Julian calendar (%d)  %s Day %03d\n" "$jdelta" "${jymd:5:5}" "$jdoy" |sed 's/-/\//'
+				   printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
+	[ $_LY ]	&& printf "Leap year              %d\n"	$year
+	[ "$moon" ]	&& printf "Moon phase             %s\n" "$moon"
+	[ $jymd ]	&& printf "Julian calendar (%d)   %s Day %03d\n" "$jdelta" "${jymd:5:5}" "$jdoy" |sed 's/-/\//'
 
-	[ "$jen" ]	&& printf "Japanese Era          %s\n" "${ERANAME[10#$ERANUM]} $jen" |sed 's/(.//;s/)//'
-	[ $cny ] 	&& printf "Chinese New Year      %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
+	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]} ${jen:1}" |sed 's/(.//;s/)//'
+	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
-	[ $vsday ]	&& printf "Vassa                 07/%02d\n" $((10#$vsday))
+	[ $vsday ]	&& printf "Vassa                  07/%02d\n" $((10#$vsday))
 	exit
 	fi
 
