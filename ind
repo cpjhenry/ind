@@ -37,7 +37,8 @@ byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 
 masconvert=4000	# Masoretic; 4000 BCE
-mglconvert=1717 # MGL year; 1717 CE
+uglconvert=1717 # UGL year; 1717 CE
+glcconvert=1855 # GLC year; 1855 CE
 arcconvert=1352 # Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
 yodconvert=530	# Anno Inventionis; 530 BCE
 mktconvert=1118 # Anno Ordinis; 1118 CE
@@ -245,7 +246,7 @@ if [ $(which phases) ]; then
 	if [ $FULL ]; then
 		[ $month -eq 2  ] && moon="Snow Moon"
 		[ $month -eq 3  ] && moon="Lenten Moon"
-		[ $month -eq 4  ] && moon="Breaking Ice Moon"
+		[ $month -eq 4  ] && moon="Paschal Moon"
 		[ $month -eq 9  ] && moon="Harvest Moon"
 		[ $month -eq 10 ] && moon="Hunter's Moon"
 		[ $month -eq 11 ] && moon="Beaver Moon"; fi
@@ -421,10 +422,12 @@ doycmp=$(date -d "$equinox" +%j)
 [[ 10#$doy -eq 10#$doycmp ]] && newarc="*"
 
 (( mas=year+masconvert ))
-(( mgl=year-mglconvert ))
+(( ugl=year-uglconvert ))
+(( glc=year-glcconvert ))
 (( yod=year+yodconvert ))
 (( mkt=year-mktconvert ))
-[[ $mgl -le 0 ]] && unset mgl
+[[ $ugl -le 0 ]] && unset ugl
+[[ $glc -le 0 ]] && unset glc
 
 # Japanese Era Name
 (( jiy=year+jiyconvert ))
@@ -476,13 +479,13 @@ if [ $JULIAND ]; then
 
 [ $JULIANP ]	&& printf "Julian Period          %d\n"	$julp
 
-[ $MASORETIC ]	&& printf "Anno Lucis %-4s        %d\n"	"$mgl" $mas
+[ $MASORETIC ]	&& printf "Anno Lucis     %3s %3s %d\n" "$glc" "$ugl" $mas
 [ $MASORETIC ]	&& printf "Anno R.C.              %d%s\n" $arc "$newarc"
 [ $MASORETIC ]	&& printf "Anno Inventionis       %d\n"	$yod
 [ $MASORETIC ]	&& printf "Anno Ordinis           %4d\n" $mkt
 
-[ $JAPANIY ]	&& printf "Japanese Imp. %-4s     %d\n"	"$jen" $jiy
-[ $CHINALY ]	&& printf "Chinese Lunar %-4s     %d%s\n" "$roc" $cly "$newchi"
+[ $JAPANIY ]	&& printf "Japanese Imp.      %3s %d\n"	"$jen" $jiy
+[ $CHINALY ]	&& printf "Chinese Lunar      %3s %d%s\n" "$roc" $cly "$newchi"
 [ $BUDDHIST ]	&& printf "Buddhist Era           %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
@@ -497,7 +500,7 @@ if [ $VERBOSE ]; then
 				   printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
 	[ $_LY ]	&& printf "Leap year              %d\n"	$year
 	[ "$moon" ]	&& printf "Moon phase             %s\n" "$moon"
-	[ $jymd ]	&& printf "Julian calendar (%d)   %s Day %03d\n" "$jdelta" "${jymd:5:5}" "$jdoy" |sed 's/-/\//'
+	[ $jymd ]	&& printf "Julian calendar     %d %s Day %03d\n" "$jdelta" "${jymd:5:5}" "$jdoy" |sed 's/-/\//'
 
 	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]} ${jen:1}" |sed 's/(.//;s/)//'
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
@@ -518,9 +521,9 @@ if [ $VERBOSE ]; then
 if [ "$moon" ]; then
 	moon="$moon Uposatha|"
 	if [ $FULL ] ; then # only the first full moon
-		[ $month -eq 2  ] && moon="Magha Puja (Sangha)|"
-		[ $month -eq 5  ] && moon="Vesak (Buddha)|"
-		[ $month -eq 7  ] && moon="Asalha Puja (Dharma)|"
+		[ $month -eq 2  ] && moon="Magha Uposatha (Sangha)|"
+		[ $month -eq 5  ] && moon="Visakha Uposatha (Buddha)|"
+		[ $month -eq 7  ] && moon="Asalha Uposatha (Dharma)|"
 		[ $month -eq 10 ] && moon="Pavarana|"; fi
 	dhol+=$moon; fi
 [ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+="Vassa|"
