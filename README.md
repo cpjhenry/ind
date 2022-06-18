@@ -56,6 +56,36 @@ Installing the following helper apps will enable additional features:
 - **jday** provides Julian Date (https://sourceforge.net/projects/jday/)
 - **klock** provides Erisian Time (https://github.com/cpjhenry/klock)
 
+## Sample output
+
+```shell
+Saturday 18 June 2022
+CE 2022 MMXXII 15th Ind.
+Day 169 Week 24 EDT
+FRC CCXXX  71 Eliz 2
+TJD 19748 R.D 738324
+Sat 16 June        H-H 2022
+23rd Confusion    YOLD 3188
+19th of Sivan       AM 5782
+City of Rome        au 2775
+Byzantine 15th Ind. AM 7530
+Julian Period          6735
+Anno Lucis     167 305 6022
+Anno R.C.              3375
+Anno Inventionis       2552
+Anno Ordinis            904
+Japanese Imp.       R4 2682
+Chinese Lunar      111 4720
+Buddhist Era           2565
+
+Lent                   03/02
+Easter                 04/17
+Spring Equinox         03/20
+Julian calendar     13 06/05 Day 156
+Chinese New Year       02/01 Tiger
+Vassa                  07/14
+```
+
 ## Author
 Paul J Henry <cpjhenry@gmail.com>  
 30 September 2021
