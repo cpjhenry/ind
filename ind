@@ -422,10 +422,11 @@ doycmp=$(date -d "$equinox" +%j)
 [[ 10#$doy -eq 10#$doycmp ]] && newarc="*"
 
 (( mas=year+masconvert ))
-(( ugl=year-uglconvert ))
-(( glc=year-glcconvert ))
 (( yod=year+yodconvert ))
 (( mkt=year-mktconvert ))
+
+(( ugl=year-uglconvert ))
+(( glc=year-glcconvert ))
 [[ $ugl -le 0 ]] && unset ugl
 [[ $glc -le 0 ]] && unset glc
 
