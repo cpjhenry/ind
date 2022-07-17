@@ -12,7 +12,6 @@ HOLTMP=/tmp/ind_holidays
 
 FULLCE=
 COMMON=true
-JULIAND=
 
 HHPC=
 ERISIAN=
@@ -97,7 +96,7 @@ NWR() { # Not within range
 	exit 1
 	}
 displayall() {
-	COMMON=true; JULIAND=true;
+	COMMON=true;
 	HHPC=true; ERISIAN=true;
 	HEBREW=true;
 	ROME=true; BYZANTINE=true;
@@ -107,7 +106,7 @@ displayall() {
 	}
 displaynone() {
 	unset FULLCE;
-	unset COMMON; unset JULIAND;
+	unset COMMON;
 	unset HHPC; unset ERISIAN;
 	unset KLOCK; unset HEBREW;
 	unset ROME; unset BYZANTINE;
@@ -119,22 +118,20 @@ displaynone() {
 	}
 testall() {
 	unset t_var
-	[ $FULLCE ]		||
-	[ $COMMON ]		|| [ $JULIAND ]	|| [ $HHPC ]		|| [ $ERISIAN ]	||
+	[ $FULLCE ]		|| [ $COMMON ]	|| [ $HHPC ]		|| [ $ERISIAN ]	||
 	[ $HEBREW ]		|| [ $ROME ]	|| [ $BYZANTINE ]	|| [ $JULIANP ]	||
 	[ $MASORETIC ]	|| [ $JAPANIY ]	|| [ $CHINALY ]		|| [ $BUDDHIST ] && t_var=true
 	}
 
 setdate today			# set today's date
 
-while getopts ":anfcJpekjrzuxiqby:m:d:hHFvlCoODU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:hHFvlCoODU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
 
 		f)	[ $FULLCE ]		&& unset FULLCE		|| FULLCE=true;;			# date
 		c)	[ $COMMON ] 	&& unset COMMON 	|| COMMON=true;;			# common year
-		J)	[ $JULIAND ]	&& unset JULIAND	|| JULIAND=true;;			# Julian days
 
 		p)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
 		e)	[ $ERISIAN ]	&& unset ERISIAN	|| ERISIAN=true;;			# Erisian
@@ -380,7 +377,7 @@ if [ $COMMON ]; then
 
 # Set Julian Period; Truncated Julian Date; DEP jday
 (( julp=year+jupconvert ))
-if [ $JULIAND ] && [ $(which jday) ]; then
+if [ $JULIANP ] && [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
 	[[ $tjd -gt 65535 ]] && unset tjd
 	[[ $tjd -gt 0 ]] && tjd="T$tjd"
@@ -462,8 +459,7 @@ if [ $COMMON ]; then
 	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos ] && printf "\n"
 
 	[ "$reg" ]	&& printf "%s  " "$reg"
-	[ $frc ]	&& printf "FRC %s" "$frc"
-	[ "$frc" ]	&& printf "\n"
+	[ "$frc" ]	&& printf "FRC %s\n" "$frc"
 
 	fi
 
