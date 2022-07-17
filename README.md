@@ -8,8 +8,8 @@ year.
 
 Lunar-solar calculations include: metonic cycle, epact, dominical year,
 Chinese year and New Year, and Buddhist observances in the Theravadan
-tradition. Astronomical dating includes current Julian period, Modified
-Julian Date, and Rata Die.
+tradition. Astronomical dating includes current Julian period, and Truncated
+Julian Date.
 
 Other obscure and idiosyncratic dating system support, including unusual
 observances, has also been added. Please see the man file for full list.

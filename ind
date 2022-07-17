@@ -128,8 +128,7 @@ testall() {
 setdate today			# set today's date
 
 while getopts ":anfcJpekjrzuxiqby:m:d:hHFvlCoODU?" OPTION
-do
-	case $OPTION in
+do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
 
@@ -379,13 +378,13 @@ if [ $COMMON ]; then
 	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
 	fi
 
-# Set Julian Period; Truncated Julian Date & Rata Die (UTC); DEP jday
+# Set Julian Period; Truncated Julian Date; DEP jday
 (( julp=year+jupconvert ))
 if [ $JULIAND ] && [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
-	rdi=$(echo "$(jday -d $utc)-1721424.5" |bc |cut -f1 -d"." |sed '/\-/d')
-	[ $tjd ] && [ $tjd -gt 65535 ] && unset tjd
-else unset tjd; unset rdi; fi
+	[[ $tjd -gt 65535 ]] && unset tjd
+	[[ $tjd -gt 0 ]] && tjd="T$tjd"
+else unset tjd; fi
 
 # Set Hanke-Henry date; DEP hh
 if [ $HHPC ] && [ $(which hh) ] && [ $year -ge 2018 ]; then
@@ -462,13 +461,10 @@ if [ $COMMON ]; then
 	[ $kloc ]	&& printf " %s" "$kloc"
 	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos ] && printf "\n"
 
-	[ $frc ]	&& printf "FRC %s" "$frc";	[ "$frc" -a "$reg" ] && printf "  "
-	[ "$reg" ]	&& printf "%s" "$reg";		[ "$frc" -o "$reg" ] && printf "\n"
-	fi
+	[ "$reg" ]	&& printf "%s  " "$reg"
+	[ $frc ]	&& printf "FRC %s" "$frc"
+	[ "$frc" ]	&& printf "\n"
 
-if [ $JULIAND ]; then
-	[ $tjd ]	&& printf "TJD %s" "$tjd";	[ "$tjd" -a "$rdi" ] && printf " "
-	[ $rdi ]	&& printf "R.D %s" "$rdi";	[ "$tjd" -o "$rdi" ] && printf "\n"
 	fi
 
 [ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
@@ -478,7 +474,7 @@ if [ $JULIAND ]; then
 [ $ROME ]		&& printf "City of Rome        au %d%s\n" $rome "$newrom"
 [ $BYZANTINE ]	&& printf "Byzantine %4s Ind. AM %d%s\n"   "$byzind" $byzantine "$newbyz"
 
-[ $JULIANP ]	&& printf "Julian Period          %d\n"	$julp
+[ $JULIANP ]	&& printf "Julian Period   %6s %d\n" "$tjd" $julp
 
 [ $MASORETIC ]	&& printf "Anno Lucis     %3s %3s %d\n" "$glc" "$ugl" $mas
 [ $MASORETIC ]	&& printf "Anno R.C.              %d%s\n" $arc "$newarc"
@@ -507,7 +503,6 @@ if [ $VERBOSE ]; then
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
 	[ $vsday ]	&& printf "Vassa                  07/%02d\n" $((10#$vsday))
-	exit
 	fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit

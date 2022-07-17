@@ -426,3 +426,8 @@ ChangeLog
 	- 'klock' defaults as off
 	- tweaks
 	- update documentation
+
+2022-07-16 v3.11.16
+	- remove RD
+	- tweaks
+	- update documentation
