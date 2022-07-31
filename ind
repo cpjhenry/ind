@@ -350,20 +350,20 @@ if [ $COMMON ] && [ $(which rnum) ]; then
 else unset rnyear; fi
 
 # Regnal Year (United Kingdom, from 1 Jan 1801)
-case 1 in
-	$(($year>=1952)) ) REGNUM=9;;
-	$(($year>=1937)) ) REGNUM=8;;
-	$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=8 || REGNUM=7;;
-	$(($year>=1910)) ) REGNUM=6;;
-	$(($year>=1901)) ) REGNUM=5;;
-	$(($year>=1837)) ) REGNUM=4;;
-	$(($year>=1830)) ) REGNUM=3;;
-	$(($year>=1820)) ) REGNUM=2;;
-	$(($year>=1801)) ) REGNUM=1;;
-	*) REGNUM=0;;
-	esac
-
 if [ $COMMON ]; then
+	case 1 in
+		$(($year>=1952)) ) REGNUM=9;;
+		$(($year>=1937)) ) REGNUM=8;;
+		$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=8 || REGNUM=7;;
+		$(($year>=1910)) ) REGNUM=6;;
+		$(($year>=1901)) ) REGNUM=5;;
+		$(($year>=1837)) ) REGNUM=4;;
+		$(($year>=1830)) ) REGNUM=3;;
+		$(($year>=1820)) ) REGNUM=2;;
+		$(($year>=1801)) ) REGNUM=1;;
+		*) REGNUM=0;;
+		esac
+
 	[ $REGNUM -eq 0 ] && REGDATE="$month/$day" && REGYEAR=$year
 	regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
 	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] && (( REGNUM-=1 ))
@@ -453,7 +453,7 @@ if [ $FULLCE ]; then
 	else printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year; fi; fi
 
 if [ $COMMON ]; then
-				   printf "$bold"; printf "CE %d %s %s Ind." $year "$rnyear" "$ind"; echo "$bold"
+				   printf "$bold"; printf "CE %d %s %s ind." $year "$rnyear" "$ind"; echo "$bold"
 	[ ! $yos ]	&& printf "Day %d Week %d %3s" $doy $iwn "$ltz"
 	[ $kloc ]	&& printf " %s" "$kloc"
 	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos ] && printf "\n"
@@ -468,16 +468,16 @@ if [ $COMMON ]; then
 [ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
 
 [ $ROME ]		&& printf "City of Rome        au %d%s\n" $rome "$newrom"
-[ $BYZANTINE ]	&& printf "Byzantine %4s Ind. AM %d%s\n"   "$byzind" $byzantine "$newbyz"
+[ $BYZANTINE ]	&& printf "Byzantine %4s ind. AM %d%s\n"   "$byzind" $byzantine "$newbyz"
 
 [ $JULIANP ]	&& printf "Julian Period   %6s %d\n" "$tjd" $julp
 
 [ $MASORETIC ]	&& printf "Anno Lucis     %3s %3s %d\n" "$glc" "$ugl" $mas
-[ $MASORETIC ]	&& printf "Anno R.C.              %d%s\n" $arc "$newarc"
+[ $MASORETIC ]	&& printf "Anno RC                %d%s\n" $arc "$newarc"
 [ $MASORETIC ]	&& printf "Anno Inventionis       %d\n"	$yod
-[ $MASORETIC ]	&& printf "Anno Ordinis           %4d\n" $mkt
+[ $MASORETIC ]	&& printf "Anno Ordinis KT        %4d\n" $mkt
 
-[ $JAPANIY ]	&& printf "Japanese Imp.      %3s %d\n"	"$jen" $jiy
+[ $JAPANIY ]	&& printf "Japanese Imperial  %3s %d\n" "$jen" $jiy
 [ $CHINALY ]	&& printf "Chinese Lunar      %3s %d%s\n" "$roc" $cly "$newchi"
 [ $BUDDHIST ]	&& printf "Buddhist Era           %d\n"	$buddhist
 
