@@ -380,7 +380,7 @@ if [ $COMMON ]; then
 if [ $JULIANP ] && [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
 	[[ $tjd -gt 65535 ]] && unset tjd
-	[[ $tjd -gt 0 ]] && tjd="T$tjd"
+	[[ $tjd -gt 0 ]] && tjd="TJ$tjd"
 else unset tjd; fi
 
 # Set Hanke-Henry date; DEP hh
@@ -470,7 +470,7 @@ if [ $COMMON ]; then
 [ $ROME ]		&& printf "City of Rome        au %d%s\n" $rome "$newrom"
 [ $BYZANTINE ]	&& printf "Byzantine %4s ind. AM %d%s\n"   "$byzind" $byzantine "$newbyz"
 
-[ $JULIANP ]	&& printf "Julian Period   %6s %d\n" "$tjd" $julp
+[ $JULIANP ]	&& printf "Julian Period  %7s %d\n" "$tjd" $julp
 
 [ $MASORETIC ]	&& printf "Anno Lucis     %3s %3s %d\n" "$glc" "$ugl" $mas
 [ $MASORETIC ]	&& printf "Anno RC                %d%s\n" $arc "$newarc"
