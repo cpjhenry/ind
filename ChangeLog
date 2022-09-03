@@ -430,3 +430,7 @@ ChangeLog
 	- remove RD, optimize display
 	- tweaks
 	- update documentation
+
+2022-09-03 v3.11.17
+	- add Passover and Rosh Hashana to verbose display
+	- tweaks

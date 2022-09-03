@@ -47,7 +47,7 @@ chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
 rocconvert=1911 # ROC year; 1912 CE
 
 frcconvert=1792 # French Revolutionary Calendar; 1792 CE
-
+hebconvert=3760 # Hebrew Calendar; 3761 BCE
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
 
 MONTHL=(- January February March April May June July August September October November December)
@@ -401,10 +401,12 @@ if [ $KLOCK ] && [ $(which klock) ]; then
 else unset KLOCK; fi
 
 # Hebrew calendar; DEP hebcal
-if [ $HEBREW ] && [ $(which hebcal) ]; then
-	hebdate=$(hebcal -rh $month $day $year |cut -f2)
-	doycmp=$(date -d $(hebcal -rh Tishrey 1 $((3761+$year)) |cut -f1) +%j)
-	[[ 10#$doy -eq 10#$doycmp ]] && newheb="*"
+if [ $(which hebcal) ]; then
+	pass=$(hebcal -rh Nisan  15 $(($hebconvert+$year))   |cut -f1)
+	rosh=$(hebcal -rh Tishrey 1 $(($hebconvert+$year+1)) |cut -f1)
+	if [ $HEBREW ]; then
+		hebdate=$(hebcal -rh $month $day $year |cut -f2)
+		[[ 10#$doy -eq 10#$(date -d $rosh +%j) ]] && newheb="*"; fi
 else unset HEBREW; fi
 
 # Masoretic; DEP gcal
@@ -467,7 +469,7 @@ if [ $COMMON ]; then
 [ $ERISIAN ]	&& printf "%-16s  YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
 [ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
 
-[ $ROME ]		&& printf "City of Rome        au %d%s\n" $rome "$newrom"
+[ $ROME ]		&& printf "City of Rome       AUC %d%s\n" $rome "$newrom"
 [ $BYZANTINE ]	&& printf "Byzantine %4s ind. AM %d%s\n"   "$byzind" $byzantine "$newbyz"
 
 [ $JULIANP ]	&& printf "Julian Period  %7s %d\n" "$tjd" $julp
@@ -490,13 +492,16 @@ if [ $VERBOSE ]; then
 				   printf "Lent                   %s\n"	"$(date -d "$(ncal -d$year-$month -e) -46 days" +%m/%d)"
 				   printf "Easter                 %s\n"	"$(date -d "$(ncal -d$year-$month -e)" +%m/%d)"
 
+	[ $pass ]   && printf "Passover               %s\n" "${pass:5}" |sed 's/-/\//'
+	[ $rosh ]   && printf "Rosh Hashana           %s\n" "${rosh:5}" |sed 's/-/\//'
+
 				   printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
 	[ $_LY ]	&& printf "Leap year              %d\n"	$year
 	[ "$moon" ]	&& printf "Moon phase             %s\n" "$moon"
-	[ $jymd ]	&& printf "Julian calendar     %d %s Day %03d\n" "$jdelta" "${jymd:5:5}" "$jdoy" |sed 's/-/\//'
+	[ $jymd ]	&& printf "Julian calendar     %d %s Day %03d\n" "$jdelta" "${jymd:5}" "$jdoy" |sed 's/-/\//'
 
 	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]}"
-	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
+	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
 	[ $vsday ]	&& printf "Vassa                  07/%02d\n" $((10#$vsday))
 	fi
