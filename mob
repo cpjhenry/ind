@@ -13,6 +13,7 @@ YAHRFILE="$HOME/.calendar/deaths"
 HEADER=true
 HEBREW=true
 PROXIM=true
+ADVENT=
 
 while getopts ":cejlYPAy:?" OPTION; do
 	case $OPTION in
@@ -35,7 +36,6 @@ while getopts ":cejlYPAy:?" OPTION; do
 			printf "Sukkot             Pilgrimage, the wandering in the desert\n"
 			printf "Chanukah           Festival of Lights, rededication of the Temple\n\n"
 			printf "Yahrzeit           Anniversary of the death of a parent or close relative\n"
-			printf "Advent             Period of preparation for the celebration of Christmas\n"
 			exit;;		
 		Y)	# Yahrzeits
 			YAHR=true;;
@@ -88,17 +88,21 @@ if [ $YAHR ]; then [ $outp ] && echo ; outp=true
 fi
 
 # Dates calculated by their proximity to another date
+
 if [ $PROXIM ]; then [ $outp ] && echo; outp=true
 	# Black Friday (&c.)
-	hold="Nov $(ncal -hm 11 |awk '/^Th/{print $5}')"
-	printf "%s*\tBlack Friday\n"	"$(date -d "$hold +1 day"  +"$DATEFMT")"
-	printf "%s*\tCyber Monday\n"	"$(date -d "$hold +4 days" +"$DATEFMT")"
-	printf "%s*\tGiving Tuesday\n" 	"$(date -d "$hold +5 days" +"$DATEFMT")"
+	FourthThuNov="Nov $(ncal -h 11 $year |awk '/^Th/{print $5}')"
+	printf "%s*\tBlack Friday\n"	"$(date -d "$FourthThuNov +1 day"  +"$DATEFMT")"
+	printf "%s*\tCyber Monday\n"	"$(date -d "$FourthThuNov +4 days" +"$DATEFMT")"
+	printf "%s*\tGiving Tuesday\n" 	"$(date -d "$FourthThuNov +5 days" +"$DATEFMT")"
 fi
 if [ $ADVENT ]; then [ $outp ] && echo
-	xmasdow=$(date -d "$year-12-25" +%w)
-	xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
-	advent="$(date -d"$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
+#	xmasdow=$(date -d "$year-12-25" +%w)
+#	xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
+#	advent="$(date -d"$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
+
+	LastThuNov="Nov $(ncal -h 11 $year |awk '/^Th/{print $NF}')"
+	advent="$(date -d"$LastThuNov +3 days" +"$DATEFMT")"
 	dpr="$(date -d"$advent $year -11 days" +"$DATEFMT")"
 
 	printf "%s*\tDay of Prayer & Repentance\n" "$dpr"

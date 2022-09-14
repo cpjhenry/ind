@@ -63,9 +63,9 @@ ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
-REGNAME=(- "Geo 3"	"Geo 4" "Wm 4"	"Vict"	"Edw 7"	"Geo 5"	"Edw 8"	"Geo 6" "Eliz 2")
-REGDATE=(- "10/25"	"01/29"	"06/26" "06/20" "01/22"	"05/06"	"01/20"	"12/11"	"02/06")
-REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952")
+REGNAME=(- "Geo 3"	"Geo 4" "Wm 4"	"Vict"	"Edw 7"	"Geo 5"	"Edw 8"	"Geo 6" "Eliz 2" "Cha 3")
+REGDATE=(- "10/25"	"01/29"	"06/26" "06/20" "01/22"	"05/06"	"01/20"	"12/11"	"02/06" "09/08")
+REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952"	"2022")
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	year=$(date -d "$1 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
@@ -352,6 +352,9 @@ else unset rnyear; fi
 # Regnal Year (United Kingdom, from 1 Jan 1801)
 if [ $COMMON ]; then
 	case 1 in
+		$(($year>=9999)) ) REGNUM=12;;
+		$(($year>=9999)) ) REGNUM=11;;
+		$(($year>=2022)) ) REGNUM=10;;
 		$(($year>=1952)) ) REGNUM=9;;
 		$(($year>=1937)) ) REGNUM=8;;
 		$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=8 || REGNUM=7;;
@@ -366,11 +369,13 @@ if [ $COMMON ]; then
 
 	[ $REGNUM -eq 0 ] && REGDATE="$month/$day" && REGYEAR=$year
 	regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
-	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] && (( REGNUM-=1 ))
+	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] && 
+		(( REGNUM-=1 )) && regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
 	if [ $REGNUM -gt 0 ]; then
 		(( reg=$year-${REGYEAR[REGNUM]} ))
 		[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
 	else reg=0; fi
+	[ $year -gt	$(date +%Y) ] && reg=0
 
 	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
 	fi
@@ -401,12 +406,10 @@ if [ $KLOCK ] && [ $(which klock) ]; then
 else unset KLOCK; fi
 
 # Hebrew calendar; DEP hebcal
-if [ $(which hebcal) ]; then
-	pass=$(hebcal -rh Nisan  15 $(($hebconvert+$year))   |cut -f1)
-	rosh=$(hebcal -rh Tishrey 1 $(($hebconvert+$year+1)) |cut -f1)
-	if [ $HEBREW ]; then
-		hebdate=$(hebcal -rh $month $day $year |cut -f2)
-		[[ 10#$doy -eq 10#$(date -d $rosh +%j) ]] && newheb="*"; fi
+_HC=$(which hebcal)
+if [ $HEBREW ] && [ $_HC ]; then
+	hebdate=$(hebcal -rh $month $day $year |cut -f2)
+	[[ 10#$doy -eq 10#$(date -d $(hebcal -rh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%j) ]] && newheb="*"
 else unset HEBREW; fi
 
 # Masoretic; DEP gcal
@@ -489,11 +492,14 @@ if [ $VERBOSE ]; then
 				   printf "Dominical letter       %s\n"	"$dominical"
 				   printf "Epact                  %s\n"	"${EPACTS[$golden]}"
 				   printf "Golden number          %s\n"	"$golden"
-				   printf "Lent                   %s\n"	"$(date -d "$(ncal -d$year-$month -e) -46 days" +%m/%d)"
-				   printf "Easter                 %s\n"	"$(date -d "$(ncal -d$year-$month -e)" +%m/%d)"
 
-	[ $pass ]   && printf "Passover               %s\n" "${pass:5}" |sed 's/-/\//'
-	[ $rosh ]   && printf "Rosh Hashana           %s\n" "${rosh:5}" |sed 's/-/\//'
+				   printf "Lent                   %s\n"	$(date -d"$(ncal -e $year) -46 days" +%m/%d)
+				   printf "Easter                 %s\n"	$(date -d"$(ncal -e $year)" +%m/%d)
+				   printf "Advent                 %s\n" $(date -d"11/$(ncal -h 11 $year |awk '/^Th/{print $NF}')+3 days" +%m/%d)
+
+	[ $_HC ]	&& printf "Passover               %s\n" $(hebcal -rh Ni 15 $(($hebconvert+$year))   |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Rosh Hashana           %s\n" $(hebcal -rh Ti  1 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Yom Kippur             %s\n" $(hebcal -rh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
 
 				   printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
 	[ $_LY ]	&& printf "Leap year              %d\n"	$year
