@@ -18,6 +18,7 @@ ERISIAN=
 KLOCK=
 
 HEBREW=
+BAHAI=
 
 ROME=
 BYZANTINE=
@@ -48,6 +49,8 @@ rocconvert=1911 # ROC year; 1912 CE
 
 frcconvert=1792 # French Revolutionary Calendar; 1792 CE
 hebconvert=3760 # Hebrew Calendar; 3761 BCE
+bahconvert=1844 # Baháʼí Calendar; 1844 CE
+
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
 
 MONTHL=(- January February March April May June July August September October November December)
@@ -98,7 +101,7 @@ NWR() { # Not within range
 displayall() {
 	COMMON=true;
 	HHPC=true; ERISIAN=true;
-	HEBREW=true;
+	HEBREW=true; BAHAI=true;
 	ROME=true; BYZANTINE=true;
 	JULIANP=true; MASORETIC=true;
 	JAPANIY=true; CHINALY=true;
@@ -107,8 +110,8 @@ displayall() {
 displaynone() {
 	unset FULLCE;
 	unset COMMON;
-	unset HHPC; unset ERISIAN;
-	unset KLOCK; unset HEBREW;
+	unset HHPC; unset ERISIAN; unset KLOCK;
+	unset HEBREW; unset BAHAI;
 	unset ROME; unset BYZANTINE;
 	unset JULIANP; unset MASORETIC;
 	unset JAPANIY; unset CHINALY;
@@ -375,7 +378,7 @@ if [ $COMMON ]; then
 		(( reg=$year-${REGYEAR[REGNUM]} ))
 		[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
 	else reg=0; fi
-	[ $year -gt	$(date +%Y) ] && reg=0
+	[ $year -gt	$(date +%Y) ] && reg=0 # Display up to current year only
 
 	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
 	fi
@@ -411,6 +414,20 @@ if [ $HEBREW ] && [ $_HC ]; then
 	hebdate=$(hebcal -rh $month $day $year |cut -f2)
 	[[ 10#$doy -eq 10#$(date -d $(hebcal -rh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%j) ]] && newheb="*"
 else unset HEBREW; fi
+
+# Baháʼí; DEP gcal
+if [ $BAHAI ] && [ $(which gcal) ]; then
+	bahyear=$((year-bahconvert)) # calculate Equinox as observed in Tehran
+	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' \
+		--time-offset=+04:30 3 $year |grep 'Equinox' |cut -d" " -f3,23)
+
+	bny=${equinox:6}
+	[[ 10#$(echo "$equinox" |sed 's/:.*//') -ge 19 ]] && [[ $year -ne 2059 ]] &&
+		bny=$(date -d"$bny + 1 day" +%Y-%0m-%0d)
+	doycmp=$(date -d "$bny" +%j)
+	[[ 10#$doy -ge 10#$doycmp ]] && (( bahyear+=1 ))
+	[[ 10#$doy -eq 10#$doycmp ]] && newbah="*"
+else unset BAHAI; fi
 
 # Masoretic; DEP gcal
 (( arc=year+arcconvert ))
@@ -470,7 +487,9 @@ if [ $COMMON ]; then
 
 [ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
 [ $ERISIAN ]	&& printf "%-16s  YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
+
 [ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
+[ $BAHAI ]		&& printf "Baháʼí              BE %4d%s\n" $bahyear "$newbah"
 
 [ $ROME ]		&& printf "City of Rome       AUC %d%s\n" $rome "$newrom"
 [ $BYZANTINE ]	&& printf "Byzantine %4s ind. AM %d%s\n"   "$byzind" $byzantine "$newbyz"
