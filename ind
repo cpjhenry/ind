@@ -282,6 +282,7 @@ if [ $(which phases) ]; then
 		$(($year< 2020))) (( yearof=$year-2008 )) ;;
 		$(($year< 2032))) (( yearof=$year-2020 )) ;;
 		$(($year< 2044))) (( yearof=$year-2032 )) ;;
+		$(($year>=2044))) unset cny ;;
 	esac
 
 	# Diagnostics
@@ -327,7 +328,7 @@ jdoycmp=$jdoy; [ $month -eq 1 -a $day -le $jdelta ] && jdoycmp=0
 [[ 10#$jdoycmp -eq 1 ]] && newrom="*"
 
 (( byzantine=year+byzconvert ))
-doycmp=$(date -d "1 Sept $year" +%j)
+doycmp=$(date -d "1 Sept $year" +%j)	 # September 1st (Day 1)
 [[ 10#$jdoycmp -ge 10#$doycmp ]] && (( byzantine+=1 ))
 [[ 10#$jdoycmp -eq 10#$doycmp ]] && newbyz="*"
 
@@ -399,6 +400,7 @@ else unset HHPC; fi
 # Set Erisian date; DEP ddate
 if [ $ERISIAN ] && [ $(which ddate) ]; then
 	discord=$(ddate +'%{%e %B%} %Y' $day $month $year |sed 's/The //')
+	[[ $(echo $discord |grep -E "^5th|50th|Tib's") ]] && dishol="+"
 else unset ERISIAN; fi
 
 # Set Erisian time; DEP klock
@@ -486,7 +488,7 @@ if [ $COMMON ]; then
 	fi
 
 [ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
-[ $ERISIAN ]	&& printf "%-16s  YOLD %d\n" "${discord::${#discord}-5}" ${discord:(-4)}
+[ $ERISIAN ]	&& printf "%-16s  YOLD %d%s\n" "${discord::${#discord}-5}" ${discord:(-4)} "$dishol"
 
 [ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
 [ $BAHAI ]		&& printf "Baháʼí              BE %4d%s\n" $bahyear "$newbah"
@@ -496,14 +498,14 @@ if [ $COMMON ]; then
 
 [ $JULIANP ]	&& printf "Julian Period  %7s %d\n" "$tjd" $julp
 
-[ $MASORETIC ]	&& printf "Anno Lucis     %3s %3s %d\n" "$glc" "$ugl" $mas
-[ $MASORETIC ]	&& printf "Anno RC                %d%s\n" $arc "$newarc"
-[ $MASORETIC ]	&& printf "Anno Inventionis       %d\n"	$yod
-[ $MASORETIC ]	&& printf "Anno Ordinis KT        %4d\n" $mkt
+[ $MASORETIC ]	&& printf "Anno Lucis  %3s %3s AL %d\n" "$glc" "$ugl" $mas
+[ $MASORETIC ]	&& printf "Anno Rosæ Crucis    AR %d%s\n" $arc "$newarc"
+[ $MASORETIC ]	&& printf "Anno Inventionis    AI %d\n"	$yod
+[ $MASORETIC ]	&& printf "Anno Ordinis KT     AO %4d\n" $mkt
 
 [ $JAPANIY ]	&& printf "Japanese Imperial  %3s %d\n" "$jen" $jiy
 [ $CHINALY ]	&& printf "Chinese Lunar      %3s %d%s\n" "$roc" $cly "$newchi"
-[ $BUDDHIST ]	&& printf "Buddhist Era           %d\n"	$buddhist
+[ $BUDDHIST ]	&& printf "Buddhist Era        BE %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
 				   printf "Ides                   %d\n"	$ides
