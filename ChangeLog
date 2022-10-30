@@ -444,3 +444,9 @@ ChangeLog
 	- added Baháʼí calculations
 	- tweaks
 	- improved error checking
+
+2022-10-30 v3.11.20
+	- hebcal refinements (v5+)
+	- mob refinements, to align with hebcal
+		- improved error checking
+	- update documentation

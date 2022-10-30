@@ -413,8 +413,8 @@ else unset KLOCK; fi
 # Hebrew calendar; DEP hebcal
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
-	hebdate=$(hebcal -rh $month $day $year |cut -f2)
-	[[ 10#$doy -eq 10#$(date -d $(hebcal -rh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%j) ]] && newheb="*"
+	hebdate=$(hebcal -grh $month $day $year |cut -f2)
+	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%j) ]] && newheb="*"
 else unset HEBREW; fi
 
 # Baháʼí; DEP gcal
@@ -518,9 +518,9 @@ if [ $VERBOSE ]; then
 				   printf "Easter                 %s\n"	$(date -d"$(ncal -e $year)" +%m/%d)
 				   printf "Advent                 %s\n" $(date -d"11/$(ncal -h 11 $year |awk '/^Th/{print $NF}')+3 days" +%m/%d)
 
-	[ $_HC ]	&& printf "Passover               %s\n" $(hebcal -rh Ni 15 $(($hebconvert+$year))   |cut -f1) |sed 's/....-//;s/-/\//'
-	[ $_HC ]	&& printf "Rosh Hashana           %s\n" $(hebcal -rh Ti  1 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
-	[ $_HC ]	&& printf "Yom Kippur             %s\n" $(hebcal -rh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Passover               %s\n" $(hebcal -grh Ni 15 $(($hebconvert+$year))   |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Rosh Hashana           %s\n" $(hebcal -grh Ti  1 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Yom Kippur             %s\n" $(hebcal -grh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
 
 				   printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
 	[ $_LY ]	&& printf "Leap year              %d\n"	$year

@@ -4,16 +4,16 @@
 
 app=$(basename $0)
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$app: 'coreutils' is required." && exit 1
-for i in calendar hebcal; do [ ! $(which $i) ] && echo "$app: '$i' is required." && exit 1; done
-cond_source() { [ -f $1 ] && . $1; }
+for i in hebcal ncal; do [ ! $(which $i) ] && echo "$app: '$i' is required." && exit 1; done
 
-year=$(date +%Y)
-DATEFMT="%d %b"
-YAHRFILE="$HOME/.calendar/deaths"
 HEADER=true
 HEBREW=true
 PROXIM=true
 ADVENT=
+
+year=$(date +%Y)
+DATEFMT="%d %b"
+YAHRFILE="$HOME/.calendar/deaths"
 
 while getopts ":cejlYPAy:?" OPTION; do
 	case $OPTION in
@@ -61,30 +61,33 @@ function set_hebrew() {
 }
 
 # Hebrew holidays
-for i in "Adar 14" "Nissan 15" "Sivan 6"; do set_hebrew "$i" $hebyear; done
-
-tishabav=$(hebcal -rh Av 9 $hebyear | cut -f1)
-[[ $(date -d "$tishabav" +%w) == 6 ]] && # !Shabbat
-	set_hebrew "$(date -d "$tishabav + 1 day" +"%m %d %Y")" ||
-	set_hebrew "$(date -d "$tishabav" +"%m %d %Y")"
-
-(( hebyear+=1 ))
-for i in "Tishrey 1" "Tishrey 10" "Tishrey 15" "Kislev 25"; do set_hebrew "$i" $hebyear; done
-
-if [ $EREV ]; then
-	for i in $(hebcal -rx $year |grep Erev |cut -f1); do set_hebrew "$(date -d "$i" +"%m %d %Y")"; done
-	set_hebrew "$(date -d $(hebcal -rx $year |grep "1 Candle" |cut -f1) +"%m %d %Y")"
-fi
-
-# display results
 if [ $HEBREW ]; then outp=true
-	echo -en "$dispheb" |sed 's/|/\n/g' |sort -Mk2
-fi
+	for i in "Adar 14" "Nissan 15" "Sivan 6"; do
+		set_hebrew "$i" $hebyear; done
 
-if [ $YAHR ]; then [ $outp ] && echo ; outp=true
-	[ -e $YAHRFILE ] &&
-		hebcal -hY $YAHRFILE $year |sed -e 's/^....-..-..\s/$(date -d& +"$DATEFMT")*/' |
-		while read -r line; do eval echo -e "$line" |sed 's/\*/*\t☠ /'; done
+	tishabav=$(hebcal -rh Av 9 $hebyear | cut -f1)
+	[[ $(date -d "$tishabav" +%w) == 6 ]] && # !Shabbat
+		set_hebrew "$(date -d "$tishabav + 1 day" +"%m %d %Y")" ||
+		set_hebrew "$(date -d "$tishabav" +"%m %d %Y")"
+
+	(( hebyear+=1 ))
+	for i in "Tishrey 1" "Tishrey 10" "Tishrey 15" "Kislev 25"; do
+		set_hebrew "$i" $hebyear; done
+
+	if [ $EREV ]; then
+		for i in $(hebcal -rx $year |grep Erev |cut -f1); do
+			set_hebrew "$(date -d "$i" +"%m %d %Y")"; done
+		set_hebrew "$(date -d $(hebcal -rx $year |grep "1 Candle" |cut -f1) +"%m %d %Y")"
+	fi
+
+	# display results
+	echo -en "$dispheb" |sed 's/|/\n/g' |sort -Mk2
+
+	if [ $YAHR ]; then [ $outp ] && echo ; outp=true
+		[ -e $YAHRFILE ] &&
+			hebcal -hY $YAHRFILE $year |sed -e 's/^....-..-..\s/$(date -d& +"$DATEFMT")*/' |
+			while read -r line; do eval echo -e "$line" |sed 's/\*/*\t☠ /'; done
+	fi
 fi
 
 # Dates calculated by their proximity to another date
