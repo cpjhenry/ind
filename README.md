@@ -51,7 +51,7 @@ moons. It is written in C and should be compiled locally prior to use:
 Installing the following helper apps will enable additional features:
 
 - **ddate** provides Discordian date support (https://github.com/bo0ts/ddate)
-- **hebcal** provides Hebrew calculations (https://www.hebcal.com)
+- **hebcal** provides Hebrew calculations (https://github.com/hebcal/hebcal)
 - **hh** provides Hanke-Henry date support (https://github.com/cpjhenry/hh)
 - **jday** provides Julian Date (https://sourceforge.net/projects/jday/)
 - **klock** provides Erisian Time (https://github.com/cpjhenry/klock)
@@ -88,4 +88,4 @@ Vassa                  07/14
 
 ## Author
 Paul J Henry <cpjhenry@gmail.com>  
-18 June 2022
+30 October 2022

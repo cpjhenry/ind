@@ -386,10 +386,9 @@ if [ $COMMON ]; then
 
 # Set Julian Period; Truncated Julian Date; DEP jday
 (( julp=year+jupconvert ))
-if [ $JULIANP ] && [ $(which jday) ]; then
+if [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
-	[[ $tjd -gt 65535 ]] && unset tjd
-	[[ $tjd -gt 0 ]] && tjd="TJ$tjd"
+	[[ $tjd -lt 1 ]] || [[ $tjd -gt 65535 ]] && unset tjd
 else unset tjd; fi
 
 # Set Hanke-Henry date; DEP hh
@@ -433,8 +432,8 @@ else unset BAHAI; fi
 
 # Masoretic; DEP gcal
 (( arc=year+arcconvert ))
-[ $(which gcal) ] && 
-	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' \
+[ $(which gcal) ] && equinox=$(gcal -n --astronomical-holidays \
+	--date-format='%Y-%>02*M-%1%>02*D%2' \
 	--time-offset=$(date -d$year-03-20 +%:z |cut -d":" -f1): 3 $year |
 	grep 'Equinox' |sed 's/.* - //;s/ =.*//') || equinox="$year-03-20"
 doycmp=$(date -d "$equinox" +%j)
@@ -491,14 +490,14 @@ if [ $COMMON ]; then
 [ $ERISIAN ]	&& printf "%-16s  YOLD %d%s\n" "${discord::${#discord}-5}" ${discord:(-4)} "$dishol"
 
 [ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
-[ $BAHAI ]		&& printf "Baháʼí              BE %4d%s\n" $bahyear "$newbah"
+[ $BAHAI ]		&& printf "Baháʼí Era          BE %4d%s\n" $bahyear "$newbah"
 
 [ $ROME ]		&& printf "City of Rome       AUC %d%s\n" $rome "$newrom"
-[ $BYZANTINE ]	&& printf "Byzantine %4s ind. AM %d%s\n"   "$byzind" $byzantine "$newbyz"
+[ $BYZANTINE ]	&& printf "Byzantine %-4s      AM %d%s\n" "$byzind" $byzantine "$newbyz"
 
-[ $JULIANP ]	&& printf "Julian Period  %7s %d\n" "$tjd" $julp
+[ $JULIANP ]	&& printf "Julian Period       JP %d\n" $julp
 
-[ $MASORETIC ]	&& printf "Anno Lucis  %3s %3s AL %d\n" "$glc" "$ugl" $mas
+[ $MASORETIC ]	&& printf "Anno Lucis          AL %d\n" $mas
 [ $MASORETIC ]	&& printf "Anno Rosæ Crucis    AR %d%s\n" $arc "$newarc"
 [ $MASORETIC ]	&& printf "Anno Inventionis    AI %d\n"	$yod
 [ $MASORETIC ]	&& printf "Anno Ordinis KT     AO %4d\n" $mkt
@@ -526,11 +525,14 @@ if [ $VERBOSE ]; then
 	[ $_LY ]	&& printf "Leap year              %d\n"	$year
 	[ "$moon" ]	&& printf "Moon phase             %s\n" "$moon"
 	[ $jymd ]	&& printf "Julian calendar     %d %s Day %03d\n" "$jdelta" "${jymd:5}" "$jdoy" |sed 's/-/\//'
+	[ $tjd ]	&& printf "Truncated Julian Date  %d\n" $tjd
 
 	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
 	[ $vsday ]	&& printf "Vassa                  07/%02d\n" $((10#$vsday))
+	[ $ugl ]	&& printf "UGLE                   %d\n" $ugl
+	[ $glc ]	&& printf "GLC                    %d\n" $glc
 	fi
 
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
