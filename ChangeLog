@@ -450,4 +450,5 @@ ChangeLog
 	- mob refinements, to align with hebcal
 		- improved error checking
 	- update documentation
-	- move TJD to verbose, add negative error checking
+	- move TJD to verbose
+		- add negative error checking
