@@ -450,5 +450,10 @@ ChangeLog
 	- mob refinements, to align with hebcal
 		- improved error checking
 	- update documentation
-	- move TJD to verbose
-		- add negative error checking
+	- add TJD negative error checking
+	- Baháʼí BE 0 error checking
+
+2022-11-19 v3.11.21
+	- added moon type, symbols
+	- added alternate moon symbols
+	- tweaks

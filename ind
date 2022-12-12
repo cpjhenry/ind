@@ -61,6 +61,8 @@ DOWS=(Sun Mon Tue Wed Thu Fri Sat)
 EPACTS=(0 29 10 21 2 13 24 5 16 27 8 19 30 11 22 3 14 25 6 17)
 DOMINI=(G A B C D E F)
 PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
+SYMBOL=("●" "☽" "○" "☾")
+ALTSYM=("x" ">" "o" "<")
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -128,7 +130,7 @@ testall() {
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:hHFvlCoODU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:hFHMvlCoODU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -160,6 +162,7 @@ do case $OPTION in
 		h)	[ $HOLDISP ]	&& unset HOLDISP	|| HOLDISP=true;;			# holiday display
 		F)	[ $HOLCACHE ]	&& unset HOLCACHE	|| HOLCACHE=true;;			# holiday cache
 		H)	bold="**"; italics="_";;										# highlight
+		M)	SYMBOL=("${ALTSYM[@]}");;										# alternate moon symbols
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
@@ -231,16 +234,16 @@ if [ $(which phases) ]; then
 		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && BLKMOON=$i
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[0]=$i && MOONSET=true
 	done
-	[ $MOONSET ] && [ $ymd = ${moonphase[0]} ] && moon=${PHASES[0]}
-	[ $BLKMOON ] && [ $ymd = $BLKMOON ] && moon="Black Moon"
+	[ $MOONSET ] && [ $ymd = ${moonphase[0]} ] && moon=${PHASES[0]} && MTYPE=0
+	[ $BLKMOON ] && [ $ymd = $BLKMOON ] && moon="Black Moon" && MTYPE=0
 	unset MOONSET
 
 	for i in "${fullmoon[@]}"; do
 		[ "${i:5:2}" = "$month" ] && [ $MOONSET ] && BLUMOON=$i
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[2]=$i && MOONSET=true
 	done
-	[ $MOONSET ] && [ $ymd = ${moonphase[2]} ] && moon=${PHASES[2]} && FULL=true
-	[ $BLUMOON ] && [ $ymd = $BLUMOON ] && moon="Blue Moon"
+	[ $MOONSET ] && [ $ymd = ${moonphase[2]} ] && moon=${PHASES[2]} && FULL=true && MTYPE=2
+	[ $BLUMOON ] && [ $ymd = $BLUMOON ] && moon="Blue Moon" && MTYPE=2
 
 	if [ $FULL ]; then
 		[ $month -eq 2  ] && moon="Snow Moon"
@@ -418,16 +421,17 @@ else unset HEBREW; fi
 
 # Baháʼí; DEP gcal
 if [ $BAHAI ] && [ $(which gcal) ]; then
-	bahyear=$((year-bahconvert)) # calculate Equinox as observed in Tehran
+	bahyear=$((year-bahconvert))
+	# calculate Equinox as observed in Tehran
 	equinox=$(gcal -n --astronomical-holidays --date-format='%Y-%>02*M-%1%>02*D%2' \
 		--time-offset=+04:30 3 $year |grep 'Equinox' |cut -d" " -f3,23)
-
 	bny=${equinox:6}
 	[[ 10#$(echo "$equinox" |sed 's/:.*//') -ge 19 ]] && [[ $year -ne 2059 ]] &&
 		bny=$(date -d"$bny + 1 day" +%Y-%0m-%0d)
 	doycmp=$(date -d "$bny" +%j)
 	[[ 10#$doy -ge 10#$doycmp ]] && (( bahyear+=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newbah="*"
+	[[ bahyear -le 0 ]] && unset BAHAI
 else unset BAHAI; fi
 
 # Masoretic; DEP gcal
@@ -446,8 +450,8 @@ doycmp=$(date -d "$equinox" +%j)
 
 (( ugl=year-uglconvert ))
 (( glc=year-glcconvert ))
-[[ $ugl -le 0 ]] && unset ugl
-[[ $glc -le 0 ]] && unset glc
+[[ ugl -le 0 ]] && unset ugl
+[[ glc -le 0 ]] && unset glc
 
 # Japanese Era Name
 (( jiy=year+jiyconvert ))
@@ -476,21 +480,24 @@ if [ $FULLCE ]; then
 	else printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year; fi; fi
 
 if [ $COMMON ]; then
-				   printf "$bold"; printf "CE %d %s %s ind." $year "$rnyear" "$ind"; echo "$bold"
+	printf "$bold";printf "CE %d " $year; [ $_LY ]	&& printf "※ "
+				   printf "%s %s ind." "$rnyear" "$ind"
+	[ $MTYPE ]	&& printf " %s" "${SYMBOL[$MTYPE]}"; printf "$bold\n"
 	[ ! $yos ]	&& printf "Day %d Week %d %3s" $doy $iwn "$ltz"
+	[ "$tjd" ]	&& printf " %d" $tjd; printf "\n"
+
+	[ "$reg" ]	&& printf "%s " "$reg"
+	[ "$frc" ]	&& printf "FRC %s" "$frc"
 	[ $kloc ]	&& printf " %s" "$kloc"
-	[ $beat ]	&& printf " %s" "$beat"; [ ! $yos ] && printf "\n"
-
-	[ "$reg" ]	&& printf "%s  " "$reg"
-	[ "$frc" ]	&& printf "FRC %s\n" "$frc"
-
+	[ $beat ]	&& printf " %s" "$beat"
+	[ "$reg" ] || [ "$frc" ] || [ "$kloc" ] && printf "\n"
 	fi
 
 [ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
 [ $ERISIAN ]	&& printf "%-16s  YOLD %d%s\n" "${discord::${#discord}-5}" ${discord:(-4)} "$dishol"
 
 [ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
-[ $BAHAI ]		&& printf "Baháʼí Era          BE %4d%s\n" $bahyear "$newbah"
+[ $BAHAI ]		&& printf "Baha'i Era          BE %4d%s\n" $bahyear "$newbah"
 
 [ $ROME ]		&& printf "City of Rome       AUC %d%s\n" $rome "$newrom"
 [ $BYZANTINE ]	&& printf "Byzantine %-4s      AM %d%s\n" "$byzind" $byzantine "$newbyz"
@@ -498,7 +505,7 @@ if [ $COMMON ]; then
 [ $JULIANP ]	&& printf "Julian Period       JP %d\n" $julp
 
 [ $MASORETIC ]	&& printf "Anno Lucis          AL %d\n" $mas
-[ $MASORETIC ]	&& printf "Anno Rosæ Crucis    AR %d%s\n" $arc "$newarc"
+[ $MASORETIC ]	&& printf "Anno Rosae Crucis   AR %d%s\n" $arc "$newarc"
 [ $MASORETIC ]	&& printf "Anno Inventionis    AI %d\n"	$yod
 [ $MASORETIC ]	&& printf "Anno Ordinis KT     AO %4d\n" $mkt
 
@@ -522,10 +529,8 @@ if [ $VERBOSE ]; then
 	[ $_HC ]	&& printf "Yom Kippur             %s\n" $(hebcal -grh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
 
 				   printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
-	[ $_LY ]	&& printf "Leap year              %d\n"	$year
 	[ "$moon" ]	&& printf "Moon phase             %s\n" "$moon"
 	[ $jymd ]	&& printf "Julian calendar     %d %s Day %03d\n" "$jdelta" "${jymd:5}" "$jdoy" |sed 's/-/\//'
-	[ $tjd ]	&& printf "Truncated Julian Date  %d\n" $tjd
 
 	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
