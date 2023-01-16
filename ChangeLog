@@ -457,3 +457,7 @@ ChangeLog
 	- added moon type, symbols
 	- added alternate moon symbols
 	- tweaks
+
+2022-12-14 v3.11.22
+	- added alternate leap year symbols
+	- (mob) added Gregorian flag to yahrzeits

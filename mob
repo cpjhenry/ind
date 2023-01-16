@@ -85,7 +85,7 @@ if [ $HEBREW ]; then outp=true
 
 	if [ $YAHR ]; then [ $outp ] && echo ; outp=true
 		[ -e $YAHRFILE ] &&
-			hebcal -hY $YAHRFILE $year |sed -e 's/^....-..-..\s/$(date -d& +"$DATEFMT")*/' |
+			hebcal -ghY $YAHRFILE $year |sed -e 's/^....-..-..\s/$(date -d& +"$DATEFMT")*/' |
 			while read -r line; do eval echo -e "$line" |sed 's/\*/*\t☠ /'; done
 	fi
 fi

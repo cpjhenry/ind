@@ -64,6 +64,9 @@ PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
 SYMBOL=("●" "☽" "○" "☾")
 ALTSYM=("x" ">" "o" "<")
 
+LYSYM="※"
+LYASYM="X"
+
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
@@ -162,7 +165,7 @@ do case $OPTION in
 		h)	[ $HOLDISP ]	&& unset HOLDISP	|| HOLDISP=true;;			# holiday display
 		F)	[ $HOLCACHE ]	&& unset HOLCACHE	|| HOLCACHE=true;;			# holiday cache
 		H)	bold="**"; italics="_";;										# highlight
-		M)	SYMBOL=("${ALTSYM[@]}");;										# alternate moon symbols
+		M)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYASYM");;					# alternate symbols
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
@@ -480,7 +483,7 @@ if [ $FULLCE ]; then
 	else printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year; fi; fi
 
 if [ $COMMON ]; then
-	printf "$bold";printf "CE %d " $year; [ $_LY ]	&& printf "※ "
+	printf "$bold";printf "CE %d " $year; [ $_LY ]	&& printf "%s " $LYSYM
 				   printf "%s %s ind." "$rnyear" "$ind"
 	[ $MTYPE ]	&& printf " %s" "${SYMBOL[$MTYPE]}"; printf "$bold\n"
 	[ ! $yos ]	&& printf "Day %d Week %d %3s" $doy $iwn "$ltz"
