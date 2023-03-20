@@ -422,6 +422,12 @@ if [ $HEBREW ] && [ $_HC ]; then
 	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%j) ]] && newheb="*"
 else unset HEBREW; fi
 
+# Hijri; DEP gcal
+if [ $(which gcal) ]; then
+	hijridt=$(gcal -e --date-format="%1%>02*M/%>02*D%2" --islamic-civil-holidays $year |
+	grep "(Isl)" |grep "New Year" |sed 's/://;s/\s(.*)//')
+	fi
+
 # Baháʼí; DEP gcal
 if [ $BAHAI ] && [ $(which gcal) ]; then
 	bahyear=$((year-bahconvert))
@@ -546,10 +552,10 @@ if [ $VERBOSE ]; then
 [ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
 
 # Non-lunar observances
-[ $day -eq $ides ] && dhol+="Ides of ${MONTHL[10#$month]}|"
-[ $month -eq 5 -a $day -eq 23 ]  && dhol+="Eris Day|"
-[ $month -eq 5 -a $day -eq 25 ]  && dhol+="Towel Day|"
-[ $month -eq 7 -a $day -eq 5 ]	 && dhol+="X-Day|"
+#[ $day -eq $ides ] && dhol+="Ides of ${MONTHL[10#$month]}|"
+#[ $month -eq 5 -a $day -eq 23 ]  && dhol+="Eris Day|"
+#[ $month -eq 5 -a $day -eq 25 ]  && dhol+="Towel Day|"
+#[ $month -eq 7 -a $day -eq 5 ]	 && dhol+="X-Day|"
 
 # Buddhist observances
 if [ "$moon" ]; then

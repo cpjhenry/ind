@@ -461,3 +461,7 @@ ChangeLog
 2022-12-14 v3.11.22
 	- added alternate leap year symbols
 	- (mob) added Gregorian flag to yahrzeits
+
+2023-03-19 v3.12.0
+	- added Islamic civil holidays (ind/mob)
+	- removed non-lunar observances
