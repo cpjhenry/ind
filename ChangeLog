@@ -463,5 +463,12 @@ ChangeLog
 	- (mob) added Gregorian flag to yahrzeits
 
 2023-03-19 v3.12.0
-	- added Islamic civil holidays (ind/mob)
+	- added Islamic civil new year / holidays (ind/mob)
+	- simplified equinox calculations
 	- removed non-lunar observances
+
+2023-03-25 v3.12.1
+	- fixed GCAL environment issue (when run under Ubersicht)
+	- gcal optimizations
+	- added Buddhist Days diagnostic (-L)
+	- tweaks

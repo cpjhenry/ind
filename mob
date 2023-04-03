@@ -8,7 +8,7 @@ for i in gcal hebcal ncal; do [ ! $(which $i) ] && echo "$app: '$i' is required.
 
 HEADER=
 HEBREW=true
-ISLAMIC=
+HIJRI=
 PROXIM=true
 ADVENT=
 
@@ -16,12 +16,12 @@ year=$(date +%Y)
 DATEFMT="%m/%d" # DATEFMT="%d %b"
 YAHRFILE="$HOME/.calendar/deaths"
 
-while getopts ":eijlYPAy:H?" OPTION; do
+while getopts ":ehjlYPAy:H?" OPTION; do
 	case $OPTION in
 		e)	# Erevs
 			EREV=true;;
-		i)	# Islamic holidays
-			[ $ISLAMIC ] && unset ISLAMIC || ISLAMIC=true;;
+		h)	# Hijri holidays
+			[ $HIJRI ] && unset HIJRI || HIJRI=true;;
 		j)	# Hebrew holidays
 			[ $HEBREW ] && unset HEBREW || HEBREW=true;;
 		l)	# Holiday information
@@ -91,10 +91,10 @@ if [ $HEBREW ]; then outp=true
 			while read -r line; do eval echo -e "$line" |sed 's/\*/*\t☠ /'; done
 	fi
 fi
-if [ $ISLAMIC ]; then [ $outp ] && echo; outp=true
+if [ $HIJRI ]; then [ $outp ] && echo; outp=true
 	gcal -e --date-format="%1%>02*M/%>02*D%2" --islamic-civil-holidays 2023 |grep --no-messages "(Isl)" |
 	sed -e 's/:\s/*\t/' -e 's/\s*(Isl).*//' -e '/Ramadan/s/$/~/;/Eid-al/s/$/~/;/New Year/s/$/~/' -e "s/'s Day//" |
-	grep --no-messages '~' | sed 's/~$//' | uniq -f1
+	grep --no-messages '~' | sed 's/~$//;s/Islamic New Year/Hijra/' | uniq -f1
 fi
 
 # Dates calculated by their proximity to another date
