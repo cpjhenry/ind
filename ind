@@ -8,7 +8,6 @@
 [ $(uname) = 'Darwin' ] && [ ! $(which gsed)  ] && echo "$(basename $0): 'GNU sed' is required."	&& exit 1
 
 GITREP=$HOME/src/ind
-HOLTMP=/tmp/ind_holidays
 export GCAL="--resource-file=gcal --exclude-fixed-dates-list-title --suppress-fixed-dates-list-separator"
 
 FULLCE=
@@ -125,16 +124,10 @@ displaynone() {
 
 	unset VERBOSE; unset LUNAR; unset CHINESE;
 	}
-testall() {
-	unset t_var
-	[ $FULLCE ]		|| [ $COMMON ]	|| [ $HHPC ]		|| [ $ERISIAN ]	||
-	[ $HEBREW ]		|| [ $ROME ]	|| [ $BYZANTINE ]	|| [ $JULIANP ]	||
-	[ $MASORETIC ]	|| [ $JAPANIY ]	|| [ $CHINALY ]		|| [ $BUDDHIST ] && t_var=true
-	}
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:hFHMvClBVoODU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:hHMvClBVZoODU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -164,7 +157,6 @@ do case $OPTION in
 			[ "$(grep -E "[[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
 
 		h)	[ $HOLDISP ]	&& unset HOLDISP	|| HOLDISP=true;;			# holiday display
-		F)	[ $HOLCACHE ]	&& unset HOLCACHE	|| HOLCACHE=true;;			#- holiday cache
 		H)	bold="**"; italics="_";;										# highlight
 		M)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYALT");;						# alternate symbols
 
@@ -176,6 +168,7 @@ do case $OPTION in
 				ind -y$year -V
 				ind -y$year -m10 -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p";exit;;
 		V)	[ $VASSA ]		&& unset VASSA		|| VASSA=true;;				#- display Vassa date
+		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- display Year of the Zodiac
 		o)	for d in {01..31}; do											#- Observance diagnostics
 				ind -ch -y$year -m$month -d$d |
 				sed "/^ind:/d;s/^/$month\/$d\t/;s/^0//;s/- //"
@@ -299,21 +292,28 @@ if [ $(which phases) ]; then
 
 	# Diagnostics
 	if [ $CHINESE ]; then
-		[ $year -le 2038 ] && printf "%s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]}
+		[ $year -le 2038 ] && printf "%s %s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$yearof]}
 		exit; fi
 
 	if [ $LUNAR ]; then
 		for i in 0 2; do # February is shorter than a standard lunation (e.g. Feb. 2033 & 2037)
-			[ ${moonphase[$i]} ] && dmoo+=$(printf "%s*\t%s|" ${moonphase[$i]:5} "${PHASES[$i]}" |sed 's/-/\//')
+			[ ${moonphase[$i]} ] && dmoo+=("$(printf "%s*\t%s" ${moonphase[$i]:5} "${PHASES[$i]}")")
 			done
-		[ "$BLKMOON" ] && dmoo+=$(printf "%s  Black Moon|" $BLKMOON)
-		[ "$BLUMOON" ] && dmoo+=$(printf "%s  Blue Moon |" $BLUMOON)
+		[ "$BLKMOON" ] && dmoo+=("$(printf "%s*\tBlack Moon" ${BLKMOON:5})")
+		[ "$BLUMOON" ] && dmoo+=("$(printf "%s*\tBlue Moon"  ${BLUMOON:5})")
 
-		echo -en "$dmoo" |sed 's/|/\n/g' |sort
+		sort <<< "$(for i in ${!dmoo[@]}; do printf "%s\n" "${dmoo[$i]}" |sed 's:-:/:'; done)"
+
 		exit; fi
+
 	if [ $VASSA ]; then
 		[ $vsday ] && printf "07/%s*\tVassa\n" $vsday
 		exit; fi
+
+	if [ $ZODIACYEAR ]; then
+		[ $cny ] && printf "%s*\tYear of the %s\n" ${cny:5} ${ZODIAC[$yearof]} |sed 's/-/\//'
+		exit; fi
+
 else unset CHINALY; fi
 
 # Lunar and Lunisolar Calculations
@@ -427,7 +427,7 @@ else unset KLOCK; fi
 # Hebrew calendar; DEP hebcal
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
-	hebdate=$(hebcal -grh $month $day $year |cut -f2)
+	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed 's/of //')
 	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%-j) ]] && newheb=" !"
 else unset HEBREW; fi
 
@@ -562,26 +562,17 @@ if [ $VERBOSE ]; then
 	[ $glc ]	&& printf "GLC                    %d\n" $glc
 	fi
 
-[ ! $HOLDISP ] && [ ! $HOLCACHE ] && exit
+[ ! $HOLDISP ] && exit
 
 # Buddhist observances
 if [ "$moon" ]; then
-	moon="$moon Uposatha|"
+	moon="Uposatha"
 	if [ $FULL ] ; then # only the first full moon
 		[ $month -eq 2  ] && moon=${BUDOBS[0]}
 		[ $month -eq 5  ] && moon=${BUDOBS[1]}
 		[ $month -eq 7  ] && moon=${BUDOBS[2]}
-		[ $month -eq 10 ] && moon=${BUDOBS[3]}; fi
-	dhol+=$moon; fi
-[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && dhol+="Vassa|"
-
-# Chinese observances
-[ $cny ] && [ $ymd = $cny ] && dhol+="Year of the ${ZODIAC[10#$yearof]}|"
-
-# Display results
-if [ "$dhol" ]; then
-	dhol=$(echo -en "$dhol" |sed 's/|/\n/g' |sed 's/^/- /g')
-	[ $HOLCACHE ] && unset HOLDISP && echo "$dhol">$HOLTMP
-	if [ $HOLDISP ]; then
-		testall; [ $t_var ] && echo
-		echo "$dhol" |sed "s/^- /&$italics/;s/$/$italics/"; fi; fi
+		[ $month -eq 10 ] && moon=${BUDOBS[3]}
+		fi
+	printf -- "- %s\n" "$moon"
+	fi
+[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && printf -- "- Vassa\n"

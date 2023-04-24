@@ -472,3 +472,10 @@ ChangeLog
 	- gcal optimizations
 	- added Buddhist Days diagnostic (-L)
 	- tweaks
+
+2023-04-23 v3.12.2
+	- moved Chinese Zodiac from general observances to own switch
+	- added Vassa display switch
+	- optimized lunar diagnostics
+	- removed holiday caching
+	- tweaks
