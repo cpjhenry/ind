@@ -127,7 +127,7 @@ displaynone() {
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:hHMvClBVZoODU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:hHMvlCBVZoODU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -143,12 +143,12 @@ do case $OPTION in
 
 		r)	[ $ROME ] 		&& unset ROME 		|| ROME=true;;				# Roman
 		z)	[ $BYZANTINE ] 	&& unset BYZANTINE 	|| BYZANTINE=true;;			# Byzantine
-		u)	[ $JULIANP ]	&& unset JULIANP	|| JULIANP=true;;			# Julian period
+		u)	[ $JULIANP ]	&& unset JULIANP	|| JULIANP=true;;			# Julian Period
 
 		x)	[ $MASORETIC ]	&& unset MASORETIC	|| MASORETIC=true;;			# Masoretic
 
 		i)	[ $JAPANIY ] 	&& unset JAPANIY	|| JAPANIY=true;;			# Japanese Imperial
-		q)	[ $CHINALY ]	&& unset CHINALY	|| CHINALY=true;;			# Chinese lunar
+		q)	[ $CHINALY ]	&& unset CHINALY	|| CHINALY=true;;			# Chinese Lunar
 		b)	[ $BUDDHIST ] 	&& unset BUDDHIST 	|| BUDDHIST=true;;			# Buddhist
 
 		y)	year=$OPTARG;;													# set year
@@ -161,13 +161,13 @@ do case $OPTION in
 		M)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYALT");;						# alternate symbols
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
-		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
-		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	#- lunar diagnostic data
+		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# Lunar diagnostic data
 		B)	for m in 2 5 7; do												# Buddhist observances
 				ind -y$year -m$m -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p";((j++)); done
 				ind -y$year -V
 				ind -y$year -m10 -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p";exit;;
 		V)	[ $VASSA ]		&& unset VASSA		|| VASSA=true;;				#- display Vassa date
+		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- display Year of the Zodiac
 		o)	for d in {01..31}; do											#- Observance diagnostics
 				ind -ch -y$year -m$month -d$d |

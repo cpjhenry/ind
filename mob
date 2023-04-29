@@ -4,19 +4,24 @@
 
 app=$(basename $0)
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$app: 'coreutils' is required." && exit 1
-for i in gcal hebcal ncal; do [ ! $(which $i) ] && echo "$app: '$i' is required." && exit 1; done
+for i in gcal hebcal ind ncal; do [ ! $(which $i) ] && echo "$app: '$i' is required." && exit 1; done
 
+###
 HEADER=
 HEBREW=true
-HIJRI=
+EREV=
+YAHR=
+HIJRI=true
+ZODIAC=true
 PROXIM=true
 ADVENT=
+###
 
 year=$(date +%Y)
 DATEFMT="%m/%d" # DATEFMT="%d %b"
 YAHRFILE="$HOME/.calendar/deaths"
 
-while getopts ":ehjlYPAy:H?" OPTION; do
+while getopts ":ehjlYPAZy:HD?" OPTION; do
 	case $OPTION in
 		e)	# Erevs
 			EREV=true;;
@@ -38,16 +43,19 @@ while getopts ":ehjlYPAy:H?" OPTION; do
 			exit;;		
 		Y)	# Yahrzeits
 			YAHR=true;;
+		Z)	# Chinese Zodiac
+			[ $ZODIAC ] && unset ZODIAC || ZODIAC=true;;
 		P)	# Proximate dates
 			[ $PROXIM ] && unset PROXIM || PROXIM=true;;
 		A)	# Advent
 			[ $ADVENT ] && unset ADVENT || ADVENT=true;;
-
 		y)	# set year
 			year=$OPTARG;;
 		H)	# header
 			[ $HEADER ] && unset HEADER || HEADER=true;;
-
+		D)	# list defaults
+			sed -n '/###/{:loop n; /###/q; p; b loop}' $0
+			exit;;
 		*)	getusage $0
 			exit;;
 	esac
@@ -92,9 +100,14 @@ if [ $HEBREW ]; then outp=true
 	fi
 fi
 if [ $HIJRI ]; then [ $outp ] && echo; outp=true
-	gcal -e --date-format="%1%>02*M/%>02*D%2" --islamic-civil-holidays 2023 |grep --no-messages "(Isl)" |
-	sed -e 's/:\s/*\t/' -e 's/\s*(Isl).*//' -e '/Ramadan/s/$/~/;/Eid-al/s/$/~/;/New Year/s/$/~/' -e "s/'s Day//" |
-	grep --no-messages '~' | sed 's/~$//;s/Islamic New Year/Hijra/' | uniq -f1
+	gcal -e --date-format="%1%>02*M/%>02*D%2" --islamic-civil-holidays 2023 |
+	grep --no-messages "(Isl)" |sed -e 's/:\s/*\t/' -e 's/\s*(Isl).*//' \
+	-e '/Ramadan/s/$/~/;/Eid-al/s/$/~/;/New Year/s/$/~/' \
+	-e "s/'s Day//;s/Islamic New Year/Hijra/" |
+	grep --no-messages '~' | sed 's/~$//' | uniq -f1
+fi
+if [ $ZODIAC ]; then [ $outp ] && echo; outp=true
+	ind -y$year -Z
 fi
 
 # Dates calculated by their proximity to another date
@@ -107,9 +120,9 @@ if [ $PROXIM ]; then [ $outp ] && echo; outp=true
 	printf "%s*\tGiving Tuesday\n" 	"$(date -d "$FourthThuNov +5 days" +"$DATEFMT")"
 fi
 if [ $ADVENT ]; then [ $outp ] && echo
-#	xmasdow=$(date -d "$year-12-25" +%w)
-#	xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
-#	advent="$(date -d"$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
+	#xmasdow=$(date -d "$year-12-25" +%w)
+	#xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
+	#advent="$(date -d"$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
 
 	LastThuNov="Nov $(ncal -h 11 $year |awk '/^Th/{print $NF}')"
 	advent="$(date -d"$LastThuNov +3 days" +"$DATEFMT")"

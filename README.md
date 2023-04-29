@@ -11,8 +11,8 @@ Chinese year and New Year, and Buddhist observances in the Theravadan
 tradition. Astronomical dating includes current Julian period, and Truncated
 Julian Date.
 
-Other obscure and idiosyncratic dating system support, including unusual
-observances, has also been added. Please see the man file for full list.
+Other obscure and idiosyncratic dating system support has also been added.
+Please see the man file for full list.
 
 ## History
 This project was inspired by Harry Turtledove's _Agent of Byzantium_. As an
@@ -86,6 +86,12 @@ Chinese New Year       02/01 Tiger
 Vassa                  07/14
 ```
 
+## Extra Tools
+
+**mob** (movable observances) displays -- in calendar-format -- lunisolar or
+other observances.
+
 ## Author
 Paul J Henry <cpjhenry@gmail.com>  
-30 October 2022
+29 April 2023
+

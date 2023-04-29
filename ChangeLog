@@ -479,3 +479,7 @@ ChangeLog
 	- optimized lunar diagnostics
 	- removed holiday caching
 	- tweaks
+
+2023-04-23 v3.12.3
+	- update documentation
+	- (mob) added Zodiac
