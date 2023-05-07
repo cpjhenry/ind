@@ -65,7 +65,7 @@ PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
 SYMBOL=("●" "☽" "○" "☾")
 ALTSYM=("x" ">" "o" "<")
 LYSYM="※"; LYALT="X"
-BUDOBS=("Magha (Sangha)" "Visakha (Buddha)" "Asalha (Dhamma)" "Pavarana")
+BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Pavarana")
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -165,7 +165,8 @@ do case $OPTION in
 		B)	for m in 2 5 7; do												# Buddhist observances
 				ind -y$year -m$m -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p";((j++)); done
 				ind -y$year -V
-				ind -y$year -m10 -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p";exit;;
+				ind -y$year -m10 -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p"
+			exit;;
 		V)	[ $VASSA ]		&& unset VASSA		|| VASSA=true;;				#- display Vassa date
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- display Year of the Zodiac
