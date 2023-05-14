@@ -38,11 +38,12 @@ byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 
 masconvert=4000	# Masoretic; 4000 BCE
+arcconvert=1352 # Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+yodconvert=530	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
+depconvert=1000 # Anno Depositionis; 1000 BCE - 1st temple
+mktconvert=1118 # Anno Ordinis; 1118 CE
 uglconvert=1717 # UGL year; 1717 CE
 glcconvert=1855 # GLC year; 1855 CE
-arcconvert=1352 # Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
-yodconvert=530	# Anno Inventionis; 530 BCE
-mktconvert=1118 # Anno Ordinis; 1118 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
@@ -467,6 +468,7 @@ doycmp=$(date -d "$equinox" +%-j)
 
 (( mas=year+masconvert ))
 (( yod=year+yodconvert ))
+(( dep=year+depconvert ))
 (( mkt=year-mktconvert ))
 
 (( ugl=year-uglconvert ))
@@ -529,6 +531,7 @@ if [ $COMMON ]; then
 [ $MASORETIC ]	&& printf "Anno Lucis          AL %d\n" $mas
 [ $MASORETIC ]	&& printf "Anno Rosae Crucis   AR %d%s\n" $arc "$newarc"
 [ $MASORETIC ]	&& printf "Anno Inventionis    AI %d\n"	$yod
+[ $MASORETIC ]	&& printf "Anno Depositionis   AD %d\n" $dep
 [ $MASORETIC ]	&& printf "Anno Ordinis KT     AO %4d\n" $mkt
 
 [ $JAPANIY ]	&& printf "Japanese Imperial  %3s %d\n" "$jen" $jiy
