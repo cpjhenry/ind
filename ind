@@ -32,6 +32,7 @@ CHINALY=
 BUDDHIST=
 
 HOLDISP=
+PREFIX="- "
 
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
@@ -128,7 +129,7 @@ displaynone() {
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:hHMvlCBVZoODU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:hHMPvlCBVZoODU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -160,6 +161,7 @@ do case $OPTION in
 		h)	[ $HOLDISP ]	&& unset HOLDISP	|| HOLDISP=true;;			# holiday display
 		H)	bold="**"; italics="_";;										# highlight
 		M)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYALT");;						# alternate symbols
+		P)	[ $PREFIX ]		&& unset PREFIX		|| PREFIX="- ";;			# prefix
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# Lunar diagnostic data
@@ -182,13 +184,13 @@ do case $OPTION in
 				[ $(which $line) ] || echo "Install '$line'"
 			done < <(grep "DEP" $0 |sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
-		U)	cp -uv $HOME/bin/$(basename $0) $GITREP/						#- update git repository
-			cp -uv $HOME/share/man/man1/$(basename $0).1 $GITREP/
-			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/
+		U)	cp -uv $HOME/bin/$(basename $0) $GITREP/ |grep -v skipped		#- update git repository
+			cp -uv $HOME/share/man/man1/$(basename $0).1 $GITREP/ |grep -v skipped
+			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/ |grep -v skipped
 
-			cp -uv $HOME/bin/getusage $GITREP/
-			cp -uv $HOME/bin/mob $GITREP/
-			cp -uv $HOME/bin/rnum $GITREP/
+			cp -uv $HOME/bin/getusage $GITREP/ |grep -v skipped
+			cp -uv $HOME/bin/mob $GITREP/ |grep -v skipped
+			cp -uv $HOME/bin/rnum $GITREP/ |grep -v skipped
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
 	esac
@@ -577,6 +579,6 @@ if [ "$moon" ]; then
 		[ $month -eq 7  ] && moon=${BUDOBS[2]}
 		[ $month -eq 10 ] && moon=${BUDOBS[3]}
 		fi
-	printf -- "- %s\n" "$moon"
+	printf -- "%s%s\n" "$PREFIX" "$moon"
 	fi
-[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && printf -- "- Vassa\n"
+[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && printf -- "%sVassa\n" "$PREFIX"
