@@ -531,7 +531,7 @@ if [ $COMMON ]; then
 [ $JULIANP ]	&& printf "Julian Period       JP %d\n" $julp
 
 [ $MASORETIC ]	&& printf "Anno Lucis          AL %d\n" $mas
-[ $MASORETIC ]	&& printf "Anno Rosae Crucis   AR %d%s\n" $arc "$newarc"
+[ $MASORETIC ]	&& printf "Anno Rosae Crucis  ARC %d%s\n" $arc "$newarc"
 [ $MASORETIC ]	&& printf "Anno Inventionis    AI %d\n"	$yod
 [ $MASORETIC ]	&& printf "Anno Depositionis   AD %d\n" $dep
 [ $MASORETIC ]	&& printf "Anno Ordinis KT     AO %4d\n" $mkt
