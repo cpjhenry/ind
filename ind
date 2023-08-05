@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 # Calculates Byzantine date & Indiction
 # 2013-07-16/pjh
 
@@ -15,7 +15,6 @@ COMMON=true
 
 HHPC=
 ERISIAN=
-KLOCK=
 
 HEBREW=
 HIJRI=
@@ -31,20 +30,20 @@ JAPANIY=
 CHINALY=
 BUDDHIST=
 
-HOLDISP=
+OBSERVS=
 PREFIX="- "
 
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 
-masconvert=4000	# Masoretic; 4000 BCE
-arcconvert=1352 # Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
-yodconvert=530	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
-depconvert=1000 # Anno Depositionis; 1000 BCE - 1st temple
-mktconvert=1118 # Anno Ordinis; 1118 CE
-uglconvert=1717 # UGL year; 1717 CE
-glcconvert=1855 # GLC year; 1855 CE
+masconvert=4000	;mas=true	# Masoretic; 4000 BCE
+arcconvert=1352 ;arc=true	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+yodconvert=530	;yod=true	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
+depconvert=1000 ;dep=		# Anno Depositionis; 1000 BCE - 1st temple
+mktconvert=1118 ;mkt=true	# Anno Ordinis; 1118 CE
+uglconvert=1717 ;ugl=true	# UGL year; 1717 CE
+glcconvert=1855 ;glc=true	# GLC year; 1855 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
@@ -67,7 +66,7 @@ PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
 SYMBOL=("●" "☽" "○" "☾")
 ALTSYM=("x" ">" "o" "<")
 LYSYM="※"; LYALT="X"
-BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Pavarana")
+BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
@@ -117,7 +116,7 @@ displayall() {
 displaynone() {
 	unset FULLCE;
 	unset COMMON;
-	unset HHPC; unset ERISIAN; unset KLOCK;
+	unset HHPC; unset ERISIAN;
 	unset HEBREW; unset BAHAI;
 	unset ROME; unset BYZANTINE;
 	unset JULIANP; unset MASORETIC;
@@ -129,7 +128,7 @@ displaynone() {
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:hHMPvlCBVZoODU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:HMPvlhoBOCZDU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -139,8 +138,6 @@ do case $OPTION in
 
 		p)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
 		e)	[ $ERISIAN ]	&& unset ERISIAN	|| ERISIAN=true;;			# Erisian
-		k)	[ $KLOCK ]		&& unset KLOCK		|| KLOCK=true;;				# Klock
-
 		j)	[ $HEBREW ] 	&& unset HEBREW 	|| HEBREW=true;;			# Hebrew
 
 		r)	[ $ROME ] 		&& unset ROME 		|| ROME=true;;				# Roman
@@ -158,29 +155,32 @@ do case $OPTION in
 		d)	day=$OPTARG														# set day
 			[ "$(grep -E "[[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
 
-		h)	[ $HOLDISP ]	&& unset HOLDISP	|| HOLDISP=true;;			# holiday display
 		H)	bold="**"; italics="_";;										# highlight
 		M)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYALT");;						# alternate symbols
 		P)	[ $PREFIX ]		&& unset PREFIX		|| PREFIX="- ";;			# prefix
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
-		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# Lunar diagnostic data
-		B)	for m in 2 5 7; do												# Buddhist observances
-				ind -y$year -m$m -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p";((j++)); done
-				ind -y$year -V
-				ind -y$year -m10 -d1 -l |sed -n "/Full/s/Full Moon/${BUDOBS[$j]}/p"
+		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar
+
+		h)	;&
+		o)	[ $OBSERVS ]	&& unset OBSERVS	|| OBSERVS=true;;			# observances
+		B)	for m in 2 5 7; do												# Buddhist Festivals
+				phases $year $m 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
+				((j++)); done
+			printf "%s*\t${BUDOBS[$j]}\n" $(date -d"$(phases $year 7 2 |sed -n '1s/ .*//p')+1day" +%0m/%0d)
+			((j++))
+			phases $year 10 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
 			exit;;
-		V)	[ $VASSA ]		&& unset VASSA		|| VASSA=true;;				#- display Vassa date
+		O)	for u in $(ind -y$year -m$month -l |sed "s/*\t.*//"); do		# Uposatha
+				if [ "$(date -d$year/$u +%-j)" -ge "$(date -d$year-$month-$day +%-j)" ]
+					then date -d"$u" +"%e %b*%tUposatha"; fi
+				done
+			exit;;
+
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
-		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- display Year of the Zodiac
-		o)	for d in {01..31}; do											#- Observance diagnostics
-				ind -ch -y$year -m$month -d$d |
-				sed "/^ind:/d;s/^/$month\/$d\t/;s/^0//;s/- //"
-			done;exit;;
-		O)	for m in {01..12}; do
-				ind -y$year -m$m -o
-			done;exit;;
-		D)	while IFS= read -r line; do										# check dependencies
+		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- Year of the Zodiac
+
+		D)	while IFS= read -r line; do										#- check dependencies
 				[ $(which $line) ] || echo "Install '$line'"
 			done < <(grep "DEP" $0 |sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
@@ -191,6 +191,8 @@ do case $OPTION in
 			cp -uv $HOME/bin/getusage $GITREP/ |grep -v skipped
 			cp -uv $HOME/bin/mob $GITREP/ |grep -v skipped
 			cp -uv $HOME/bin/rnum $GITREP/ |grep -v skipped
+			
+			[ -e $GITREP/ChangeLog ] && touch $GITREP/ChangeLog
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
 	esac
@@ -222,6 +224,7 @@ ltz=$(date -d "$ymd 00:18" +%Z)		# timezone
 dow=$(date -d "$ymd 00:18" +%w) 	# day of week
 doy=$(date -d "$ymd 00:18" +%-j)	# day of year
 iwn=$(date -d "$ymd 00:18" +%-V)	# ISO week no
+qtr=$(date -d "$ymd 00:18" +"Q%q")	# quarter
 
 if [ "$ltz" = "EWT" ]; then			# 9 Feb 1942 to 30 Sep 1945
 	utc=$(date -ud "$ymd $hms $(date -d06/01 +%Z)" "+%F %T")
@@ -232,7 +235,7 @@ else
 fi
 
 # Moons; DEP phases
-if [ $(which phases) ]; then
+if [ $(which phases) ]; then _PH=true
 	while IFS= read -r line; do newmoon+=( "$(date -d "$line UTC" +%F)"); done < <(phases $year $month 0)
 	while IFS= read -r line; do fullmoon+=("$(date -d "$line UTC" +%F)"); done < <(phases $year $month 2)
 
@@ -251,6 +254,19 @@ if [ $(which phases) ]; then
 	[ $MOONSET ] && [ $ymd = ${moonphase[2]} ] && moon=${PHASES[2]} && FULL=true && MTYPE=2
 	[ $BLUMOON ] && [ $ymd = $BLUMOON ] && moon="Blue Moon" && MTYPE=2
 
+	if [ $OBSERVS ]; then [ "$moon" ] && printf -- "%sUposatha\n" "$PREFIX"; exit; fi
+
+	if [ $LUNAR ]; then
+		for i in 0 2; do # February is shorter than a standard lunation (e.g. Feb. 2033 & 2037)
+			[ ${moonphase[$i]} ] && dmoo+=("$(printf "%s*\t%s" ${moonphase[$i]:5} "${PHASES[$i]}")")
+			done
+		[ "$BLKMOON" ] && dmoo+=("$(printf "%s*\tBlack Moon" ${BLKMOON:5})")
+		[ "$BLUMOON" ] && dmoo+=("$(printf "%s*\tBlue Moon"  ${BLUMOON:5})")
+
+		sort <<< "$(for i in ${!dmoo[@]}; do printf "%s\n" "${dmoo[$i]}" |sed 's:-:/:'; done)"
+
+		exit; fi
+
 	if [ $FULL ]; then
 		[ $month -eq 2  ] && moon="Snow Moon"
 		[ $month -eq 3  ] && moon="Lenten Moon"
@@ -258,9 +274,6 @@ if [ $(which phases) ]; then
 		[ $month -eq 9  ] && moon="Harvest Moon"
 		[ $month -eq 10 ] && moon="Hunter's Moon"
 		[ $month -eq 11 ] && moon="Beaver Moon"; fi
-
-	# Vassa
-	vsday=$(date -d "$(phases $year 7 2 |sed -n 1p) + 1 day" +%d)
 
 	# Chinese calendar
 	for i in {1..2}; do while IFS= read -r line; do
@@ -294,24 +307,8 @@ if [ $(which phases) ]; then
 		$(($year>=2044))) unset cny ;;
 	esac
 
-	# Diagnostics
 	if [ $CHINESE ]; then
 		[ $year -le 2038 ] && printf "%s %s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$yearof]}
-		exit; fi
-
-	if [ $LUNAR ]; then
-		for i in 0 2; do # February is shorter than a standard lunation (e.g. Feb. 2033 & 2037)
-			[ ${moonphase[$i]} ] && dmoo+=("$(printf "%s*\t%s" ${moonphase[$i]:5} "${PHASES[$i]}")")
-			done
-		[ "$BLKMOON" ] && dmoo+=("$(printf "%s*\tBlack Moon" ${BLKMOON:5})")
-		[ "$BLUMOON" ] && dmoo+=("$(printf "%s*\tBlue Moon"  ${BLUMOON:5})")
-
-		sort <<< "$(for i in ${!dmoo[@]}; do printf "%s\n" "${dmoo[$i]}" |sed 's:-:/:'; done)"
-
-		exit; fi
-
-	if [ $VASSA ]; then
-		[ $vsday ] && printf "07/%s*\tVassa\n" $vsday
 		exit; fi
 
 	if [ $ZODIACYEAR ]; then
@@ -421,13 +418,6 @@ if [ $ERISIAN ] && [ $(which ddate) ]; then
 	[[ $(echo $discord |grep -E "^5th|50th|Tib's") ]] && dishol=" +"
 else unset ERISIAN; fi
 
-# Set Erisian time; DEP klock
-[ $KLOCK ] && [ $ymd != $(date +%F) ] && unset KLOCK
-if [ $KLOCK ] && [ $(which klock) ]; then
-	kloc=$(klock -d$ymd)
-	beat=$(klock -d$ymd -kb)
-else unset KLOCK; fi
-
 # Hebrew calendar; DEP hebcal
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
@@ -449,34 +439,33 @@ else unset HIJRI; fi
 if [ $BAHAI ] && [ $(which gcal) ]; then
 	bahyear=$((year-bahconvert))
 	# calculate Equinox as observed in Tehran
-	equinox=$(gcal -e --astronomical-holidays --date-format='%Y-%>02*M-%>02*D' --time-offset=+04:30 3 $year |
+	tequinox=$(gcal -e --astronomical-holidays --date-format='%Y-%>02*M-%>02*D' --time-offset=+04:30 3 $year |
 	grep 'Equinox' |cut -f1 -d":")
-	doycmp=$(date -d"$equinox" +%-j)
+	doycmp=$(date -d"$tequinox" +%-j)
 	[[ 10#$doy -ge 10#$doycmp ]] && (( bahyear+=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newbah=" !"
 	[[ bahyear -le 0 ]] && unset BAHAI
 else unset BAHAI; fi
 
 # Masoretic; DEP gcal
-(( arc=year+arcconvert ))
-if [ $(which gcal) ]; then
-	equinox=$(gcal -e --astronomical-holidays --date-format='%Y-%>02*M-%>02*D' \
-	--time-offset=$(date -d$year-03-20 +%:z) 3 $year |
-	grep 'Equinox' |cut -f1 -d":"); else equinox="$year-03-20"; fi
+[ $arc ] && (( arc=year+arcconvert ))
+if [ $arc ]; then
+	if [ $(which gcal) ]; then
+		equinox=$(gcal -e --astronomical-holidays --date-format='%Y-%>02*M-%>02*D' \
+		--time-offset=$(date -d$year-03-20 +%:z) 3 $year |grep 'Equinox' |cut -f1 -d":")
+	else equinox="$year-03-20"; fi
 
-doycmp=$(date -d "$equinox" +%-j)
-[[ 10#$doy -ge 10#$doycmp ]] && (( arc+=1 ))
-[[ 10#$doy -eq 10#$doycmp ]] && newarc=" !"
+	doycmp=$(date -d "$equinox" +%-j)
+	[[ 10#$doy -ge 10#$doycmp ]] && (( arc+=1 ))
+	[[ 10#$doy -eq 10#$doycmp ]] && newarc=" !"; fi
 
-(( mas=year+masconvert ))
-(( yod=year+yodconvert ))
-(( dep=year+depconvert ))
-(( mkt=year-mktconvert ))
+[ $mas ] && (( mas=year+masconvert ))
+[ $yod ] && (( yod=year+yodconvert ))
+[ $dep ] && (( dep=year+depconvert ))
+[ $mkt ] && (( mkt=year-mktconvert ))
 
-(( ugl=year-uglconvert ))
-(( glc=year-glcconvert ))
-[[ ugl -le 0 ]] && unset ugl
-[[ glc -le 0 ]] && unset glc
+[ $ugl ] && (( ugl=year-uglconvert )) && [[ ugl -le 0 ]] && unset ugl
+[ $glc ] && (( glc=year-glcconvert )) && [[ glc -le 0 ]] && unset glc
 
 # Japanese Era Name
 (( jiy=year+jiyconvert ))
@@ -508,14 +497,12 @@ if [ $COMMON ]; then
 	printf "$bold";printf "CE %d " $year; [ $_LY ]	&& printf "%s " $LYSYM
 				   printf "%s %s ind." "$rnyear" "$ind"
 	[ $MTYPE ]	&& printf " %s" "${SYMBOL[$MTYPE]}"; printf "$bold\n"
-	[ ! $yos ]	&& printf "Day %d Week %d %3s" $doy $iwn "$ltz"
-	[ "$tjd" ]	&& printf " %d" $tjd; printf "\n"
+	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz"
 
 	[ "$reg" ]	&& printf "%s " "$reg"
 	[ "$frc" ]	&& printf "FRC %s" "$frc"
-	[ $kloc ]	&& printf " %s" "$kloc"
-	[ $beat ]	&& printf " %s" "$beat"
-	[ "$reg" ] || [ "$frc" ] || [ "$kloc" ] && printf "\n"
+	[ "$tjd" ]	&& printf " %d" "$tjd"
+	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
 	fi
 
 [ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
@@ -530,11 +517,11 @@ if [ $COMMON ]; then
 
 [ $JULIANP ]	&& printf "Julian Period       JP %d\n" $julp
 
-[ $MASORETIC ]	&& printf "Anno Lucis          AL %d\n" $mas
-[ $MASORETIC ]	&& printf "Anno Rosae Crucis  ARC %d%s\n" $arc "$newarc"
-[ $MASORETIC ]	&& printf "Anno Inventionis    AI %d\n"	$yod
-[ $MASORETIC ]	&& printf "Anno Depositionis   AD %d\n" $dep
-[ $MASORETIC ]	&& printf "Anno Ordinis KT     AO %4d\n" $mkt
+[ "$MASORETIC" -a "$mas" ] && printf "Anno Lucis          AL %d\n" $mas
+[ "$MASORETIC" -a "$arc" ] && printf "Anno Rosae Crucis  ARC %d%s\n" $arc "$newarc"
+[ "$MASORETIC" -a "$yod" ] && printf "Anno Inventionis    AI %d\n"	$yod
+[ "$MASORETIC" -a "$dep" ] && printf "Anno Depositionis   AD %d\n" $dep
+[ "$MASORETIC" -a "$mkt" ] && printf "Anno Ordinis KT     AO %4d\n" $mkt
 
 [ $JAPANIY ]	&& printf "Japanese Imperial  %3s %d\n" "$jen" $jiy
 [ $CHINALY ]	&& printf "Chinese Lunar      %3s %d%s\n" "$roc" $cly "$newchi"
@@ -556,29 +543,14 @@ if [ $VERBOSE ]; then
 	[ $_HC ]	&& printf "Yom Kippur             %s\n" $(hebcal -grh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
 	[ $hijra ]	&& printf "Hijra                  %s\n" "$hijra"
 
-				   printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
+	[ $equinox ] &&printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
 	[ "$moon" ]	&& printf "Moon phase             %s\n" "$moon"
 	[ $jymd ]	&& printf "Julian calendar     %d %s Day %03d\n" "$jdelta" "${jymd:5}" "$jdoy" |sed 's/-/\//'
 
 	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
-	[ $vsday ]	&& printf "Vassa                  07/%02d\n" $((10#$vsday))
+	[ $_PH ]	&& printf "Vassa                  07/%02d\n" $(date -d "$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
 	[ $ugl ]	&& printf "UGLE                   %d\n" $ugl
 	[ $glc ]	&& printf "GLC                    %d\n" $glc
 	fi
-
-[ ! $HOLDISP ] && exit
-
-# Buddhist observances
-if [ "$moon" ]; then
-	moon="Uposatha"
-	if [ $FULL ] ; then # only the first full moon
-		[ $month -eq 2  ] && moon=${BUDOBS[0]}
-		[ $month -eq 5  ] && moon=${BUDOBS[1]}
-		[ $month -eq 7  ] && moon=${BUDOBS[2]}
-		[ $month -eq 10 ] && moon=${BUDOBS[3]}
-		fi
-	printf -- "%s%s\n" "$PREFIX" "$moon"
-	fi
-[ $vsday ] && [ $month -eq 7 -a $day -eq $vsday ] && printf -- "%sVassa\n" "$PREFIX"

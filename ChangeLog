@@ -488,3 +488,17 @@ ChangeLog
 2023-05-14 v3.12.4
 	- added Anno Depositionis
 	- tweaks
+
+2023-08-05 v3.12.5
+	- changed shebang to 'env'
+	- modified some variable names for consistency
+	- changed holidays to observances and optimized
+		- observances now only display with switch
+		- removed Vassa Switch
+	- optimized diagnostics
+	- masoretic dates now have own (internal) flags
+	- added yearly quarter
+	- removed 'klock' support
+	- (mob) added Buddhist
+	- (mob) added substitutions
+	- (mob) changed spellings on some Hebrew words
