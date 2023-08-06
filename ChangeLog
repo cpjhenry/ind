@@ -494,11 +494,11 @@ ChangeLog
 	- modified some variable names for consistency
 	- changed holidays to observances and optimized
 		- observances now only display with switch
-		- removed Vassa Switch
+		- removed separate Vassa switch
 	- optimized diagnostics
 	- masoretic dates now have own (internal) flags
 	- added yearly quarter
 	- removed 'klock' support
 	- (mob) added Buddhist
 	- (mob) added substitutions
-	- (mob) changed spellings on some Hebrew words
+	- tweaks

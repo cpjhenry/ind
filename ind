@@ -4,8 +4,9 @@
 
 # See ChangeLog for changes.
 
-[ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$(basename $0): 'coreutils' is required."	&& exit 1
-[ $(uname) = 'Darwin' ] && [ ! $(which gsed)  ] && echo "$(basename $0): 'GNU sed' is required."	&& exit 1
+APP=$(basename $0)
+[ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$APP: 'coreutils' is required."	&& exit 1
+[ $(uname) = 'Darwin' ] && [ ! $(which gsed)  ] && echo "$APP: 'GNU sed' is required."		&& exit 1
 
 GITREP=$HOME/src/ind
 export GCAL="--resource-file=gcal --exclude-fixed-dates-list-title --suppress-fixed-dates-list-separator"
@@ -33,6 +34,8 @@ BUDDHIST=
 OBSERVS=
 PREFIX="- "
 
+# Conversion dates
+# (if start of year is not January 1st (Gregorian), subtract one) 
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
@@ -56,8 +59,8 @@ bahconvert=1844 # Baháʼí Calendar; 1844 CE
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
 
 MONTHL=(- January February March April May June July August September October November December)
-DOWL=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
 MONTHS=(- Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)
+DOWL=(Sunday Monday Tuesday Wednesday Thursday Friday Saturday)
 DOWS=(Sun Mon Tue Wed Thu Fri Sat)
 
 EPACTS=(0 29 10 21 2 13 24 5 16 27 8 19 30 11 22 3 14 25 6 17)
@@ -101,7 +104,7 @@ is_leap_year() { ## USAGE: is_leap_year [year]
 	esac
 	}
 NWR() { # Not within range
-	echo "$(basename $0): Y-M-D not within range."
+	echo "$APP: Y-M-D not within range."
 	exit 1
 	}
 displayall() {
@@ -162,8 +165,6 @@ do case $OPTION in
  		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar
 
-		h)	;&
-		o)	[ $OBSERVS ]	&& unset OBSERVS	|| OBSERVS=true;;			# observances
 		B)	for m in 2 5 7; do												# Buddhist Festivals
 				phases $year $m 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
 				((j++)); done
@@ -171,10 +172,11 @@ do case $OPTION in
 			((j++))
 			phases $year 10 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
 			exit;;
+		h)	;&
+		o)	[ $OBSERVS ]	&& unset OBSERVS	|| OBSERVS=true;;			# observances
 		O)	for u in $(ind -y$year -m$month -l |sed "s/*\t.*//"); do		# Uposatha
 				if [ "$(date -d$year/$u +%-j)" -ge "$(date -d$year-$month-$day +%-j)" ]
-					then date -d"$u" +"%e %b*%tUposatha"; fi
-				done
+					then date -d"$u" +"%e %b*%tUposatha"; fi; done
 			exit;;
 
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
@@ -184,8 +186,8 @@ do case $OPTION in
 				[ $(which $line) ] || echo "Install '$line'"
 			done < <(grep "DEP" $0 |sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
-		U)	cp -uv $HOME/bin/$(basename $0) $GITREP/ |grep -v skipped		#- update git repository
-			cp -uv $HOME/share/man/man1/$(basename $0).1 $GITREP/ |grep -v skipped
+		U)	cp -uv $HOME/bin/$APP $GITREP/ |grep -v skipped		#- update git repository
+			cp -uv $HOME/share/man/man1/$APP.1 $GITREP/ |grep -v skipped
 			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/ |grep -v skipped
 
 			cp -uv $HOME/bin/getusage $GITREP/ |grep -v skipped
@@ -212,7 +214,7 @@ if [ $year -lt 1583 ]; then ybg=true
 		[ $month -eq 10 ] && [ $day -ge 15 ] && unset ybg
 		[ $month -gt 10 ] && unset ybg; fi
 	if [ $ybg ]; then
-		echo "$(basename $0): Proleptic dates prior to the start of the Gregorian calendar are disabled."
+		echo "$APP: Proleptic dates prior to the start of the Gregorian calendar are disabled."
 		exit; fi; fi
 
 month=$(printf "%02d" $((10#$month)))
