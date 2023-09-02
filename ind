@@ -174,7 +174,7 @@ do case $OPTION in
 			exit;;
 		h)	;&
 		o)	[ $OBSERVS ]	&& unset OBSERVS	|| OBSERVS=true;;			# observances
-		O)	for u in $(ind -y$year -m$month -l |sed "s/*\t.*//"); do		# Uposatha
+		O)	for u in $(ind -y$year -m$month -d1 -l |sed "s/*\t.*//"); do	# Uposatha
 				if [ "$(date -d$year/$u +%-j)" -ge "$(date -d$year-$month-$day +%-j)" ]
 					then date -d"$u" +"%e %b*%tUposatha"; fi; done
 			exit;;
