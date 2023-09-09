@@ -45,8 +45,9 @@ arcconvert=1352 ;arc=true	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
 yodconvert=530	;yod=true	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
 depconvert=1000 ;dep=		# Anno Depositionis; 1000 BCE - 1st temple
 mktconvert=1118 ;mkt=true	# Anno Ordinis; 1118 CE
-uglconvert=1717 ;ugl=true	# UGL year; 1717 CE
-glcconvert=1855 ;glc=true	# GLC year; 1855 CE
+UGLconvert=1717 ;UGL=true	# UGL year; 1717 CE
+MUCconvert=1792 ;MUC=true	# MUC year; 1792 CE
+GLCconvert=1855 ;GLC=true	# GLC year; 1855 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
@@ -186,7 +187,7 @@ do case $OPTION in
 				[ $(which $line) ] || echo "Install '$line'"
 			done < <(grep "DEP" $0 |sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
 			exit;;
-		U)	cp -uv $HOME/bin/$APP $GITREP/ |grep -v skipped		#- update git repository
+		U)	cp -uv $HOME/bin/$APP $GITREP/ |grep -v skipped					#- update git repository
 			cp -uv $HOME/share/man/man1/$APP.1 $GITREP/ |grep -v skipped
 			cp -uv $HOME/share/man/man7/uposatha.7 $GITREP/ |grep -v skipped
 
@@ -466,8 +467,9 @@ if [ $arc ]; then
 [ $dep ] && (( dep=year+depconvert ))
 [ $mkt ] && (( mkt=year-mktconvert ))
 
-[ $ugl ] && (( ugl=year-uglconvert )) && [[ ugl -le 0 ]] && unset ugl
-[ $glc ] && (( glc=year-glcconvert )) && [[ glc -le 0 ]] && unset glc
+[ $UGL ] && (( UGL=year-UGLconvert )); [[ UGL -le 0 ]] && unset UGL
+[ $MUC ] && (( MUC=year-MUCconvert )); [[ MUC -le 0 ]] && unset MUC
+[ $GLC ] && (( GLC=year-GLCconvert )); [[ GLC -le 0 ]] && unset GLC
 
 # Japanese Era Name
 (( jiy=year+jiyconvert ))
@@ -553,6 +555,7 @@ if [ $VERBOSE ]; then
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
 	[ $_PH ]	&& printf "Vassa                  07/%02d\n" $(date -d "$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
-	[ $ugl ]	&& printf "UGLE                   %d\n" $ugl
-	[ $glc ]	&& printf "GLC                    %d\n" $glc
+	[ $UGL ]	&& printf "UGLE                   %d\n" $UGL
+	[ $MUC ]	&& printf "M in UC                %d\n" $MUC
+	[ $GLC ]	&& printf "GLC                    %d\n" $GLC
 	fi

@@ -497,6 +497,7 @@ ChangeLog
 		- removed separate Vassa switch
 	- optimized diagnostics
 	- masoretic dates now have own (internal) flags
+	- added m.i.o.
 	- added yearly quarter
 	- removed 'klock' support
 	- (mob) added Buddhist
