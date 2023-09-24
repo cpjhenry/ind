@@ -311,7 +311,10 @@ if [ $(which phases) ]; then _PH=true
 	esac
 
 	if [ $CHINESE ]; then
-		[ $year -le 2038 ] && printf "%s %s %s %s\n" $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$yearof]}
+		if [ $year -le 2038 ]; then
+			printf "%s %s %s %s " $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$yearof]}
+			[ $(which rnum) ] && printf "%s\n" "$(rnum $(($yearof +1)))" || printf "%d\n" $(($yearof +1))
+			fi
 		exit; fi
 
 	if [ $ZODIACYEAR ]; then
