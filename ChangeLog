@@ -507,3 +507,4 @@ ChangeLog
 2023-09-30 v3.12.6
 	- UGLE, PGLUC, and GLC now have own switch
 	- tweaks
+	- (mob) swats / allow Yahrzeits independently of Hebrew dates

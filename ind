@@ -33,6 +33,9 @@ BUDDHIST=
 
 OBSERVS=
 PREFIX="- "
+SPACER=" "
+
+GRAND=
 
 # Conversion dates
 # (if start of year is not January 1st (Gregorian), subtract one) 
@@ -46,7 +49,7 @@ yodconvert=530	;yod=true	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd tem
 depconvert=1000 ;dep=		# Anno Depositionis; 1000 BCE - 1st temple
 mktconvert=1118 ;mkt=true	# Anno Ordinis; 1118 CE
 UGLconvert=1717 ;UGL=true	# UGL year; 1717 CE
-MUCconvert=1792 ;MUC=true	# MUC year; 1792 CE
+PGLconvert=1792 ;PGL=true	# PGL year; 1792 CE
 GLCconvert=1855 ;GLC=true	# GLC year; 1855 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
@@ -132,7 +135,7 @@ displaynone() {
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:HMPvlhoBOCZDU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:AHPBoOvlXCZDU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -159,12 +162,9 @@ do case $OPTION in
 		d)	day=$OPTARG														# set day
 			[ "$(grep -E "[[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
 
+		A)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYALT");;						# alternate symbols
 		H)	bold="**"; italics="_";;										# highlight
-		M)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYALT");;						# alternate symbols
 		P)	[ $PREFIX ]		&& unset PREFIX		|| PREFIX="- ";;			# prefix
-
- 		v)	[ $VERBOSE ]	&& unset VERBOSE	|| displaynone;VERBOSE=true;; # verbose
-		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar
 
 		B)	for m in 2 5 7; do												# Buddhist Festivals
 				phases $year $m 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
@@ -173,12 +173,17 @@ do case $OPTION in
 			((j++))
 			phases $year 10 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
 			exit;;
-		h)	;&
+		#h)	;&
 		o)	[ $OBSERVS ]	&& unset OBSERVS	|| OBSERVS=true;;			# observances
 		O)	for u in $(ind -y$year -m$month -d1 -l |sed "s/*\t.*//"); do	# Uposatha
 				if [ "$(date -d$year/$u +%-j)" -ge "$(date -d$year-$month-$day +%-j)" ]
 					then date -d"$u" +"%e %b*%tUposatha"; fi; done
 			exit;;
+
+ 		v)	[ $VERBOSE ]	&& unset VERBOSE 	||							# verbose
+ 							displaynone;VERBOSE=true; GRAND=true; unset SPACER;;
+		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar
+		X)	[ $GRAND ]		&& unset GRAND		|| GRAND=true;;				# GL dates
 
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- Year of the Zodiac
@@ -376,6 +381,7 @@ if [ $COMMON ] && [ $(which rnum) ]; then
 else unset rnyear; fi
 
 # Regnal Year (United Kingdom, from 1 Jan 1801)
+# TODO: '+' if start of new year
 if [ $COMMON ]; then
 	case 1 in
 		$(($year>=9999)) ) REGNUM=12;;
@@ -471,7 +477,7 @@ if [ $arc ]; then
 [ $mkt ] && (( mkt=year-mktconvert ))
 
 [ $UGL ] && (( UGL=year-UGLconvert )); [[ UGL -le 0 ]] && unset UGL
-[ $MUC ] && (( MUC=year-MUCconvert )); [[ MUC -le 0 ]] && unset MUC
+[ $PGL ] && (( PGL=year-PGLconvert )); [[ PGL -le 0 ]] && unset PGL
 [ $GLC ] && (( GLC=year-GLCconvert )); [[ GLC -le 0 ]] && unset GLC
 
 # Japanese Era Name
@@ -535,11 +541,11 @@ if [ $COMMON ]; then
 [ $BUDDHIST ]	&& printf "Buddhist            BE %d\n"	$buddhist
 
 if [ $VERBOSE ]; then
-				   printf "Ides                   %d\n"	$ides
+				   printf "Ides                   %d\n" $ides
 
-				   printf "Dominical letter       %s\n"	"$dominical"
-				   printf "Epact                  %s\n"	"${EPACTS[$golden]}"
-				   printf "Golden number          %s\n"	"$golden"
+				   printf "Dominical letter       %s\n" "$dominical"
+				   printf "Epact                  %s\n" "${EPACTS[$golden]}"
+				   printf "Golden number          %s\n" "$golden"
 
 				   printf "Lent                   %s\n"	$(date -d"$(ncal -e $year) -46 days" +%m/%d)
 				   printf "Easter                 %s\n"	$(date -d"$(ncal -e $year)" +%m/%d)
@@ -558,7 +564,10 @@ if [ $VERBOSE ]; then
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
 	[ $_PH ]	&& printf "Vassa                  07/%02d\n" $(date -d "$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
-	[ $UGL ]	&& printf "UGLE                   %d\n" $UGL
-	[ $MUC ]	&& printf "M in UC                %d\n" $MUC
-	[ $GLC ]	&& printf "GLC                    %d\n" $GLC
+	fi
+
+if [ $GRAND ] ; then
+	[ $UGL ]	&& printf "UGLE                   %s%d\n" "$SPACER" $UGL
+	[ $PGL ]	&& printf "PGLUC                  %s%d\n" "$SPACER" $PGL
+	[ $GLC ]	&& printf "GLC                    %s%d\n" "$SPACER" $GLC
 	fi
