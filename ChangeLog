@@ -503,3 +503,7 @@ ChangeLog
 	- (mob) added Buddhist
 	- (mob) added substitutions
 	- tweaks
+
+2023-09-30 v3.12.6
+	- UGLE, PGLUC, and GLC now have own switch
+	- tweaks
