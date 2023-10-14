@@ -9,7 +9,7 @@ APP=$(basename $0)
 [ $(uname) = 'Darwin' ] && [ ! $(which gsed)  ] && echo "$APP: 'GNU sed' is required."		&& exit 1
 
 GITREP=$HOME/src/ind
-export GCAL="--resource-file=gcal --exclude-fixed-dates-list-title --suppress-fixed-dates-list-separator"
+export GCAL="--resource-file=nil --exclude-fixed-dates-list-title --suppress-fixed-dates-list-separator"
 
 FULLCE=
 COMMON=true
@@ -381,7 +381,7 @@ if [ $COMMON ] && [ $(which rnum) ]; then
 else unset rnyear; fi
 
 # Regnal Year (United Kingdom, from 1 Jan 1801)
-# TODO: '+' if start of new year
+# TODO: '+' if start of new regnal year
 if [ $COMMON ]; then
 	case 1 in
 		$(($year>=9999)) ) REGNUM=12;;
