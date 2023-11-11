@@ -174,7 +174,7 @@ do case $OPTION in
 			phases $year 10 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
 			exit;;
 		#h)	;&
-		o)	[ $OBSERVS ]	&& unset OBSERVS	|| OBSERVS=true;;			# observances
+		o)	[ $OBSERVS ]	&& unset OBSERVS	|| OBSERVS=true;;			# Today's observances
 		O)	for u in $(ind -y$year -m$month -d1 -l |sed "s/*\t.*//"); do	# Uposatha
 				if [ "$(date -d$year/$u +%-j)" -ge "$(date -d$year-$month-$day +%-j)" ]
 					then date -d"$u" +"%e %b*%tUposatha"; fi; done
