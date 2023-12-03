@@ -105,7 +105,7 @@ if [ $YAHR ] && [ -e $YAHRFILE ]; then [ $outp ] && echo; outp=true
 
 # Others
 if [ $HIJRI ]; then [ $outp ] && echo; outp=true
-	gcal -e --date-format="%1%>02*M/%>02*D%2" --islamic-civil-holidays 2023 |
+	gcal -e --date-format="%1%>02*M/%>02*D%2" --islamic-civil-holidays $year |
 	grep --no-messages "(Isl)" |sed -e 's/:\s/*\t/' -e 's/\s*(Isl).*//' \
 	-e '/Ramadan/s/$/~/;/Eid-al/s/$/~/;/New Year/s/$/~/' \
 	-e "s/'s Day//;s/Islamic New Year/Hijra/" |
@@ -130,7 +130,7 @@ if [ $PROXIM ]; then [ $outp ] && echo; outp=true
 
 	# Xtian liturgical dates
 	echo
-	printf "%s*\tThe Baptism\n" "$(date +"%m/%d" -d"$(date +"%Y%m%d +7 days -%w days" -d"Jan 6")")"
+	printf "%s*\tThe Baptism\n" "$(date +"%m/%d" -d"$(date +"%Y%m%d +7 days -%w days" -d"Jan 6 $year")")"
 	fi
 
 if [ $ADVENT ]; then [ $outp ] && echo
