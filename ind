@@ -370,8 +370,11 @@ ind="$ind$(ordinal $ind)"
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
-# French Revolutionary Calendar
+# French Revolutionary Calendar (revised)
 (( frc=year-frcconvert ))
+doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
+[[ 10#$doy -ge 10#$doycmp ]] && (( frc+=1 ))
+[[ 10#$doy -eq 10#$doycmp ]] && newfrc=" !"
 [ $frc -le 0 ] && unset frc
 
 # Set Roman numeral years; DEP rnum
