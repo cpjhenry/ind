@@ -32,8 +32,10 @@ CHINALY=
 BUDDHIST=
 
 OBSERVS=
-PREFIX="- "
 SPACER=" "
+PREFIX="- "
+CHGSYM=" !"
+HOLSYM=" +"
 
 GRAND=
 
@@ -47,7 +49,7 @@ masconvert=4000	;mas=true	# Masoretic; 4000 BCE
 arcconvert=1352 ;arc=true	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
 yodconvert=530	;yod=true	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
 depconvert=1000 ;dep=		# Anno Depositionis; 1000 BCE - 1st temple
-mktconvert=1118 ;mkt=true	# Anno Ordinis; 1118 CE
+mktconvert=1118 ;mkt=		# Anno Ordinis; 1118 CE
 UGLconvert=1717 ;UGL=true	# UGL year; 1717 CE
 PGLconvert=1792 ;PGL=true	# PGL year; 1792 CE
 GLCconvert=1855 ;GLC=true	# GLC year; 1855 CE
@@ -299,7 +301,7 @@ if [ $(which phases) ]; then _PH=true
 	(( cly=year+chiconvert ))
 	doycmp=$(date -d "$cny" +%-j)
 	[[ 10#$doy -ge 10#$doycmp ]] && (( cly+=1 ))
-	[[ 10#$doy -eq 10#$doycmp ]] && newchi=" !"
+	[[ 10#$doy -eq 10#$doycmp ]] && newchi=$CHGSYM
 	(( roc=year-rocconvert )); [ $roc -le 0 ] && unset roc
 
 	# 'year of'
@@ -352,12 +354,12 @@ jdoycmp=$jdoy; [ $month -eq 1 -a $day -le $jdelta ] && jdoycmp=0
 # Roman & Byzantine calendars are aligned to Julian calendar
 (( rome=year+romconvert ))
 [[ 10#$jdoycmp -ge 1 ]] && (( rome+=1 )) # January 1st (Day 1)
-[[ 10#$jdoycmp -eq 1 ]] && newrom=" !"
+[[ 10#$jdoycmp -eq 1 ]] && newrom=$CHGSYM
 
 (( byzantine=year+byzconvert ))
 doycmp=$(date -d "1 Sept $year" +%-j)	 # September 1st (Day 1)
 [[ 10#$jdoycmp -ge 10#$doycmp ]] && (( byzantine+=1 ))
-[[ 10#$jdoycmp -eq 10#$doycmp ]] && newbyz=" !"
+[[ 10#$jdoycmp -eq 10#$doycmp ]] && newbyz=$CHGSYM
 
 # Indictions and ordinals
 (( byzind=$byzantine%15 ))	# Byzantine
@@ -374,7 +376,7 @@ ind="$ind$(ordinal $ind)"
 (( frc=year-frcconvert ))
 doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
 [[ 10#$doy -ge 10#$doycmp ]] && (( frc+=1 ))
-[[ 10#$doy -eq 10#$doycmp ]] && newfrc=" !"
+[[ 10#$doy -eq 10#$doycmp ]] && newfrc=$CHGSYM
 [ $frc -le 0 ] && unset frc
 
 # Set Roman numeral years; DEP rnum
@@ -430,14 +432,14 @@ else unset HHPC; fi
 # Set Erisian date; DEP ddate
 if [ $ERISIAN ] && [ $(which ddate) ]; then
 	discord=$(ddate +'%{%e %B%} %Y' $day $month $year |sed 's/The //')
-	[[ $(echo $discord |grep -E "^5th|50th|Tib's") ]] && dishol=" +"
+	[[ $(grep -E "^5th|50th|Tib's" <<< $discord) ]] && dishol=$HOLSYM
 else unset ERISIAN; fi
 
 # Hebrew calendar; DEP hebcal
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
 	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed 's/of //')
-	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%-j) ]] && newheb=" !"
+	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%-j) ]] && newheb=$CHGSYM
 else unset HEBREW; fi
 
 # Hijri; DEP gcal
@@ -447,7 +449,7 @@ if [ $(which gcal) ]; then
 	hijra=$(cut -f1 -d":" <<<$hijra)
 	doycmp=$(date -d"$hijra" +%-j)
 	[[ 10#$doy -lt 10#$doycmp ]] && (( hijri-=1 ))
-	[[ 10#$doy -eq 10#$doycmp ]] && newhij=" !"
+	[[ 10#$doy -eq 10#$doycmp ]] && newhij=$CHGSYM
 else unset HIJRI; fi
 
 # Baháʼí; DEP gcal
@@ -458,7 +460,7 @@ if [ $BAHAI ] && [ $(which gcal) ]; then
 	grep 'Equinox' |cut -f1 -d":")
 	doycmp=$(date -d"$tequinox" +%-j)
 	[[ 10#$doy -ge 10#$doycmp ]] && (( bahyear+=1 ))
-	[[ 10#$doy -eq 10#$doycmp ]] && newbah=" !"
+	[[ 10#$doy -eq 10#$doycmp ]] && newbah=$CHGSYM
 	[[ bahyear -le 0 ]] && unset BAHAI
 else unset BAHAI; fi
 
@@ -472,7 +474,7 @@ if [ $arc ]; then
 
 	doycmp=$(date -d "$equinox" +%-j)
 	[[ 10#$doy -ge 10#$doycmp ]] && (( arc+=1 ))
-	[[ 10#$doy -eq 10#$doycmp ]] && newarc=" !"; fi
+	[[ 10#$doy -eq 10#$doycmp ]] && newarc=$CHGSYM; fi
 
 [ $mas ] && (( mas=year+masconvert ))
 [ $yod ] && (( yod=year+yodconvert ))
