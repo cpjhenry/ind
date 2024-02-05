@@ -13,6 +13,7 @@ export GCAL="--resource-file=nil --exclude-fixed-dates-list-title --suppress-fix
 
 FULLCE=
 COMMON=true
+FRCAL=true
 
 HHPC=
 ERISIAN=
@@ -74,7 +75,7 @@ DOMINI=(G A B C D E F)
 PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
 SYMBOL=("●" "☽" "○" "☾")
 ALTSYM=("x" ">" "o" "<")
-LYSYM="※"; LYALT="X"
+LYSYM="※"; LYALT="*"
 BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
@@ -378,11 +379,17 @@ doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
 [[ 10#$doy -ge 10#$doycmp ]] && (( frc+=1 ))
 [[ 10#$doy -eq 10#$doycmp ]] && newfrc=$CHGSYM
 [ $frc -le 0 ] && unset frc
+if [ $FRCAL ] && [ $(which emacs) ]; then
+	frcal=$(emacs -Q --batch \
+		--eval "(require 'cal-french)" \
+		--eval="(print (calendar-french-date-string))" |
+		sed 's/\"//g;/^$/d;s/ an [0-9]* de la R.volution.*$//'); fi
 
 # Set Roman numeral years; DEP rnum
 if [ $COMMON ] && [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
 	[ $frc ] && frc=$(rnum $frc)
+	[ "$frcal" ] && frcal="$frcal $frc$newfrc" && unset frc
 else unset rnyear; fi
 
 # Regnal Year (United Kingdom, from 1 Jan 1801)
@@ -422,6 +429,7 @@ if [ $COMMON ]; then
 if [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
 	[[ $tjd -lt 1 ]] || [[ $tjd -gt 65535 ]] && unset tjd
+	[ "$frcal" ] && tjd="TJD $tjd"
 else unset tjd; fi
 
 # Set Hanke-Henry date; DEP hh
@@ -512,15 +520,16 @@ if [ $FULLCE ]; then
 	else printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year; fi; fi
 
 if [ $COMMON ]; then
-	printf "$bold";printf "CE %d " $year; [ $_LY ]	&& printf "%s " $LYSYM
+	printf "$bold";printf "CE %d " $year; [ $_LY ]	&& printf "%s " "$LYSYM"
 				   printf "%s %s ind." "$rnyear" "$ind"
 	[ $MTYPE ]	&& printf " %s" "${SYMBOL[$MTYPE]}"; printf "$bold\n"
 	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz"
 
 	[ "$reg" ]	&& printf "%s " "$reg"
 	[ "$frc" ]	&& printf "FRC %s" "$frc"
-	[ "$tjd" ]	&& printf " %d" "$tjd"
+	[ "$tjd" ]	&& printf " %s" "$tjd"
 	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
+	[ "$frcal" ]&& printf "%s\n" "$frcal"
 	fi
 
 [ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}

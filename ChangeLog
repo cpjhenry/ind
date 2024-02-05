@@ -510,3 +510,11 @@ ChangeLog
 	- (mob) swats / allow Yahrzeits independently of Hebrew dates
 	- (mob) other tweaks & fixes
 	- aligned French revolutionary calendar to FRC (revised dating)
+
+2024-01-13 v3.12.7
+	- swats
+	- (mob) rename 'advent' function to 'xian'
+	- (mob) liturgical dates supressed into 'xian' function
+
+2024-02-03 v3.12.8
+	- pull full FRC date from Emacs cal-french if available

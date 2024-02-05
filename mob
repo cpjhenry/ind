@@ -15,14 +15,14 @@ HIJRI=true
 BUDDHA=true
 ZODIAC=true
 PROXIM=true
-ADVENT=
+XIAN=
 ###
 
 year=$(date +%Y)
 DATEFMT="%m/%d" # DATEFMT="%d %b"
 YAHRFILE="$HOME/.calendar/deaths"
 
-while getopts ":jeYlbhzpay:HD?" OPTION; do
+while getopts ":jeYlbhzpxy:HD?" OPTION; do
 	case $OPTION in
 		j)	# Hebrew
 			[ $HEBREW ] && unset HEBREW || HEBREW=true;;
@@ -50,8 +50,8 @@ while getopts ":jeYlbhzpay:HD?" OPTION; do
 			[ $ZODIAC ] && unset ZODIAC || ZODIAC=true;;
 		p)	# Proximate dates
 			[ $PROXIM ] && unset PROXIM || PROXIM=true;;
-		a)	# Advent
-			[ $ADVENT ] && unset ADVENT || ADVENT=true;;
+		x)	# Xian
+			[ $XIAN ] && unset XIAN || XIAN=true;;
 		y)	# set year
 			year=$OPTARG;;
 		H)	# header
@@ -127,21 +127,16 @@ if [ $PROXIM ]; then [ $outp ] && echo; outp=true
 	printf "%s*\tBlack Friday\n"	"$(date -d "$FourthThuNov +1 day"  +"$DATEFMT")"
 	printf "%s*\tCyber Monday\n"	"$(date -d "$FourthThuNov +4 days" +"$DATEFMT")"
 	printf "%s*\tGiving Tuesday\n" 	"$(date -d "$FourthThuNov +5 days" +"$DATEFMT")"
-
-	# Xtian liturgical dates
-	echo
-	printf "%s*\tThe Baptism\n" "$(date +"%m/%d" -d"$(date +"%Y%m%d +7 days -%w days" -d"Jan 6 $year")")"
 	fi
 
-if [ $ADVENT ]; then [ $outp ] && echo
-	#xmasdow=$(date -d "$year-12-25" +%w)
-	#xmaswks=3; [ $xmasdow -eq 0 ] && (( xmaswks+=1 ))
-	#advent="$(date -d"$year-12-25 -$(((xmaswks*7)+xmasdow)) days" +"$DATEFMT")"
-
+if [ $XIAN ]; then [ $outp ] && echo
 	LastThuNov="Nov $(ncal -h 11 $year |awk '/^Th/{print $NF}')"
 	advent="$(date -d"$LastThuNov +3 days" +"$DATEFMT")"
 	dpr="$(date -d"$advent $year -11 days" +"$DATEFMT")"
 
 	printf "%s*\tDay of Prayer & Repentance\n" "$dpr"
  	printf "%s*\tAdvent\n" "$advent"
+
+	# Liturgical dates
+	printf "%s*\tThe Baptism\n" "$(date +"%m/%d" -d"$(date +"%Y%m%d +7 days -%w days" -d"Jan 6 $year")")"
 	fi
