@@ -41,7 +41,7 @@ HOLSYM=" +"
 GRAND=
 
 # Conversion dates
-# (if start of year is not January 1st (Gregorian), subtract one) 
+# (if start of year is not January 1st (Gregorian), subtract one)
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
@@ -59,7 +59,7 @@ jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
 rocconvert=1911 # ROC year; 1912 CE
 
-frcconvert=1792 # French Revolutionary Calendar; 1792 CE
+frcconvert=1792 # French Revolutionary Calendar; 22 September 1792 CE
 hebconvert=3760 # Hebrew Calendar; 3761 BCE
 bahconvert=1844 # Baháʼí Calendar; 1844 CE
 
@@ -75,7 +75,7 @@ DOMINI=(G A B C D E F)
 PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
 SYMBOL=("●" "☽" "○" "☾")
 ALTSYM=("x" ">" "o" "<")
-LYSYM="※"; LYALT="*"
+LYSYM="*"
 BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
@@ -95,7 +95,7 @@ ordinal() {
 	local ord
 	case "$1" in
 		1)	ord="st";;
-		2)	ord="nd";;	
+		2)	ord="nd";;
 		3)	ord="rd";;
 		21)	ord="st";;
 		22)	ord="nd";;
@@ -165,7 +165,7 @@ do case $OPTION in
 		d)	day=$OPTARG														# set day
 			[ "$(grep -E "[[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
 
-		A)	SYMBOL=("${ALTSYM[@]}"); LYSYM=("$LYALT");;						# alternate symbols
+		A)	SYMBOL=("${ALTSYM[@]}");;										# alternate symbols
 		H)	bold="**"; italics="_";;										# highlight
 		P)	[ $PREFIX ]		&& unset PREFIX		|| PREFIX="- ";;			# prefix
 
@@ -202,7 +202,7 @@ do case $OPTION in
 			cp -uv $HOME/bin/getusage $GITREP/ |grep -v skipped
 			cp -uv $HOME/bin/mob $GITREP/ |grep -v skipped
 			cp -uv $HOME/bin/rnum $GITREP/ |grep -v skipped
-			
+
 			[ -e $GITREP/ChangeLog ] && touch $GITREP/ChangeLog
 			exit;;
 		*)	[ $(which getusage) ] && getusage $0;exit;;
@@ -298,7 +298,7 @@ if [ $(which phases) ]; then _PH=true
 	[ $year -eq 2027 ] && lunarmonth[1]=$(date -d "${lunarmonth[1]} - 1 day" +%F)
 
 	# Chinese Lunar Year
-	cny=${lunarmonth[1]}	
+	cny=${lunarmonth[1]}
 	(( cly=year+chiconvert ))
 	doycmp=$(date -d "$cny" +%-j)
 	[[ 10#$doy -ge 10#$doycmp ]] && (( cly+=1 ))
@@ -373,27 +373,7 @@ ind="$ind$(ordinal $ind)"
 # Beware the Ides...
 [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
-# French Revolutionary Calendar (revised)
-(( frc=year-frcconvert ))
-doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
-[[ 10#$doy -ge 10#$doycmp ]] && (( frc+=1 ))
-[[ 10#$doy -eq 10#$doycmp ]] && newfrc=$CHGSYM
-[ $frc -le 0 ] && unset frc
-if [ $FRCAL ] && [ $(which emacs) ]; then
-	frcal=$(emacs -Q --batch \
-		--eval "(require 'cal-french)" \
-		--eval="(print (calendar-french-date-string))" |
-		sed 's/\"//g;/^$/d;s/ an [0-9]* de la R.volution.*$//'); fi
-
-# Set Roman numeral years; DEP rnum
-if [ $COMMON ] && [ $(which rnum) ]; then
-	rnyear=$(rnum $year)
-	[ $frc ] && frc=$(rnum $frc)
-	[ "$frcal" ] && frcal="$frcal $frc$newfrc" && unset frc
-else unset rnyear; fi
-
 # Regnal Year (United Kingdom, from 1 Jan 1801)
-# TODO: '+' if start of new regnal year
 if [ $COMMON ]; then
 	case 1 in
 		$(($year>=9999)) ) REGNUM=12;;
@@ -413,23 +393,50 @@ if [ $COMMON ]; then
 
 	[ $REGNUM -eq 0 ] && REGDATE="$month/$day" && REGYEAR=$year
 	regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
-	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] && 
+	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] &&
 		(( REGNUM-=1 )) && regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
 	if [ $REGNUM -gt 0 ]; then
 		(( reg=$year-${REGYEAR[REGNUM]} ))
 		[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
+		[[ 10#$doy -eq 10#$regdt ]] && newreg=$HOLSYM
 	else reg=0; fi
 	[ $year -gt	$(date +%Y) ] && reg=0 # Display up to current year only
 
-	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}"
+	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}$newreg"
 	fi
+
+# French Revolutionary Calendar (revised)
+(( frc=year-frcconvert ))
+doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
+[[ 10#$doy -ge 10#$doycmp ]] && (( frc+=1 ))
+[[ 10#$doy -eq 10#$doycmp ]] && newfrc=$CHGSYM
+[ $frc -le 0 ] && unset frc
+if [ $FRCAL ] && [ $(which emacs) ]; then
+	frcal=$(emacs -Q --batch \
+		--eval "(require 'cal-french)" \
+		--eval="(print (calendar-french-date-string '($month $day $year)))" |
+		sed 's/\"//g;/^$/d;s/ an [0-9]* de la R.volution.*$//'); fi
+
+# Set Roman numeral years; DEP rnum
+if [ $COMMON ] && [ $(which rnum) ]; then
+	rnyear=$(rnum $year)
+	[ $frc ] && frc=$(rnum $frc)
+	[ "$frcal" ] && frcal="$frcal $frc$newfrc" && unset frc
+else unset rnyear; fi
+[ $frc ] && frc="FRC $frc"
 
 # Set Julian Period; Truncated Julian Date; DEP jday
 (( julp=year+jupconvert ))
 if [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
-	[[ $tjd -lt 1 ]] || [[ $tjd -gt 65535 ]] && unset tjd
-	[ "$frcal" ] && tjd="TJD $tjd"
+	[[ $tjd -lt 1 ]] || [[ $tjd -gt 65535 ]] && unset tjd &&
+		mjd=$(echo "$(jday -d $utc)-2400000.5" |bc |cut -f1 -d"." |sed '/\-/d')
+	[[ $mjd -lt 1 ]] && unset mjd &&
+		RD=$(echo "$(jday -d $utc)-1721424.5"  |bc |cut -f1 -d"." |sed '/\-/d')
+
+	[ "$frcal" ] && [ $tjd ]   && tjd="TJD $tjd"
+	[ ! "$tjd" ] && [ $mjd ]   && tjd="MJD $mjd"
+	[ ! "$tjd" ] && [ ! $mjd ] && [ $RD ] && tjd="RD $RD"
 else unset tjd; fi
 
 # Set Hanke-Henry date; DEP hh
@@ -526,8 +533,8 @@ if [ $COMMON ]; then
 	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz"
 
 	[ "$reg" ]	&& printf "%s " "$reg"
-	[ "$frc" ]	&& printf "FRC %s" "$frc"
-	[ "$tjd" ]	&& printf " %s" "$tjd"
+	[ "$frc" ]	&& printf "%s " "$frc"
+	[ "$tjd" ]	&& printf "%s" "$tjd"
 	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
 	[ "$frcal" ]&& printf "%s\n" "$frcal"
 	fi
@@ -585,3 +592,7 @@ if [ $GRAND ] ; then
 	[ $PGL ]	&& printf "PGLUC                  %s%d\n" "$SPACER" $PGL
 	[ $GLC ]	&& printf "GLC                    %s%d\n" "$SPACER" $GLC
 	fi
+
+# Local Variables:
+# truncate-lines: -1
+# End:

@@ -518,3 +518,12 @@ ChangeLog
 
 2024-02-03 v3.12.8
 	- pull full FRC date from Emacs cal-french if available
+	- tweaks
+
+2024-02-09 v3.12.9
+	- frcal tracks date
+	- TJD 0 falls back to MJD
+	- MJD 0 falls back to RD
+	- (man) tweak
+	- (mob) added Fast of Esther
+	- tweaks

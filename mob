@@ -41,7 +41,7 @@ while getopts ":jeYlbhzpxy:HD?" OPTION; do
 			printf "Sukkot             Pilgrimage, the wandering in the desert\n"
 			printf "Chanukah           Festival of Lights, rededication of the Temple\n\n"
 			printf "Yahrzeit           Anniversary of the death of a parent or close relative\n"
-			exit;;		
+			exit;;
 		b)	# Buddhist
 			[ $BUDDHA ] && unset BUDDHA || BUDDHA=true;;
 		h)	# Hijri
@@ -66,7 +66,7 @@ done
 
 function set_hebrew() {
 	excl="/Shabbat/d;/Ta'anit/d"
-	subs="s/Pesach/Passover/;s/Tish'a/Tisha/"
+	subs="s/Pesach/Passover/;s/Tish'a/Tisha/;s/Erev Purim/Fast of Esther/"
 	hebdate=$(date -d $(hebcal -rx $1 $2|sed "1d;$excl;$subs" |cut -f1) +"$DATEFMT")
 	hebtext=$(hebcal -rx $1 $2 |cut -f2 |sed "1d;$excl;$subs;s/ I//;/1 Candle/s/^/Erev /;s/:.*//")
 	dispheb+=$(printf "%s*\t%s|" "$hebdate" "$hebtext")
@@ -76,7 +76,7 @@ hebyear=$(hebcal -Th 01 01 $year | sed -n 1p | sed 's/.*, //')
 
 # Hebrew holidays
 if [ $HEBREW ]; then outp=true
-	for i in "Adar 14" "Nissan 15" "Sivan 6"; do
+	for i in "Adar 13" "Adar 14" "Nissan 15" "Sivan 6"; do
 		set_hebrew "$i" $hebyear; done
 
 	tishabav=$(hebcal -rh Av 9 $hebyear | cut -f1)
