@@ -517,7 +517,7 @@ ChangeLog
 	- (mob) liturgical dates supressed into 'xian' function
 
 2024-02-03 v3.12.8
-	- pull full FRC date from Emacs cal-french if available
+	- pull full FRC date from Emacs cal-french, if available
 	- tweaks
 
 2024-02-09 v3.12.9
@@ -527,3 +527,4 @@ ChangeLog
 	- (man) tweak
 	- (mob) added Fast of Esther
 	- tweaks
+	- GL dates no longer display with verbose
