@@ -528,3 +528,7 @@ ChangeLog
 	- (mob) added Fast of Esther
 	- tweaks
 	- GL dates no longer display with verbose
+
+2024-03-24 v3.12.10
+	- added Babylonian date
+	- tweaks
