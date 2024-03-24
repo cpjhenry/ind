@@ -17,6 +17,7 @@ FRCAL=true
 
 HHPC=
 ERISIAN=
+NABON=
 
 HEBREW=
 HIJRI=
@@ -43,6 +44,8 @@ HOLSYM=" +"
 
 # Conversion dates
 # (if start of year is not January 1st (Gregorian), subtract one)
+nabconvert=746	# Reign of the Babylonian King Nabūnāṣiru; 747 BCE
+
 romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
@@ -113,7 +116,7 @@ NWR() { # Not within range
 	exit 1
 	}
 displayall() {
-	COMMON=true;
+	COMMON=true; NABON=true;
 	HHPC=true; ERISIAN=true;
 	HEBREW=true; BAHAI=true;
 	ROME=true; BYZANTINE=true;
@@ -123,7 +126,7 @@ displayall() {
 	}
 displaynone() {
 	unset FULLCE;
-	unset COMMON;
+	unset COMMON; unset NABON;
 	unset HHPC; unset ERISIAN;
 	unset HEBREW; unset BAHAI;
 	unset ROME; unset BYZANTINE;
@@ -136,7 +139,7 @@ displaynone() {
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:AHPBoOvlXCZDU?" OPTION
+while getopts ":anfcpekjrzuxiqby:m:d:AHPBoOXvlCZDU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -180,10 +183,10 @@ do case $OPTION in
 				if [ "$(date -d$year/$u +%-j)" -ge "$(date -d$year-$month-$day +%-j)" ]
 					then date -d"$u" +"%e %b*%tUposatha"; fi; done
 			exit;;
+		X)	[ $GRAND ]		&& unset GRAND		|| GRAND=true;;				# GL dates
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE 	|| displaynone;VERBOSE=true;; # verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar
-		X)	[ $GRAND ]		&& unset GRAND		|| GRAND=true;;				# GL dates
 
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
 		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- Year of the Zodiac
@@ -349,6 +352,14 @@ if [ $year -lt 1701 ]
 jymd=$(date -d "$ymd - $jdelta days 00:18" +%F)
 jdoy=$(date -d "$jymd 00:18" +%-j)
 jdoycmp=$jdoy; [ $month -eq 1 -a $day -le $jdelta ] && jdoycmp=0
+
+# Nabonassar
+if [ $NABON ]; then
+	nabyear=$((year+nabconvert))
+	[ $_LY ] && doycmp=$(date -d "$year-04-17" +%-j) || doycmp=$(date -d "$year-04-18" +%-j)
+	[[ 10#$doy -ge 10#$doycmp ]] && (( nabyear+=1 ))
+	[[ 10#$doy -eq 10#$doycmp ]] && newnab=$CHGSYM
+else unset NABON; fi
 
 # Roman & Byzantine calendars are aligned to Julian calendar
 (( rome=year+romconvert ))
@@ -545,6 +556,7 @@ if [ $COMMON ]; then
 [ $HIJRI ]		&& printf "Hijri               AH %-4d%s\n" $hijri "$newhij"
 [ $BAHAI ]		&& printf "Baha'i              BE %4d%s\n" $bahyear "$newbah"
 
+[ $NABON ]		&& printf "Babylonian          AN %d%s\n" $nabyear "$newnab"
 [ $ROME ]		&& printf "City of Rome       AUC %d%s\n" $rome "$newrom"
 [ $BYZANTINE ]	&& printf "Byzantine %-4s      AM %d%s\n" "$byzind" $byzantine "$newbyz"
 
