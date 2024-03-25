@@ -44,14 +44,14 @@ HOLSYM=" +"
 
 # Conversion dates
 # (if start of year is not January 1st (Gregorian), subtract one)
-nabconvert=746	# Reign of the Babylonian King Nabūnāṣiru; 747 BCE
+nabconvert=747	# Reign of the Babylonian King Nabūnāṣiru; 747 BCE
 
-romconvert=752  # Founding of Rome, January 1st (Julian calendar); 753 BCE
-byzconvert=5508 # Byzantine year, September 1st (Julian calendar); 5509 BCE
+romconvert=753  # Founding of Rome, January 1st (Julian calendar); 753 BCE
+byzconvert=5509 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 
 masconvert=4000	;mas=true	# Masoretic; 4000 BCE
-arcconvert=1352 ;arc=true	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+arcconvert=1353 ;arc=true	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
 yodconvert=530	;yod=true	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
 depconvert=1000 ;dep=		# Anno Depositionis; 1000 BCE - 1st temple
 mktconvert=1118 ;mkt=		# Anno Ordinis; 1118 CE
@@ -353,28 +353,31 @@ jymd=$(date -d "$ymd - $jdelta days 00:18" +%F)
 jdoy=$(date -d "$jymd 00:18" +%-j)
 jdoycmp=$jdoy; [ $month -eq 1 -a $day -le $jdelta ] && jdoycmp=0
 
-# Nabonassar
+# Nabonassar (Babylonian)
 if [ $NABON ]; then
-	nabyear=$((year+nabconvert))
+	(( nabyear=year+nabconvert ))
 	[ $_LY ] && doycmp=$(date -d "$year-04-17" +%-j) || doycmp=$(date -d "$year-04-18" +%-j)
-	[[ 10#$doy -ge 10#$doycmp ]] && (( nabyear+=1 ))
+	[[ 10#$doy -lt 10#$doycmp ]] && (( nabyear-=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newnab=$CHGSYM
 else unset NABON; fi
 
 # Roman & Byzantine calendars are aligned to Julian calendar
-(( rome=year+romconvert ))
-[[ 10#$jdoycmp -ge 1 ]] && (( rome+=1 )) # January 1st (Day 1)
-[[ 10#$jdoycmp -eq 1 ]] && newrom=$CHGSYM
+if [ $ROME ]; then
+	(( rome=year+romconvert ))
+	[[ 10#$jdoycmp -lt 1 ]] && (( rome-=1 )) # January 1st (Day 1)
+	[[ 10#$jdoycmp -eq 1 ]] && newrom=$CHGSYM
+else unset ROME; fi
 
-(( byzantine=year+byzconvert ))
-doycmp=$(date -d "1 Sept $year" +%-j)	 # September 1st (Day 1)
-[[ 10#$jdoycmp -ge 10#$doycmp ]] && (( byzantine+=1 ))
-[[ 10#$jdoycmp -eq 10#$doycmp ]] && newbyz=$CHGSYM
+if [ $BYZANTINE ]; then
+	(( byzantine=year+byzconvert ))
+	doycmp=$(date -d "1 Sept $year" +%-j)	 # September 1st (Day 1)
+	[[ 10#$jdoycmp -lt 10#$doycmp ]] && (( byzantine-=1 ))
+	[[ 10#$jdoycmp -eq 10#$doycmp ]] && newbyz=$CHGSYM
 
-# Indictions and ordinals
-(( byzind=$byzantine%15 ))	# Byzantine
-[ $byzind -eq "0" ] && byzind=15
-byzind="$byzind$(ordinal $byzind)"
+	(( byzind=$byzantine%15 ))	# Byzantine
+	[ $byzind -eq "0" ] && byzind=15
+	byzind="$byzind$(ordinal $byzind)"
+else unset BYZANTINE; fi
 
 (( ind=($year+2)%15+1 ))	# Gregorian
 ind="$ind$(ordinal $ind)"
@@ -497,7 +500,7 @@ if [ $arc ]; then
 	else equinox="$year-03-20"; fi
 
 	doycmp=$(date -d "$equinox" +%-j)
-	[[ 10#$doy -ge 10#$doycmp ]] && (( arc+=1 ))
+	[[ 10#$doy -lt 10#$doycmp ]] && (( arc-=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newarc=$CHGSYM; fi
 
 [ $mas ] && (( mas=year+masconvert ))
