@@ -532,3 +532,4 @@ ChangeLog
 2024-03-24 v3.12.10
 	- added Babylonian date
 	- tweaks
+	- normalized 'convert' dates

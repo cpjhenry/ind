@@ -43,8 +43,8 @@ CHGSYM=" !"
 HOLSYM=" +"
 
 # Conversion dates
-# (if start of year is not January 1st (Gregorian), subtract one)
 nabconvert=747	# Reign of the Babylonian King Nabūnāṣiru; 747 BCE
+dioconvert=284	# Reign of Diocletian, September 11th; 284 CE
 
 romconvert=753  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5509 # Byzantine year, September 1st (Julian calendar); 5509 BCE
@@ -60,11 +60,11 @@ PGLconvert=1792 ;PGL=true	# PGL year; 1792 CE
 GLCconvert=1855 ;GLC=true	# GLC year; 1855 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
-chiconvert=2697	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
-rocconvert=1911 # ROC year; 1912 CE
+chiconvert=2698	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
+rocconvert=1912 # ROC year; 1912 CE
 
 frcconvert=1792 # French Revolutionary Calendar; 22 September 1792 CE
-hebconvert=3760 # Hebrew Calendar; 3761 BCE
+hebconvert=3761 # Hebrew Calendar; 3761 BCE
 bahconvert=1844 # Baháʼí Calendar; 1844 CE
 
 budconvert=543	# Buddhist Era or Thai Solar year; 543 BCE
@@ -302,9 +302,9 @@ if [ $(which phases) ]; then _PH=true
 	cny=${lunarmonth[1]}
 	(( cly=year+chiconvert ))
 	doycmp=$(date -d "$cny" +%-j)
-	[[ 10#$doy -ge 10#$doycmp ]] && (( cly+=1 ))
+	[[ 10#$doy -lt 10#$doycmp ]] && (( cly-=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newchi=$CHGSYM
-	(( roc=year-rocconvert )); [ $roc -le 0 ] && unset roc
+	(( roc=year-rocconvert+1 )); [ $roc -le 0 ] && unset roc
 
 	# 'year of'
 	case 1 in
@@ -466,7 +466,7 @@ else unset ERISIAN; fi
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
 	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed 's/of //')
-	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year+1)) |cut -f1) +%-j) ]] && newheb=$CHGSYM
+	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year)) |cut -f1) +%-j) ]] && newheb=$CHGSYM
 else unset HEBREW; fi
 
 # Hijri; DEP gcal
@@ -481,12 +481,12 @@ else unset HIJRI; fi
 
 # Baháʼí; DEP gcal
 if [ $BAHAI ] && [ $(which gcal) ]; then
-	bahyear=$((year-bahconvert))
+	(( bahyear=year-bahconvert+1 ))
 	# calculate Equinox as observed in Tehran
 	tequinox=$(gcal -e --astronomical-holidays --date-format='%Y-%>02*M-%>02*D' --time-offset=+04:30 3 $year |
 	grep 'Equinox' |cut -f1 -d":")
 	doycmp=$(date -d"$tequinox" +%-j)
-	[[ 10#$doy -ge 10#$doycmp ]] && (( bahyear+=1 ))
+	[[ 10#$doy -lt 10#$doycmp ]] && (( bahyear-=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newbah=$CHGSYM
 	[[ bahyear -le 0 ]] && unset BAHAI
 else unset BAHAI; fi
@@ -506,7 +506,7 @@ if [ $arc ]; then
 [ $mas ] && (( mas=year+masconvert ))
 [ $yod ] && (( yod=year+yodconvert ))
 [ $dep ] && (( dep=year+depconvert ))
-[ $mkt ] && (( mkt=year-mktconvert ))
+[ $mkt ] && (( mkt=year-mktconvert+1 ))
 
 [ $UGL ] && (( UGL=year-UGLconvert )); [[ UGL -le 0 ]] && unset UGL
 [ $PGL ] && (( PGL=year-PGLconvert )); [[ PGL -le 0 ]] && unset PGL
