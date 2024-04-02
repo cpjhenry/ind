@@ -50,14 +50,14 @@ romconvert=753  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5509 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 
-masconvert=4000	;mas=true	# Masoretic; 4000 BCE
-arcconvert=1353 ;arc=true	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
-yodconvert=530	;yod=true	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
-depconvert=1000 ;dep=		# Anno Depositionis; 1000 BCE - 1st temple
-mktconvert=1118 ;mkt=		# Anno Ordinis; 1118 CE
-UGLconvert=1717 ;UGL=true	# UGL year; 1717 CE
-PGLconvert=1792 ;PGL=true	# PGL year; 1792 CE
-GLCconvert=1855 ;GLC=true	# GLC year; 1855 CE
+masconvert=4000	;mas=t	# Masoretic; 4000 BCE
+arcconvert=1353 ;arc=t	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+yodconvert=530	;yod=t	# Anno Inventionis/Year of Discovery; 530 BCE - 2nd temple
+depconvert=1000 ;dep=	# Anno Depositionis; 1000 BCE - 1st temple
+mktconvert=1118 ;mkt=	# Anno Ordinis; 1118 CE
+UGLconvert=1717 ;UGL=t	# UGL year; 1717 CE
+PGLconvert=1792 ;PGL=t	# PGL year; 1792 CE
+GLCconvert=1855 ;GLC=t	# GLC year; 1855 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2698	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
@@ -80,7 +80,8 @@ PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
 BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
-CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
+CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13
+		 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
 REGNAME=(- "Geo 3"	"Geo 4" "Wm 4"	"Vict"	"Edw 7"	"Geo 5"	"Edw 8"	"Geo 6" "Eliz 2" "Cha 3")
