@@ -4,7 +4,9 @@
 
 app=$(basename $0)
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$app: 'coreutils' is required." && exit 1
-for i in gcal hebcal ind ncal; do [ ! $(which $i) ] && echo "$app: '$i' is required." && exit 1; done
+[ $(uname) = 'Darwin' ] && [ ! $(which dateround) ] && echo "$app: 'dateutils' is required." && exit 1
+for i in gcal hebcal ind ncal; do [ ! $(which $i) ] && echo "$app: '$i' is required." && exit 1
+	done
 
 ###
 HEADER=
@@ -76,7 +78,7 @@ hebyear=$(hebcal -Th 01 01 $year | sed -n 1p | sed 's/.*, //')
 
 # Hebrew holidays
 if [ $HEBREW ]; then outp=true
-	for i in "Adar 13" "Adar 14" "Nissan 15" "Sivan 6"; do
+	for i in "Adar 14" "Nissan 15" "Sivan 6"; do
 		set_hebrew "$i" $hebyear; done
 
 	tishabav=$(hebcal -rh Av 9 $hebyear | cut -f1)
@@ -107,7 +109,7 @@ if [ $YAHR ] && [ -e $YAHRFILE ]; then [ $outp ] && echo; outp=true
 if [ $HIJRI ]; then [ $outp ] && echo; outp=true
 	gcal -e --date-format="%1%>02*M/%>02*D%2" --islamic-civil-holidays $year |
 	grep --no-messages "(Isl)" |sed -e 's/:\s/*\t/' -e 's/\s*(Isl).*//' \
-	-e '/Ramadan/s/$/~/;/Eid-al/s/$/~/;/New Year/s/$/~/' \
+	-e '/Ramadan/s/$/~/;/Eid-al-Fitr/s/$/~/;/New Year/s/$/~/' \
 	-e "s/'s Day//;s/Islamic New Year/Hijra/" |
 	grep --no-messages '~' | sed 's/~$//' | uniq -f1
 	fi
@@ -122,6 +124,14 @@ if [ $ZODIAC ]; then [ $outp ] && echo; outp=true
 
 # Dates calculated by their proximity to another date
 if [ $PROXIM ]; then [ $outp ] && echo; outp=true
+	# Proper Midsummer
+	# Saturday immediately following the Summer Solstice
+	solstice=$(gcal -e --astronomical-holidays --date-format="%Y-%>02*M-%>02*D" --time-offset=$(date +%:z) \
+		6 $year |grep -E Solstice| sed -e 's/:.*//')
+	midsummer=$(dateround $solstice --next Saturday)
+	[ $EREV ] && printf "%s*\tMidsummer Eve\n" "$(date -d "$midsummer -1 day" +"$DATEFMT")"
+	printf "%s*\tMidsummer\n" "$(date -d "$midsummer" +"$DATEFMT")"
+
 	# Black Friday (&c.)
 	FourthThuNov="Nov $(ncal -h 11 $year |awk '/^Th/{print $5}')"
 	printf "%s*\tBlack Friday\n"	"$(date -d "$FourthThuNov +1 day"  +"$DATEFMT")"

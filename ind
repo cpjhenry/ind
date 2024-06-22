@@ -89,9 +89,17 @@ REGDATE=(- "10/25"	"01/29"	"06/26" "06/20" "01/22"	"05/06"	"01/20"	"12/11"	"02/0
 REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952"	"2022")
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
-	year=$(date -d "$1 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
-	month=$(date -d "$1 00:18" +%0m)
-	day=$(date -d "$1 00:18" +%0d)
+	sd="$@"
+	if [ "$(grep '\+' <<< $sd)" ]; then
+		[ $VERBOSE ] && echo -n "+ >> $sd >> "
+		[ "$(grep -v '[Dd]ay' <<< $sd)" ] && sd=$(echo $sd |sed 's/$/ day/') \
+			&& [ $VERBOSE ] && echo -n "adding 'day' >> "
+		[ $VERBOSE ] && echo $sd
+		fi
+	year=$(date -d "$sd 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
+	month=$(date -d "$sd 00:18" +%0m)
+	day=$(date -d "$sd 00:18" +%0d)
+	[ $VERBOSE ] && echo $year $month $day
 	}
 ordinal() {
 	local ord
@@ -118,6 +126,7 @@ NWR() { # Not within range
 	}
 displayall() {
 	COMMON=true; NABON=true;
+	FRCAL=true;
 	HHPC=true; ERISIAN=true;
 	HEBREW=true; BAHAI=true;
 	ROME=true; BYZANTINE=true;
@@ -140,13 +149,14 @@ displaynone() {
 
 setdate today			# set today's date
 
-while getopts ":anfcpekjrzuxiqby:m:d:AHPBoOXvlCZDU?" OPTION
+while getopts ":anfcFpekjrzuxiqby:m:d:AHPBoOXvlCZDU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
 
 		f)	[ $FULLCE ]		&& unset FULLCE		|| FULLCE=true;;			# date
 		c)	[ $COMMON ] 	&& unset COMMON 	|| COMMON=true;;			# common year
+		F)	[ $FRCAL ]		&& unset FRCAL		|| FRCAL=true;;				# French Revolutionary
 
 		p)	[ $HHPC ]		&& unset HHPC		|| HHPC=true;;				# Hanke-Henry
 		e)	[ $ERISIAN ]	&& unset ERISIAN	|| ERISIAN=true;;			# Erisian
@@ -165,7 +175,7 @@ do case $OPTION in
 		y)	year=$OPTARG;;													# set year
 		m)	month=$OPTARG;;													# set month
 		d)	day=$OPTARG														# set day
-			[ "$(grep -E "[[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
+			[ "$(grep -E "[\+[:alpha:][:blank:]-]" <<< $day)" ] && setdate "$day";;
 
 		A)	SYMBOL=("${ALTSYM[@]}");;										# alternate symbols
 		H)	bold="**"; italics="_";;										# highlight
@@ -434,7 +444,7 @@ if [ $FRCAL ] && [ $(which emacs) ]; then
 if [ $COMMON ] && [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
 	[ $frc ] && frc=$(rnum $frc)
-	[ "$frcal" ] && frcal="$frcal $frc$newfrc" && unset frc
+	[ "$frcal" ] && frcal=$(printf "%-s %s%s" "$frcal" "$frc" "$newfrc") && unset frc # -19s
 else unset rnyear; fi
 [ $frc ] && frc="FRC $frc"
 
@@ -567,7 +577,7 @@ if [ $COMMON ]; then
 [ $JULIANP ]	&& printf "Julian Period       JP %d\n" $julp
 
 [ "$MASORETIC" -a "$mas" ] && printf "Anno Lucis          AL %d\n" $mas
-[ "$MASORETIC" -a "$arc" ] && printf "Anno Rosae Crucis  ARC %d%s\n" $arc "$newarc"
+[ "$MASORETIC" -a "$arc" ] && printf "Anno Rosae Crucis   RC %d%s\n" $arc "$newarc"
 [ "$MASORETIC" -a "$yod" ] && printf "Anno Inventionis    AI %d\n"	$yod
 [ "$MASORETIC" -a "$dep" ] && printf "Anno Depositionis   AD %d\n" $dep
 [ "$MASORETIC" -a "$mkt" ] && printf "Anno Ordinis KT     AO %4d\n" $mkt
