@@ -91,10 +91,7 @@ REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952"	"2022"
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	sd="$@"
 	if [ "$(grep '\+' <<< $sd)" ]; then
-		[ $VERBOSE ] && echo -n "+ >> $sd >> "
-		[ "$(grep -v '[Dd]ay' <<< $sd)" ] && sd=$(echo $sd |sed 's/$/ day/') \
-			&& [ $VERBOSE ] && echo -n "adding 'day' >> "
-		[ $VERBOSE ] && echo $sd
+		[ "$(grep -v '[Dd]ay' <<< $sd)" ] && sd=$(echo $sd |sed 's/$/ day/')
 		fi
 	year=$(date -d "$sd 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
 	month=$(date -d "$sd 00:18" +%0m)
