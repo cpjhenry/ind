@@ -1,6 +1,6 @@
 ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 
-** 3.12.11 - 2024-06-22
+* 3.12.11 - 2024-06-22
 - new *ChangeLog* format
 - added '+1' day functionality
 - tweaks
@@ -8,12 +8,12 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - (mob) Midsummer's Eve
 - (mob) tweaks
 
-** 3.12.10 - 2024-03-24
+* 3.12.10 - 2024-03-24
 - added Babylonian date
 - normalized 'convert' dates
 - tweaks
 
-** 3.12.9 - 2024-02-09
+* 3.12.9 - 2024-02-09
 - frcal tracks date
 - TJD 0 falls back to MJD
 - MJD 0 falls back to RD
@@ -22,23 +22,23 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - tweaks
 - GL dates no longer display with verbose
 
-** 3.12.8 - 2024-02-03
+* 3.12.8 - 2024-02-03
 - pull full FRC date from Emacs cal-french, if available (frcal)
 - tweaks
 
-** 3.12.7 - 2024-01-13
+* 3.12.7 - 2024-01-13
 - swats
 - (mob) rename 'advent' function to 'Xian'
 - (mob) liturgical dates suppressed into 'Xian' function
 
-** 3.12.6 - 2023-09-30
+* 3.12.6 - 2023-09-30
 - UGLE, PGLUC, and GLC now have own switch
 - tweaks
 - (mob) swats / allow Yahrzeits independently of Hebrew dates
 - (mob) other tweaks & fixes
 - aligned French revolutionary calendar to FRC (revised dating)
 
-** 3.12.5 - 2023-08-05
+* 3.12.5 - 2023-08-05
 - changed shebang to 'env'
 - modified some variable names for consistency
 - changed holidays to observances and optimized
@@ -53,43 +53,43 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - (mob) added substitutions
 - tweaks
 
-** 3.12.4 - 2023-05-14
+* 3.12.4 - 2023-05-14
 - added Anno Depositionis
 - tweaks
 
-** 3.12.3 - 2023-04-23
+* 3.12.3 - 2023-04-23
 - update documentation
 - (mob) added Zodiac
 - tweaks
 
-** 3.12.2 - 2023-04-23
+* 3.12.2 - 2023-04-23
 - moved Chinese Zodiac from general observances to own switch
 - added Vassa display switch
 - optimized lunar diagnostics
 - removed holiday caching
 - tweaks
 
-** 3.12.1 - 2023-03-25
+* 3.12.1 - 2023-03-25
 - fixed GCAL environment issue (when run under Übersicht)
 - gcal optimizations
 - added Buddhist Days diagnostic (-L)
 - tweaks
 
-** 3.12.0 - 2023-03-19
+* 3.12.0 - 2023-03-19
 - added Islamic civil new year / holidays (ind/mob)
 - simplified equinox calculations
 - removed non-lunar observances
 
-** 3.11.22 - 2022-12-14
+* 3.11.22 - 2022-12-14
 - added alternate leap year symbols
 - (mob) added Gregorian flag to Yahrzeits
 
-** 3.11.21 - 2022-11-19
+* 3.11.21 - 2022-11-19
 - added moon type, symbols
 - added alternate moon symbols
 - tweaks
 
-** 3.11.20 - 2022-10-30
+* 3.11.20 - 2022-10-30
 - hebcal refinements (v5+)
 - mob refinements, to align with hebcal
 - improved error checking
@@ -97,36 +97,36 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - add TJD negative error checking
 - Baháʼí BE 0 error checking
 
-** 3.11.19 - 2022-09-24
+* 3.11.19 - 2022-09-24
 - added Baháʼí calculations
 - tweaks
 - improved error checking
 
-** 3.11.18 - 2022-09-14
+* 3.11.18 - 2022-09-14
 - added (optimized) Advent and Yom Kippur to verbose display
 - updated Regnal years
 - tweaks
 
-** 3.11.17 - 2022-09-03
+* 3.11.17 - 2022-09-03
 - added Passover and Rosh Hashana to verbose display
 - tweaks
 
-** 3.11.16 - 2022-07-16
+* 3.11.16 - 2022-07-16
 - remove RD, optimize display
 - tweaks
 - update documentation
 
-** 3.11.15 - 2022-05-14
+* 3.11.15 - 2022-05-14
 - remove MJD, preferring TJD
 - 'klock' defaults as off
 - tweaks
 - update documentation
 
-** 3.11.14 - 2022-05-07
+* 3.11.14 - 2022-05-07
 - tweaks
 - better Julian date error-checking
 
-** 3.11.13 - 2022-04-23
+* 3.11.13 - 2022-04-23
 - tweaks
 - diagnostic display of Lent
 - verbose mode turns off display of other modes
@@ -135,35 +135,35 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - added mode 4 (display all) to 'phases'
 - additional date error-checking
 
-** 3.11.12 - 2022-04-16
+* 3.11.12 - 2022-04-16
 - flag dates which shift mid-year as new
 - diagnostic display of Easter
 - tweaks
 
-** 3.11.11 - 2022-03-27
+* 3.11.11 - 2022-03-27
 - tweaks / error checking
 - added proleptic halt for Gregorian calendar
 - added auto display of O.S. dates for 1752 and earlier
 - 'klock' tweaks and fixes (no DST on .beats)
 
-** 3.11.10 - 2022-02-21
+* 3.11.10 - 2022-02-21
 - added French Revolutionary calendar
 - fixed proleptic and transitional regnal year
 - tweaks
 - tweak documentation
 
-** 3.11.9 - 2022-02-12
+* 3.11.9 - 2022-02-12
 - fixed EWT (Eastern War Time)
 - tweaked JEN
 - added Commonwealth regnal year
 - toggle holiday display (default: off)
 - tweaked 'mob'
 
-** 3.11.8 - 2022-01-29
+* 3.11.8 - 2022-01-29
 - tweaks and optimizations to 'mob'
 - update documentation
 
-** 3.11.7 - 2022-01-23
+* 3.11.7 - 2022-01-23
 - moved quarter / cross-quarter days to 'calendar'. Config as follows:
 
 	//  Quarter Days
@@ -187,7 +187,7 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - tweaks and documentation updates
 - automate calculation of standard timezone and time offset
 
-** 3.11.6 - 2022-01-01
+* 3.11.6 - 2022-01-01
 - added calculation of vernal equinox
 - align ARC to vernal equinox
 - tweaks
@@ -196,34 +196,34 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - 'GNU sed' required warning
 - (control character sequences are not POSIX)
 
-** 3.11.5 - 2021-12-11
+* 3.11.5 - 2021-12-11
 - added MGL calculation
 - tweaks to 'mob'
 
-** 3.11.4 - 2021-10-19
+* 3.11.4 - 2021-10-19
 - optimized / re-ordered calculations (date/time, lunar, internal, dependencies)
 - lint checking (shell-check)
 - tweaks
 
-** 3.11.3 - 2021-10-18
+* 3.11.3 - 2021-10-18
 - optimized lunar phase calculation
 > including, by extension, Chinese NY diagnostics
 
-** 3.11.2 - 2021-10-16
+* 3.11.2 - 2021-10-16
 - tweaks and code optimizations
 - display tweaks
 
-** 3.11.1 - 2021-09-30
+* 3.11.1 - 2021-09-30
 - documentation updates
 - bug fixes
 - additional tweaks
 
-** 3.11 - 2021-08-28
+* 3.11 - 2021-08-28
 - new helper app - 'klock'
 > added Erisian Time Values
 > added Swatch .beat
 
-** 3.10.15 - 2021-08-21
+* 3.10.15 - 2021-08-21
 - cleanup of superfluous variables
 > preference for in-line over variables used once
 - optimized leap year calculations
@@ -231,61 +231,61 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - (and cap TJD at 16 bits - 65535, per PB-5J)
 - tweaky tweaks
 
-** 3.10.14 - 2021-08-19
+* 3.10.14 - 2021-08-19
 - added Japanese Eras (for modern Japan)
 - tweaks to parenthetical variable display
 - improved proleptic range and error checking
 - fixed January 1st 1895 display bug
 
-** 3.10.13 - 2021-08-14
+* 3.10.13 - 2021-08-14
 - added creation of cache file to speed up display of holidays when printed separately
 - tweaks
 
-** 3.10.12 - 2021-07-16
+* 3.10.12 - 2021-07-16
 - added more Masoretic-style dates
 - merged ARC with Masoretic
 - documentation tweaks & code cleanup
 
-** 3.10.10 - 2021-04-24
+* 3.10.10 - 2021-04-24
 - new observance
 - add "close to" code hook to 'mob'
 
-** 3.10.9 - 2021-02-15
+* 3.10.9 - 2021-02-15
 - lunar tweaks and optimizations
 
-** 3.10.8 - 2021-02-13
+* 3.10.8 - 2021-02-13
 - added "-o", monthly observance diagnostics
 - lunar tweaks and additions
 - code optimizations
 - documentation tweaks
 
-** 3.10.7 - 2021-02-07
+* 3.10.7 - 2021-02-07
 - moved lunar observance diagnostics to verbose mode
 - re-add lunar phase diagnostics to main code
 
-** 3.10.6 - 2021-01-16
+* 3.10.6 - 2021-01-16
 - remove Chinese festivals (save CNY & 'year of')
 > use 'ccalendar' (instead of 'calendar') https://github.com/cpjhenry/ccalendar
 
-** 3.10.5 - 2021-01-09
+* 3.10.5 - 2021-01-09
 - tweaks
 - added observances diagnostics
 
-** 3.10.4 - 2021-01-05
+* 3.10.4 - 2021-01-05
 - added 'mob' (movable observances) script to repository
 
-** 3.10.3 - 2020-11-22
+* 3.10.3 - 2020-11-22
 - documentation tweaks
 - removed Advent (move to helper app)
 
-** 3.10.2 - 2020-10-31
+* 3.10.2 - 2020-10-31
 - adjust Uposatha observance
 - update Uposatha man-file
 
-** 3.10.1 - 2020-10-29
+* 3.10.1 - 2020-10-29
 - tweaks
 
-** 3.10 - 2020-10-25
+* 3.10 - 2020-10-25
 - removed idiosyncratic events
 - removed Easter-related calculations. As with Hebrew holidays, there are far better tools.
 > One such tool is 'calendar'. Config as follows:
@@ -303,63 +303,63 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - added 'Advent' switch
 - offload lunar diagnostics
 
-** 3.9.4 - 2020-10-24
+* 3.9.4 - 2020-10-24
 - tweaks
 
-** 3.9.3 - 2020-10-14
+* 3.9.3 - 2020-10-14
 - tweaks
 
-** 3.9.2 - 2020-10-10
+* 3.9.2 - 2020-10-10
 - tweaks & optimizations
 
-** 3.9.1 - 2020-10-03
+* 3.9.1 - 2020-10-03
 - tweaks & optimizations
 - move leap year to verbose mode
 - removed PARTCE argument
 
-** 3.9 - 2020-09-30
+* 3.9 - 2020-09-30
 - year, month, day error checking improvements
 - runtime optimizations
 - added correction for 13 months to Chinese calendar calculations
 - optimized Chinese holidays
 - add ROC ordinal
 
-** 3.8.18 - 2020-09-29
+* 3.8.18 - 2020-09-29
 - tweaks
 - optimized '-d'
 
-** 3.8.17 - 2020-09-27
+* 3.8.17 - 2020-09-27
 - added 'y-m-d' format to -d option
 - tweaks
 
-** 3.8.16 - 2020-09-23
+* 3.8.16 - 2020-09-23
 - source tweaks
 
-** 3.8.15 - 2020-09-20
+* 3.8.15 - 2020-09-20
 - source tweaks
 
-** 3.8.14 - 2020-09-11
+* 3.8.14 - 2020-09-11
 - added Rata Die
 
-** 3.8.13 - 2020-08-30
+* 3.8.13 - 2020-08-30
 - source tweaks
 
-** 3.8.12 - 2020-08-18
+* 3.8.12 - 2020-08-18
 - source tweaks
 
-** 3.8.11 - 2020-08-05
+* 3.8.11 - 2020-08-05
 - tweak verbose display
 
-** 3.8.10 - 2020-07-29
+* 3.8.10 - 2020-07-29
 - added dependency check
 - tweak lunar diagnostic data
 - update documentation
 
-** 3.8.9 - 2020-04-05
+* 3.8.9 - 2020-04-05
 - source tweaks
 - update documentation
 
-** 3.8.8 - 2020-03-31
+* 3.8.8 - 2020-03-31
 - aligned City of Rome date to Julian calendar
 - added error-checking for Julian day of year
 - optimized disabled feature error trapping
@@ -367,12 +367,12 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - display tweaks
 - update documentation
 
-** 3.8.6 - 2020-03-30
+* 3.8.6 - 2020-03-30
 - added 'Uposatha' man file to repository
 - display tweaks
 - update documentation
 
-** 3.8.5 - 2020-03-29
+* 3.8.5 - 2020-03-29
 - cleanup orphaned calculations
 - added Chinese Lunar Year
 - fixed Byzantine start of year when year supplied
@@ -380,164 +380,164 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - display tweaks
 - update documentation
 
-** 3.8 - 2019-11-02
+* 3.8 - 2019-11-02
 - removed Hebrew holidays (see helper app 'hebcal')
 - display tweaks
 - update documentation
 
-** 3.7.7 - 2019-10-19
+* 3.7.7 - 2019-10-19
 - update documentation
 
-** 3.7.6 - 2019-10-16
+* 3.7.6 - 2019-10-16
 - display and math tweaks
 - optimized date variables used only once
 
-** 3.7.5 - 2019-10-15
+* 3.7.5 - 2019-10-15
 - added hebcal-based holidays to display
 
-** 3.7.3 - 2019-10-12
+* 3.7.3 - 2019-10-12
 - substituted Orthodox Pascha for Double-Nine
 - fixed calculation of Easter/Orthodox Easter when year supplied
 - display tweaks
 
-** 3.7.1 - 2019-09-30
+* 3.7.1 - 2019-09-30
 - fixed OPTARG issue when current day exceeds days in the month
 - added Hebrew holiday switch
 
-** 3.7 - 2019-09-29
+* 3.7 - 2019-09-29
 - significant re-write, and final removal of remind
 - now requires helper app 'phases' to calculate moon phases
 - streamlined calculation of Chinese months & festivals
 
-** 3.6.8 - 2019-09-26
+* 3.6.8 - 2019-09-26
 - replaced remind with ncal for Easter calculations
 
-** 3.6.7 - 2019-09-23
+* 3.6.7 - 2019-09-23
 - replaced remind with hebcal for Hebrew calculations
 - removed sunset calculation as superfluous
 
-** 3.6.5 - 2019-09-16
+* 3.6.5 - 2019-09-16
 - sped up Chinese holiday display (now on by default)
 - display tweaks
 
-** 3.6.4 - 2019-09-08
+* 3.6.4 - 2019-09-08
 - aligned Byzantine date to Julian calendar
 - added better calculation of Hebrew year (using remind)
 - added more common holidays (quarter / cross-quarter days)
 - display tweaks
 
-** 3.6.2 - 2019-09-07
+* 3.6.2 - 2019-09-07
 - display tweaks
 - corrected speeling mistakes
 - fixed Tish'a B'Av date (not on Shabbat)
 
-** 3.6.1 - 2019-08-28
+* 3.6.1 - 2019-08-28
 - corrected MJD to UTC time
 
-** 3.6 - 2019-08-24
+* 3.6 - 2019-08-24
 - added Modified Julian Day
 
-** 3.5.5 - 2019-05-20
+* 3.5.5 - 2019-05-20
 - added Roman numeral year to common
 - removed Pentecost
 - added Chinese switch (off by default)
 
-** 3.5.1 - 2019-04-02
+* 3.5.1 - 2019-04-02
 - fixed lunar / verbose displays
 
-** 3.5 - 2019-03-22
+* 3.5 - 2019-03-22
 - added Masoretic calendar calculation
 - update documentation
 
-** 3.4.6 - 2019-03-19
+* 3.4.6 - 2019-03-19
 - cleanup of diagnostic data
 - disable solar year calculation
 
-** 3.4.5 - 2019-03-05
+* 3.4.5 - 2019-03-05
 - added Chinese 'year of' calculation
 
-** 3.4 - 2018-09-23
+* 3.4 - 2018-09-23
 - adjusted version numbering
 - fixed Chinese NY
 - added Chinese month calculations
 
-** 3.3.1 - 2018-09-09
+* 3.3.1 - 2018-09-09
 - update documentation
 
-** 3.3 - 2018-09-08
+* 3.3 - 2018-09-08
 - edits
 - added Hogmanay
 
-** 3.2 - 2018-08-23
+* 3.2 - 2018-08-23
 - sorting of diagnostic data
 - miscellaneous display tweaking
 
-** 3.1 - 2018-08-18
+* 3.1 - 2018-08-18
 - added highlighting
 - added additional common era holidays
 
-** 3.0 - 2018-08-07
+* 3.0 - 2018-08-07
 - added next first and last quarters
  ort for Hanke-Henry dates - - added su
  ort for Discordian dates - - added su
 
-** 2.7 - 2018-03-16
+* 2.7 - 2018-03-16
 - added full vs part CE display
 - added ordinal support
 - added additional common era holidays
 - moved self-documentation to 'getusage'
 - added support for Ides
 
-** 2.5 - 2017-08-24
+* 2.5 - 2017-08-24
 - added support for Julian Period
 - added support for Japanese Imperial Year
 - added additional Hebrew holiday support
 - added Chinese New Year
 
-** 2.3 - 2015-08-01
+* 2.3 - 2015-08-01
 - fixed blue moon timings
 
-** 2.2 - 2015-07-31
+* 2.2 - 2015-07-31
 - improved error checking, including Darwin detection
 - added holiday 'off' switch and display tweaks
 
-** 2.1 - 2015-07-26
+* 2.1 - 2015-07-26
 - added blue / black moon calculations
 - fixed common section month base ten error (array indexes in bash)
 - added new documentation (ChangeLog, man file)
 
-** 2.0 - 2015-05-21
+* 2.0 - 2015-05-21
 - added relative date specification to -d option (see: 'gdate' for format)
 
-** 1.9 - 2015-05-20
+* 1.9 - 2015-05-20
 - added more sophisticated Hebrew date calculations; tidied up 'remind' calls
 
-** 1.8 - 2015-05-18
+* 1.8 - 2015-05-18
 - changed moon phase to array
 
-** 1.7 - 2015-04-12
+* 1.7 - 2015-04-12
 - added all moon calculations, Uposatha observances
 
-** 1.6 - 2015-03-21
+* 1.6 - 2015-03-21
 - added full-moon calculations = more luni-solar holidays
 
-** 1.5 - 2015-02-06
+* 1.5 - 2015-02-06
 - added lunar, Hebrew, and Rome calculations
 
-** 1.4 - 2014-08-07
+* 1.4 - 2014-08-07
 - added Buddhist holidays, info on dating systems
 
-** 1.3 - 2014-08-01
+* 1.3 - 2014-08-01
 - Re-wrote, added switches
 
-** 1.2 - 2014-06-07
+* 1.2 - 2014-06-07
 - corrected base ten for day calc [deprecated]
 
-** 1.1 - 2014-05-06
+* 1.1 - 2014-05-06
 - added Buddhist year calculations
 
-** 1.0 - 2013-07-16
+* 1.0 - 2013-07-16
 - initial calculations
 
-** #
+* #
 #  LocalWords:  dateutils
