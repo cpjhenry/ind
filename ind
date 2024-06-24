@@ -95,7 +95,6 @@ setdate() { # usage: setdate [yesterday|today|tomorrow]
 	year=$(date -d "$sd 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
 	month=$(date -d "$sd 00:18" +%0m)
 	day=$(date -d "$sd 00:18" +%0d)
-	[ $VERBOSE ] && echo $year $month $day
 	}
 ordinal() {
 	local ord
