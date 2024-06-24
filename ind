@@ -52,8 +52,8 @@ jupconvert=4713	# Julian Period; 4713 BCE
 
 masconvert=4000	;mas=t	# Masoretic; 4000 BCE
 arcconvert=1353 ;arc=t	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
-yodconvert=530	;yod=t	# Anno Inventionis/Year of Discovery; 530 BCE (2nd temple)
-depconvert=1000 ;dep=	# Anno Depositionis; 1000 BCE (1st temple)
+yodconvert=530	;yod=t	# Anno Inventionis; 530 BCE; building of the Second Temple by Zerubbabel
+depconvert=1000 ;dep=	# Anno Depositionis; 1000 BCE; completion of the First Temple by Solomon
 mktconvert=1118 ;mkt=	# Anno Ordinis; 1118 CE
 UGLconvert=1717 ;UGL=t	# UGL year; 1717 CE
 PGLconvert=1792 ;PGL=t	# PGL year; 1792 CE
