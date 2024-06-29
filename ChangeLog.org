@@ -3,7 +3,7 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 * 3.12.11 - 2024-06-22
 - new *ChangeLog* format
 - added '+1' day functionality
-- tweaks and optimizations
+- tweaks
 - (mob) dateutils error-checking
 - (mob) Midsummer's Eve
 - (mob) tweaks
