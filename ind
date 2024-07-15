@@ -121,7 +121,6 @@ NWR() { # Not within range
 	}
 displayall() {
 	COMMON=true; NABON=true;
-	FRCAL=true;
 	HHPC=true; ERISIAN=true;
 	HEBREW=true; BAHAI=true;
 	ROME=true; BYZANTINE=true;
@@ -364,7 +363,8 @@ jdoycmp=$jdoy; [ $month -eq 1 -a $day -le $jdelta ] && jdoycmp=0
 # Nabonassar (Babylonian)
 if [ $NABON ]; then
 	(( nabyear=year+nabconvert ))
-	[ $_LY ] && doycmp=$(date -d "$year-04-17" +%-j) || doycmp=$(date -d "$year-04-18" +%-j)
+	doycmp=$(date -d "$year-04-18" +%-j)
+	[ $_LY ] && (( doycmp-=1 ))
 	[[ 10#$doy -lt 10#$doycmp ]] && (( nabyear-=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newnab=$CHGSYM
 else unset NABON; fi
@@ -378,16 +378,16 @@ else unset ROME; fi
 
 if [ $BYZANTINE ]; then
 	(( byzantine=year+byzconvert ))
-	doycmp=$(date -d "1 Sept $year" +%-j)	 # September 1st (Day 1)
+	doycmp=$(date -d "1 Sept $year" +%-j) # September 1st (Day 1)
 	[[ 10#$jdoycmp -lt 10#$doycmp ]] && (( byzantine-=1 ))
 	[[ 10#$jdoycmp -eq 10#$doycmp ]] && newbyz=$CHGSYM
 
-	(( byzind=$byzantine%15 ))	# Byzantine
+	(( byzind=$byzantine%15 ))
 	[ $byzind -eq "0" ] && byzind=15
 	byzind="$byzind$(ordinal $byzind)"
 else unset BYZANTINE; fi
 
-(( ind=($year+2)%15+1 ))	# Gregorian
+(( ind=($year+2)%15+1 )) # Gregorian
 ind="$ind$(ordinal $ind)"
 
 # Beware the Ides...
