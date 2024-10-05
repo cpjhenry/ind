@@ -1,5 +1,12 @@
 ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 
+* 3.12.12 - 2024-10-05
+- tweaks
+- silence ides
+- added Julian date to common
+- removed dailies from verbose
+- removed weekday from FRC
+
 * 3.12.11 - 2024-06-22
 - new *ChangeLog* format
 - added '+1' day functionality

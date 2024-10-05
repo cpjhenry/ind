@@ -76,7 +76,7 @@ DOWS=(Sun Mon Tue Wed Thu Fri Sat)
 
 EPACTS=(0 29 10 21 2 13 24 5 16 27 8 19 30 11 22 3 14 25 6 17)
 DOMINI=(G A B C D E F)
-PHASES=("New Moon" "First Quarter" "Full Moon" "Last Quarter")
+PHASES=("New" "First" "Full" "Last")
 BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
 ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
@@ -391,7 +391,7 @@ else unset BYZANTINE; fi
 ind="$ind$(ordinal $ind)"
 
 # Beware the Ides...
-[ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
+# [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
 # Regnal Year (United Kingdom, from 1 Jan 1801)
 if [ $COMMON ]; then
@@ -434,8 +434,8 @@ doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
 if [ $FRCAL ] && [ $(which emacs) ]; then
 	frcal=$(emacs -Q --batch \
 		--eval "(require 'cal-french)" \
-		--eval="(print (calendar-french-date-string '($month $day $year)))" |
-		sed 's/\"//g;/^$/d;s/ an [0-9]* de la R.volution.*$//'); fi
+		--eval "(print (calendar-french-date-string '($month $day $year)))" |
+		sed 's/\"//g;/^$/d;s/^[[:alpha:]]* //;s/ an [0-9]* de la R.v.*$//'); fi
 
 # Set Roman numeral years; DEP rnum
 if [ $COMMON ] && [ $(which rnum) ]; then
@@ -547,11 +547,14 @@ if [ $FULLCE ]; then
 	else printf "$bold%s %d %s %d$bold\n" ${DOWL[$dow]} $(( 10#$day )) ${MONTHL[10#$month]} $year; fi; fi
 
 if [ $COMMON ]; then
-	printf "$bold";printf "CE %d" $year
+	printf "$bold"
+	printf "CE %d" $year
 	[ $_LY ]	&& printf "%s" "$HOLSYM"
-				   printf " %s %s ind." "$rnyear" "$ind"
-	[ $MTYPE ]	&& printf " %s" "${SYMBOL[$MTYPE]}"; printf "$bold\n"
+	printf " %s %s ind." "$rnyear" "$ind"
+	printf "$bold"
+	[ $MTYPE ]	&& printf " (%s)" "$moon"; printf "\n" #"${SYMBOL[$MTYPE]}"
 	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz"
+	[ $jymd ]	&& printf "O.S. %s Day %03d\n" "${jymd:5}" "$jdoy" |sed 's/-/\//'
 
 	[ "$reg" ]	&& printf "%s " "$reg"
 	[ "$frc" ]	&& printf "%s " "$frc"
@@ -591,11 +594,10 @@ if [ $GRAND ] ; then
 
 if [ $VERBOSE ]; then
 	[ $COMMON ] && echo "----"
-				   printf "Ides                   %d\n" $ides
-
 				   printf "Dominical letter       %s\n" "$dominical"
 				   printf "Epact                  %s\n" "${EPACTS[$golden]}"
 				   printf "Golden number          %s\n" "$golden"
+				   printf "Julian delta           %d\n" $jdelta
 
 				   printf "Lent                   %s\n"	$(date -d"$(ncal -e $year) -46 days" +%m/%d)
 				   printf "Easter                 %s\n"	$(date -d"$(ncal -e $year)" +%m/%d)
@@ -607,8 +609,6 @@ if [ $VERBOSE ]; then
 	[ $hijra ]	&& printf "Hijra                  %s\n" "$hijra"
 
 	[ $equinox ] &&printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
-	[ "$moon" ]	&& printf "Moon phase             %s\n" "$moon"
-	[ $jymd ]	&& printf "Julian calendar     %d %s Day %03d\n" "$jdelta" "${jymd:5}" "$jdoy" |sed 's/-/\//'
 
 	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
