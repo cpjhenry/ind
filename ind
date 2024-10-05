@@ -435,7 +435,7 @@ if [ $FRCAL ] && [ $(which emacs) ]; then
 	frcal=$(emacs -Q --batch \
 		--eval "(require 'cal-french)" \
 		--eval "(print (calendar-french-date-string '($month $day $year)))" |
-		sed 's/\"//g;/^$/d;s/^[[:alpha:]]* //;s/ an [0-9]* de la R.v.*$//'); fi
+		sed 's/\"//g;/^$/d;s/^[[:alpha:]]* //;s/ an [0-9]* de la R.v.*$//;s/ jour / /'); fi
 
 # Set Roman numeral years; DEP rnum
 if [ $COMMON ] && [ $(which rnum) ]; then
@@ -553,7 +553,8 @@ if [ $COMMON ]; then
 	printf " %s %s ind." "$rnyear" "$ind"
 	printf "$bold"
 	[ $MTYPE ]	&& printf " (%s)" "$moon"; printf "\n" #"${SYMBOL[$MTYPE]}"
-	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz"
+
+	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz" &&
 	[ $jymd ]	&& printf "O.S. %s Day %03d\n" "${jymd:5}" "$jdoy" |sed 's/-/\//'
 
 	[ "$reg" ]	&& printf "%s " "$reg"
