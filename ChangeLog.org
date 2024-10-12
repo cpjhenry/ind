@@ -6,6 +6,8 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - added Julian date to common
 - removed dailies from verbose
 - removed weekday from FRC
+- removed ordinals from dailies
+- moved full frcal to switched
 
 * 3.12.11 - 2024-06-22
 - new *ChangeLog* format

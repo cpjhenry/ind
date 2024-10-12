@@ -13,8 +13,8 @@ export GCAL="--resource-file=nil --exclude-fixed-dates-list-title --suppress-fix
 
 FULLCE=
 COMMON=true
-FRCAL=true
 
+FRCAL=
 HHPC=
 ERISIAN=
 NABON=
@@ -39,6 +39,7 @@ GRAND=
 SYMBOL=("x" ">" "o" "<")
 ALTSYM=("●" "☽" "○" "☾")
 PREFIX="- "
+SEPARATOR=
 CHGSYM=" !"
 HOLSYM=" +"
 
@@ -109,6 +110,11 @@ ordinal() {
 		*)	ord="th";;
 	esac; echo $ord
 	}
+function ruled() { # horizontal rule/line of 25 dashes
+	[ ${#1} = 0 ] && dash=25 || dash="$1"
+	printf -v res %${dash}s
+	printf '%s\n' "${res// /${2--}}"
+	}
 is_leap_year() { ## USAGE: is_leap_year [year]
 	case ${1:-$(date +%Y)} in
 		*0[48] | *[2468][048] | *[13579][26] | *[02468][048]00 | *[13579][26]00 ) _LY=1;;
@@ -120,17 +126,21 @@ NWR() { # Not within range
 	exit 1
 	}
 displayall() {
-	COMMON=true; NABON=true;
+	COMMON=true; FRCAL=true;
+	NABON=true;
 	HHPC=true; ERISIAN=true;
 	HEBREW=true; BAHAI=true;
 	ROME=true; BYZANTINE=true;
 	JULIANP=true; MASORETIC=true;
 	JAPANIY=true; CHINALY=true;
 	BUDDHIST=true; HIJRI=true;
+
+	SEPARATOR=true
 	}
 displaynone() {
 	unset FULLCE;
-	unset COMMON; unset NABON;
+	unset COMMON; unset FRCAL;
+	unset NABON;
 	unset HHPC; unset ERISIAN;
 	unset HEBREW; unset BAHAI;
 	unset ROME; unset BYZANTINE;
@@ -143,7 +153,7 @@ displaynone() {
 
 setdate today			# set today's date
 
-while getopts ":anfcFpekjrzuxiqby:m:d:AHPBoOXvlCZDU?" OPTION
+while getopts ":anfcFpekjrzuxiqby:m:d:AHPSBoOXvlCZDU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -174,6 +184,7 @@ do case $OPTION in
 		A)	SYMBOL=("${ALTSYM[@]}");;										# alternate symbols
 		H)	bold="**"; italics="_";;										# highlight
 		P)	[ $PREFIX ]		&& unset PREFIX		|| PREFIX="- ";;			# prefix
+		S)	[ $SEPARATOR ]	&& unset SEPARATOR	|| SEPARATOR=true;;			# separator
 
 		B)	for m in 2 5 7; do												# Buddhist Festivals
 				phases $year $m 2 |sed -n "s/^....-//;s/-/\//;1s/ .*/*\t${BUDOBS[$j]}/p"
@@ -441,9 +452,9 @@ if [ $FRCAL ] && [ $(which emacs) ]; then
 if [ $COMMON ] && [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
 	[ $frc ] && frc=$(rnum $frc)
-	[ "$frcal" ] && frcal=$(printf "%-s %s%s" "$frcal" "$frc" "$newfrc") && unset frc # -19s
+	[ "$frcal" ] && frcal=$(printf "%-$((27-${#frc}))s %s%s" "$frcal" "$frc" "$newfrc") && unset frc
 else unset rnyear; fi
-[ $frc ] && frc="FRC $frc"
+#[ $frc ] && frc="$frc"
 
 # Set Julian Period; Truncated Julian Date; DEP jday
 (( julp=year+jupconvert ))
@@ -461,20 +472,20 @@ else unset tjd; fi
 
 # Set Hanke-Henry date; DEP hh
 if [ $HHPC ] && [ $(which hh) ] && [ $year -ge 2018 ]; then
-	hhdate=$(hh -W -d$day -m$month -y$year)
+	hhdate=$(hh -d$day -m$month -y$year)
 else unset HHPC; fi
 
 # Set Erisian date; DEP ddate
 if [ $ERISIAN ] && [ $(which ddate) ]; then
-	discord=$(ddate +'%{%e %B%} %Y' $day $month $year |sed 's/The //')
+	discord=$(ddate +'%{%d %B%} %Y' $day $month $year |sed 's/The //')
 	[[ $(grep -E "^5th|50th|Tib's" <<< $discord) ]] && dishol=$HOLSYM
 else unset ERISIAN; fi
 
 # Hebrew calendar; DEP hebcal
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
-	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed 's/of //')
-	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year)) |cut -f1) +%-j) ]] && newheb=$CHGSYM
+	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed 's/of //' |sed -E 's/st |nd |rd |th / /')
+	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year)) |cut -f1) +%-j) ]] &&newheb=$CHGSYM
 else unset HEBREW; fi
 
 # Hijri; DEP gcal
@@ -561,13 +572,14 @@ if [ $COMMON ]; then
 	[ "$frc" ]	&& printf "%s " "$frc"
 	[ "$tjd" ]	&& printf "%s" "$tjd"
 	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
-	[ "$frcal" ]&& printf "%s\n" "$frcal"
 	fi
 
+[ $FRCAL ] && [ "$frcal" ] && printf "%s\n" "$frcal"
 [ $HHPC ]		&& printf "%-17s  H-H %4d\n" "${hhdate::${#hhdate}-5}"   ${hhdate:(-4)}
 [ $ERISIAN ]	&& printf "%-16s  YOLD %d%s\n" "${discord::${#discord}-5}" ${discord:(-4)} "$dishol"
-
 [ $HEBREW ]		&& printf "%-18s  AM %d%s\n" "${hebdate::${#hebdate}-6}" ${hebdate:(-4)} "$newheb"
+
+[ $SEPARATOR ]	&& ruled 27
 [ $HIJRI ]		&& printf "Hijri               AH %-4d%s\n" $hijri "$newhij"
 [ $BAHAI ]		&& printf "Baha'i              BE %4d%s\n" $bahyear "$newbah"
 
@@ -595,26 +607,26 @@ if [ $GRAND ] ; then
 
 if [ $VERBOSE ]; then
 	[ $COMMON ] && echo "----"
-				   printf "Dominical letter       %s\n" "$dominical"
-				   printf "Epact                  %s\n" "${EPACTS[$golden]}"
-				   printf "Golden number          %s\n" "$golden"
-				   printf "Julian delta           %d\n" $jdelta
+				   printf "Dominical letter    %s\n" "$dominical"
+				   printf "Epact               %s\n" "${EPACTS[$golden]}"
+				   printf "Golden number       %s\n" "$golden"
+				   printf "Julian delta        %d\n" $jdelta
 
-				   printf "Lent                   %s\n"	$(date -d"$(ncal -e $year) -46 days" +%m/%d)
-				   printf "Easter                 %s\n"	$(date -d"$(ncal -e $year)" +%m/%d)
-				   printf "Advent                 %s\n" $(date -d"11/$(ncal -h 11 $year |awk '/^Th/{print $NF}')+3 days" +%m/%d)
+				   printf "Lent                %s\n"	$(date -d"$(ncal -e $year) -46 days" +%m/%d)
+				   printf "Easter              %s\n"	$(date -d"$(ncal -e $year)" +%m/%d)
+				   printf "Advent              %s\n" $(date -d"11/$(ncal -h 11 $year |awk '/^Th/{print $NF}')+3 days" +%m/%d)
 
-	[ $_HC ]	&& printf "Passover               %s\n" $(hebcal -grh Ni 15 $(($hebconvert+$year))   |cut -f1) |sed 's/....-//;s/-/\//'
-	[ $_HC ]	&& printf "Rosh Hashana           %s\n" $(hebcal -grh Ti  1 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
-	[ $_HC ]	&& printf "Yom Kippur             %s\n" $(hebcal -grh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
-	[ $hijra ]	&& printf "Hijra                  %s\n" "$hijra"
+	[ $_HC ]	&& printf "Passover            %s\n" $(hebcal -grh Ni 15 $(($hebconvert+$year))   |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Rosh Hashana        %s\n" $(hebcal -grh Ti  1 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Yom Kippur          %s\n" $(hebcal -grh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $hijra ]	&& printf "Hijra               %s\n" "$hijra"
 
-	[ $equinox ] &&printf "Spring Equinox         %s\n" "${equinox:5}" |sed 's/-/\//'
+	[ $equinox ] &&printf "Spring Equinox      %s\n" "${equinox:5}" |sed 's/-/\//'
 
-	[ "$jen" ]	&& printf "Japanese Era           %s\n" "${ERANAME[10#$ERANUM]}"
-	[ $cny ] 	&& printf "Chinese New Year       %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
+	[ "$jen" ]	&& printf "Japanese Era        %s\n" "${ERANAME[10#$ERANUM]}"
+	[ $cny ] 	&& printf "Chinese New Year    %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
-	[ $_PH ]	&& printf "Vassa                  07/%02d\n" $(date -d "$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
+	[ $_PH ]	&& printf "Vassa               07/%02d\n" $(date -d "$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
 	fi
 
 # Local Variables:
