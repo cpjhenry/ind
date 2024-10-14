@@ -298,12 +298,12 @@ if [ $(which phases) ]; then _PH=true
 		exit; fi
 
 	if [ $FULL ]; then
-		[ $month -eq 2  ] && moon="Snow Moon"
-		[ $month -eq 3  ] && moon="Lenten Moon"
-		[ $month -eq 4  ] && moon="Paschal Moon"
-		[ $month -eq 9  ] && moon="Harvest Moon"
-		[ $month -eq 10 ] && moon="Hunter's Moon"
-		[ $month -eq 11 ] && moon="Beaver Moon"; fi
+		[ $month -eq 2  ] && moon="Snow"
+		[ $month -eq 3  ] && moon="Lenten"
+		[ $month -eq 4  ] && moon="Paschal"
+		[ $month -eq 9  ] && moon="Harvest"
+		[ $month -eq 10 ] && moon="Hunter"
+		[ $month -eq 11 ] && moon="Beaver"; fi
 
 	# Chinese calendar
 	for i in {1..2}; do while IFS= read -r line; do
@@ -484,9 +484,14 @@ else unset ERISIAN; fi
 # Hebrew calendar; DEP hebcal
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
-	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed 's/of //' |sed -E 's/st |nd |rd |th / /')
+	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed -E 's/st |nd |rd |th / /;s/ of / /')
 	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year)) |cut -f1) +%-j) ]] &&newheb=$CHGSYM
 else unset HEBREW; fi
+if [ $year -ge 1951 ]; then
+	(( shmita=year-1951 )); (( shmita=shmita % 7 ));
+	[ $shmita == 0 ] && shmita="Shmita" || unset shmita
+	[ $shmita ] && [ $newheb ] && newheb="${newheb}S"
+fi
 
 # Hijri; DEP gcal
 if [ $(which gcal) ]; then
@@ -606,7 +611,7 @@ if [ $GRAND ] ; then
 	fi
 
 if [ $VERBOSE ]; then
-	[ $COMMON ] && echo "----"
+	[ $COMMON ] && ruled 27
 				   printf "Dominical letter    %s\n" "$dominical"
 				   printf "Epact               %s\n" "${EPACTS[$golden]}"
 				   printf "Golden number       %s\n" "$golden"
@@ -617,7 +622,7 @@ if [ $VERBOSE ]; then
 				   printf "Advent              %s\n" $(date -d"11/$(ncal -h 11 $year |awk '/^Th/{print $NF}')+3 days" +%m/%d)
 
 	[ $_HC ]	&& printf "Passover            %s\n" $(hebcal -grh Ni 15 $(($hebconvert+$year))   |cut -f1) |sed 's/....-//;s/-/\//'
-	[ $_HC ]	&& printf "Rosh Hashana        %s\n" $(hebcal -grh Ti  1 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
+	[ $_HC ]	&& printf "Rosh Hashana %6s %s\n" "$shmita" $(hebcal -grh Ti  1 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
 	[ $_HC ]	&& printf "Yom Kippur          %s\n" $(hebcal -grh Ti 10 $(($hebconvert+$year+1)) |cut -f1) |sed 's/....-//;s/-/\//'
 	[ $hijra ]	&& printf "Hijra               %s\n" "$hijra"
 

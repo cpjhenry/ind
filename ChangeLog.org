@@ -8,6 +8,8 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - removed weekday from FRC
 - removed ordinals from dailies
 - moved full frcal to switched
+- added Shmita year
+- (mob) added Hebrew-only switch
 
 * 3.12.11 - 2024-06-22
 - new *ChangeLog* format

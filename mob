@@ -13,8 +13,8 @@ HEADER=
 HEBREW=true
 EREV=
 YAHR=
-HIJRI=true
 BUDDHA=true
+HIJRI=true
 ZODIAC=true
 PROXIM=true
 XIAN=
@@ -24,10 +24,16 @@ year=$(date +%Y)
 DATEFMT="%m/%d" # DATEFMT="%d %b"
 YAHRFILE="$HOME/.calendar/deaths"
 
-while getopts ":jeYlbhzpxy:HD?" OPTION; do
+while getopts ":jJeYlbhzpxy:HD?" OPTION; do
 	case $OPTION in
 		j)	# Hebrew
 			[ $HEBREW ] && unset HEBREW || HEBREW=true;;
+		J)	HEBREW=true
+			unset BUDDHA
+			unset HIJRI
+			unset ZODIAC
+			unset PROXIM
+			unset XIAN;;
 		e)	# Erevs
 			EREV=true;;
 		Y)	# Yahrzeits
