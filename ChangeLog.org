@@ -10,6 +10,7 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - moved full frcal to switched
 - added Shmita year
 - (mob) added Hebrew-only switch
+- (mob) added coincident Passover/Easter
 
 * 3.12.11 - 2024-06-22
 - new *ChangeLog* format

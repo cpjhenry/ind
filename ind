@@ -288,7 +288,7 @@ if [ $(which phases) ]; then _PH=true
 
 	if [ $LUNAR ]; then
 		for i in 0 2; do # February is shorter than a standard lunation (e.g. Feb. 2033 & 2037)
-			[ ${moonphase[$i]} ] && dmoo+=("$(printf "%s*\t%s" ${moonphase[$i]:5} "${PHASES[$i]}")")
+			[ ${moonphase[$i]} ] && dmoo+=("$(printf "%s*\t%s Moon" ${moonphase[$i]:5} "${PHASES[$i]}")")
 			done
 		[ "$BLKMOON" ] && dmoo+=("$(printf "%s*\tBlack Moon" ${BLKMOON:5})")
 		[ "$BLUMOON" ] && dmoo+=("$(printf "%s*\tBlue Moon"  ${BLUMOON:5})")
@@ -567,11 +567,11 @@ if [ $COMMON ]; then
 	printf "CE %d" $year
 	[ $_LY ]	&& printf "%s" "$HOLSYM"
 	printf " %s %s ind." "$rnyear" "$ind"
-	printf "$bold"
-	[ $MTYPE ]	&& printf " (%s)" "$moon"; printf "\n" #"${SYMBOL[$MTYPE]}"
+	printf "$bold\n"
 
 	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz" &&
 	[ $jymd ]	&& printf "O.S. %s Day %03d\n" "${jymd:5}" "$jdoy" |sed 's/-/\//'
+	[ $MTYPE ]	&& printf -- "-- %s --\n" "$moon Moon"
 
 	[ "$reg" ]	&& printf "%s " "$reg"
 	[ "$frc" ]	&& printf "%s " "$frc"
