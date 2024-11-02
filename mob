@@ -2,6 +2,8 @@
 # Movable observances, Hebrew calendar & yahrtzeits
 # 2019-10-23
 
+# See ChangeLog for changes.
+
 app=$(basename $0)
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$app: 'coreutils' is required." && exit 1
 [ $(uname) = 'Darwin' ] && [ ! $(which dateround) ] && echo "$app: 'dateutils' is required." && exit 1
@@ -29,16 +31,22 @@ function passover_easter() { # year
 	easter=$( date -d"$(ncal -e $1)" +%m/%d)
 	[ $(date -d"$passover + 1 day" +%m/%d) = $easter ] && match=true; }
 
-while getopts ":jJeYlbhzpxy:HDP?" OPTION; do
+function displaynone() {
+	unset HEBREW
+	unset EREV
+	unset YAHR
+	unset BUDDHA
+	unset HIJRI
+	unset ZODIAC
+	unset PROXIM
+	unset XIAN; }
+
+while getopts ":njeYlbhzpxy:HDP?" OPTION; do
 	case $OPTION in
+		n)	# display none
+			displaynone;;
 		j)	# Hebrew
 			[ $HEBREW ] && unset HEBREW || HEBREW=true;;
-		J)	HEBREW=true
-			unset BUDDHA
-			unset HIJRI
-			unset ZODIAC
-			unset PROXIM
-			unset XIAN;;
 		e)	# Erevs
 			EREV=true;;
 		Y)	# Yahrzeits

@@ -7,9 +7,13 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - removed dailies from verbose
 - removed weekday from FRC
 - removed ordinals from dailies
+- added separator
 - moved full frcal to switched
 - added Shmita year
-- (mob) added Hebrew-only switch
+- added Pavarana to verbose
+- squashed FRC multi-byte display bug
+- squashed Hebrew verbose year bug
+- (mob) added 'display none' switch
 - (mob) added coincident Passover/Easter
 
 * 3.12.11 - 2024-06-22
