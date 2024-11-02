@@ -13,6 +13,7 @@ export GCAL="--resource-file=nil --exclude-fixed-dates-list-title --suppress-fix
 
 FULLCE=
 COMMON=true
+RNUM=true
 
 FRCAL=
 HHPC=
@@ -443,22 +444,26 @@ doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
 [[ 10#$doy -ge 10#$doycmp ]] && (( frc+=1 ))
 [[ 10#$doy -eq 10#$doycmp ]] && newfrc=$CHGSYM
 [ $frc -le 0 ] && unset frc
-if [ $FRCAL ] && [ $(which emacs) ]; then
+
+if [ $FRCAL ] && [ $frc ] && [ $(which emacs) ]; then
 	frcal=$(emacs -Q --batch \
 		--eval "(require 'cal-french)" \
 		--eval "(print (calendar-french-date-string '($month $day $year)))" |
-		sed 's/\"//g;/^$/d;s/^[[:alpha:]]* //;s/ an [0-9]* de la R.v.*$//;s/ jour / /'); fi
+		sed 's/\"//g;/^$/d;s/^[[:alpha:]]* //;s/ an [0-9]* de la R.v.*$//;s/ jour / /')
+else unset FRCAL; fi
 
 # Set Roman numeral years; DEP rnum
-if [ $COMMON ] && [ $(which rnum) ]; then
+if [ $RNUM ] && [ $(which rnum) ]; then
 	rnyear=$(rnum $year)
 	[ $frc ] && frc=$(rnum $frc)
-	if [ "$frcal" ]; then
-		frcl=$(($OUTPWTH - ${#frc}))
-		[ $(wc -c <<< "$frcal") != $(wc -m <<< "$frcal") ] && ((frcl++))
-		frcal=$(printf "%-${frcl}s%s%s" "$frcal" "$frc" "$newfrc")
-		unset frc; fi
 else unset rnyear; fi
+
+if [ "$frcal" ]; then
+	[ ! "$rnyear" ] && frc=$(printf "FRC %4s" "$frc")
+	frcl=$(($OUTPWTH - ${#frc}))
+	[ $(wc -c <<< "$frcal") != $(wc -m <<< "$frcal") ] && ((frcl++))
+	frcal=$(printf "%-${frcl}s%s%s" "$frcal" "$frc" "$newfrc")
+	unset frc; fi
 
 # Set Julian Period; Truncated Julian Date; DEP jday
 (( julp=year+jupconvert ))
@@ -576,9 +581,9 @@ if [ $COMMON ]; then
 	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz" &&
 	[ $jymd ]	&& printf "O.S. %s Day %03d\n" "${jymd:5}" "$jdoy" |sed 's/-/\//'
 
-	[ "$reg" ]	&& printf "%s " "$reg"
+	[ "$reg" ]	&& printf "%s " "$reg"; [ ! "$reg" ] && [ "$frc" ] && printf "FRC "
 	[ "$frc" ]	&& printf "%s " "$frc"
-	[ "$tjd" ]	&& printf "%s" "$tjd"
+	[ "$tjd" ]	&& printf "%s"  "$tjd"
 	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
 
 	[ $MTYPE ]	&& printf -- "-- %s --\n" "$moon Moon"
