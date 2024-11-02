@@ -3,6 +3,7 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 * 3.12.13 - 2024-11-02
 - tweaks
 - display bug squashing
+- Japanese regnal year behaves as Commonwealth
 - squashed double-Hijri bug
 - (mob) list double-Hijris
 
