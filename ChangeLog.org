@@ -1,5 +1,9 @@
 ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 
+* 3.12.13 - 2024-11-02
+- tweaks
+- display bug squashing
+
 * 3.12.12 - 2024-10-05
 - tweaks
 - silence ides
