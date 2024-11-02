@@ -41,7 +41,7 @@ function displaynone() {
 	unset PROXIM
 	unset XIAN; }
 
-while getopts ":njeYlbhzpxy:HDP?" OPTION; do
+while getopts ":njeYlbhzpxy:HDPI?" OPTION; do
 	case $OPTION in
 		n)	# display none
 			displaynone;;
@@ -86,6 +86,12 @@ while getopts ":njeYlbhzpxy:HDP?" OPTION; do
 				passover_easter $i
 				[ $match ] && printf "%4d   %-8s %-6s\n" $i $passover $easter && unset match
 				done; exit;;
+		I)	# double Hijri
+			for i in {1901..2099}; do
+				gcal -e --islamic-civil-holidays --date-format='%>04*Y-%>02*M-%>02*D' $i |
+					grep '(Isl)' |grep 'New' |sed -n "2p" |sed "s/ (.*//"
+				done; exit;;
+
 		*)	getusage $0
 			exit;;
 	esac

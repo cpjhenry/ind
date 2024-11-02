@@ -504,7 +504,7 @@ fi
 
 # Hijri; DEP gcal
 if [ $(which gcal) ]; then
-	hijra=$(gcal -e --islamic-civil-holidays --date-format='%>02*M/%>02*D' $year |grep 'New')
+	hijra=$(gcal -e --islamic-civil-holidays --date-format='%>02*M/%>02*D' $year |grep -m1 'New')
 	hijri=${hijra:(-10):4}
 	hijra=$(cut -f1 -d":" <<<$hijra)
 	doycmp=$(date -d"$hijra" +%-j)
@@ -555,6 +555,7 @@ case 1 in
 	$(($year>=1868))) ERANUM=1;jenconvert=1868;;
 	$(($year<1868)))  ERANUM=0;;
 	esac
+[ $year -gt	$(date +%Y) ] && ERANUM=0 # Display up to current year only
 [ $ERANUM -eq 0 ] && unset jen || jen="${ERANAME[10#$ERANUM]:0:1}$(( jen=year-(jenconvert-1) ))"
 
 # Buddhist year calculations
@@ -629,20 +630,21 @@ if [ $VERBOSE ]; then
 
 	[ $equinox ] &&printf "Spring Equinox      %s\n" "${equinox:5}" |sed 's/-/\//'
 
-				   printf "Lent                %s\n"	$(date -d"$(ncal -e $year) -46 days" +%m/%d)
-				   printf "Easter              %s\n"	$(date -d"$(ncal -e $year)" +%m/%d)
-				   printf "Advent              %s\n" $(date -d"11/$(ncal -h 11 $year |awk '/^Th/{print $NF}')+3 days" +%m/%d)
-
 	[ $_HC ]	&& printf "Passover            %s\n" $(hebcal -grh Ni 15 $(($hebconvert+$year-1))   |cut -f1) |sed 's/....-//;s/-/\//'
 	[ $_HC ]	&& printf "Rosh Hashana %6s %s\n" "$shmita" $(hebcal -grh Ti 1 $(($hebconvert+$year)) |cut -f1) |sed 's/....-//;s/-/\//'
 	[ $_HC ]	&& printf "Yom Kippur          %s\n" $(hebcal -grh Ti 10 $(($hebconvert+$year)) |cut -f1) |sed 's/....-//;s/-/\//'
+
+				   printf "Lent                %s\n" $(date -d"$(ncal -e $year) -46 days" +%m/%d)
+				   printf "Easter              %s\n" $(date -d"$(ncal -e $year)" +%m/%d)
+				   printf "Advent              %s\n" $(date -d"11/$(ncal -h 11 $year |awk '/^Th/{print $NF}')+3 days" +%m/%d)
+
 	[ $hijra ]	&& printf "Hijra               %s\n" "$hijra"
 
 	[ "$jen" ]	&& printf "Japanese Era        %s\n" "${ERANAME[10#$ERANUM]}"
 	[ $cny ] 	&& printf "Chinese New Year    %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
 
-	[ $_PH ]	&& printf "Vassa               07/%02d\n" $(date -d"$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
-	[ $_PH ]	&& printf "Pavarana            10/%02d\n" $(date -d"$(phases $year 10 2 |sed -n 1p)" +%d)
+	[ $_PH ]	&& printf "Vassa               07/%02s\n" $(date -d"$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
+	[ $_PH ]	&& printf "Pavarana            10/%02s\n" $(date -d"$(phases $year 10 2 |sed -n 1p)" +%d)
 	fi
 
 # Local Variables:

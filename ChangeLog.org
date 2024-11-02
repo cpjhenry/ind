@@ -3,6 +3,8 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 * 3.12.13 - 2024-11-02
 - tweaks
 - display bug squashing
+- squashed double-Hijri bug
+- (mob) list double-Hijris
 
 * 3.12.12 - 2024-10-05
 - tweaks
@@ -560,4 +562,4 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - initial calculations
 
 * #
-#  LocalWords:  dateutils
+#  LocalWords:  dateutils Hijri Hijris PGLUC
