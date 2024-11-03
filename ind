@@ -82,7 +82,7 @@ DOMINI=(G A B C D E F)
 PHASES=("New" "First" "Full" "Last")
 BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
-ZODIAC=(Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
+ZODIAC=(- Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13
 		 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
@@ -327,27 +327,19 @@ if [ $(which phases) ]; then _PH=true
 	(( roc=year-rocconvert+1 )); [ $roc -le 0 ] && unset roc
 
 	# 'year of'
-	case 1 in
-		$(($year< 1969))) unset cny ;;
-		$(($year< 1972))) (( yearof=$year-1960 )) ;;
-		$(($year< 1984))) (( yearof=$year-1972 )) ;;
-		$(($year< 1996))) (( yearof=$year-1984 )) ;;
-		$(($year< 2008))) (( yearof=$year-1996 )) ;;
-		$(($year< 2020))) (( yearof=$year-2008 )) ;;
-		$(($year< 2032))) (( yearof=$year-2020 )) ;;
-		$(($year< 2044))) (( yearof=$year-2032 )) ;;
-		$(($year>=2044))) unset cny ;;
-	esac
-
-	if [ $CHINESE ]; then
-		if [ $year -le 2038 ]; then
-			printf "%s %s %s %s " $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$yearof]}
-			[ $(which rnum) ] && printf "%s\n" "$(rnum $(($yearof +1)))" || printf "%d\n" $(($yearof +1))
-			fi
-		exit; fi
+	(( yearof = ( $year - 3 ) % 12 ))
+	[[ $yearof == 0 ]] && yearof=12
 
 	if [ $ZODIACYEAR ]; then
-		[ $cny ] && printf "%s*\tYear of the %s\n" ${cny:5} ${ZODIAC[$yearof]} |sed 's/-/\//'
+		[ $cny ] && printf "%s*\tYear of the %s " ${cny:5} ${ZODIAC[$yearof]} |sed 's/-/\//'
+		[ $(which rnum) ] && printf "%s\n" "$(rnum $yearof)" || printf "%d\n" $yearof
+		exit; fi
+
+	if [ $CHINESE ]; then
+		if [ $year -ge 1999 ] && [ $year -le 2038 ]; then
+			printf "%s %s %s %s " $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$yearof]}
+			[ $(which rnum) ] && printf "%s\n" "$(rnum $yearof)" || printf "%d\n" $yearof
+			fi
 		exit; fi
 
 else unset CHINALY; fi
