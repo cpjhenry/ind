@@ -89,7 +89,7 @@ while getopts ":njeYlbhzpxy:HDPI?" OPTION; do
 		I)	# double Hijri
 			for i in {1901..2099}; do
 				gcal -e --islamic-civil-holidays --date-format='%>04*Y-%>02*M-%>02*D' $i |
-					grep '(Isl)' |grep 'New' |sed -n "2p" |sed "s/ (.*//"
+					grep '(Isl)' |grep 'New' |sed -n "2p" |sed "s/: /\t/;s/ (.*//"
 				done; exit;;
 
 		*)	getusage $0
