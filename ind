@@ -579,7 +579,7 @@ if [ $COMMON ]; then
 	[ "$tjd" ]	&& printf "%s"  "$tjd"
 	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
 
-	[ $MTYPE ]	&& printf -- "-- %s --\n" "$moon Moon"
+	[ $MTYPE ]	&& printf -- "- %s -\n" "$moon Moon"
 	fi
 
 [ $FRCAL ] && [ "$frcal" ] && printf "%s\n" "$frcal"
