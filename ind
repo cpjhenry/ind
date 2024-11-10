@@ -38,8 +38,6 @@ OBSERVS=
 GRAND=
 
 OUTPWTH=27
-SYMBOL=("x" ">" "o" "<")
-ALTSYM=("●" "☽" "○" "☾")
 PREFIX="- "
 SEPARATOR=
 CHGSYM=" !"
@@ -79,6 +77,8 @@ DOWS=(Sun Mon Tue Wed Thu Fri Sat)
 
 EPACTS=(0 29 10 21 2 13 24 5 16 27 8 19 30 11 22 3 14 25 6 17)
 DOMINI=(G A B C D E F)
+SYMBOL=("x" ">" "o" "<")
+ALTSYM=("●" "☽" "○" "☾")
 PHASES=("New" "First" "Full" "Last")
 BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
@@ -93,7 +93,7 @@ REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952"	"2022"
 
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	sd="$@"
-	if [ "$(grep '\+' <<< $sd)" ]; then
+	if [ "$(grep '\+\|\-' <<< $sd)" ]; then
 		[ "$(grep -v '[Dd]ay' <<< $sd)" ] && sd=$(echo $sd |sed 's/$/ day/'); fi
 	year=$(date -d "$sd 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
 	month=$(date -d "$sd 00:18" +%0m)
@@ -266,6 +266,7 @@ else
 	utc=$(date -ud "$ymd $hms $ltz" "+%F %T")
 fi
 
+#
 # Moons; DEP phases
 if [ $(which phases) ]; then _PH=true
 	while IFS= read -r line; do newmoon+=( "$(date -d "$line UTC" +%F)"); done < <(phases $year $month 0)
@@ -344,6 +345,7 @@ if [ $(which phases) ]; then _PH=true
 
 else unset CHINALY; fi
 
+#
 # Lunar and Lunisolar Calculations
 if [ $VERBOSE ]; then
 	(( dominical=((year-1)%100%4*2+(year-1)%100%7*4+(year-1)/100%4*2)%7 ))
@@ -486,7 +488,8 @@ else unset ERISIAN; fi
 _HC=$(which hebcal)
 if [ $HEBREW ] && [ $_HC ]; then
 	hebdate=$(hebcal -grh $month $day $year |cut -f2 |sed -E 's/st |nd |rd |th / /;s/ of / /')
-	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year)) |cut -f1) +%-j) ]] &&newheb=$CHGSYM
+	[[ 10#$doy -eq 10#$(date -d $(hebcal -grh Ti 1 $(($hebconvert+$year)) |cut -f1) +%-j) ]] &&
+		newheb=$CHGSYM
 else unset HEBREW; fi
 if [ $year -ge 1951 ]; then
 	(( shmita=year-1951 )); (( shmita=shmita % 7 ));
@@ -508,8 +511,8 @@ else unset HIJRI; fi
 if [ $BAHAI ] && [ $(which gcal) ]; then
 	(( bahyear=year-bahconvert+1 ))
 	# calculate Equinox as observed in Tehran
-	tequinox=$(gcal -e --astronomical-holidays --date-format='%Y-%>02*M-%>02*D' --time-offset=+04:30 3 $year |
-	grep 'Equinox' |cut -f1 -d":")
+	tequinox=$(gcal -e --astronomical-holidays --date-format='%Y-%>02*M-%>02*D' --time-offset=+04:30 3 $year|
+		grep 'Equinox' |cut -f1 -d":")
 	doycmp=$(date -d"$tequinox" +%-j)
 	[[ 10#$doy -lt 10#$doycmp ]] && (( bahyear-=1 ))
 	[[ 10#$doy -eq 10#$doycmp ]] && newbah=$CHGSYM
@@ -553,6 +556,7 @@ case 1 in
 # Buddhist year calculations
 (( buddhist=year+budconvert ))
 
+#
 # main()
 if [ $FULLCE ]; then
 	case 1 in

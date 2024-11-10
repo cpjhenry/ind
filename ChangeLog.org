@@ -6,6 +6,7 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 - convert zodiac table to modulus (∞)
 - Japanese regnal now behaves as Commonwealth
 - squashed double-Hijri bug
+- added '-' day functionality
 - (mob) list double-Hijris
 
 * 3.12.12 - 2024-10-05
@@ -26,7 +27,7 @@ ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 
 * 3.12.11 - 2024-06-22
 - new *ChangeLog* format
-- added '+1' day functionality
+- added '+' day functionality
 - tweaks
 - (mob) dateutils error-checking
 - (mob) Midsummer's Eve
