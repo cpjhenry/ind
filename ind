@@ -432,7 +432,7 @@ if [ $COMMON ]; then
 	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}$newreg"
 	fi
 
-# French Revolutionary Calendar (revised)
+# French Revolutionary Calendar (revised, from 22 September 1792)
 (( frc=year-frcconvert ))
 doycmp=$(date -d "22 Sept $year" +%-j)	 # September 22nd (Day 1) Gregorian
 [[ 10#$doy -ge 10#$doycmp ]] && (( frc+=1 ))
