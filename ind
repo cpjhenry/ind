@@ -10,11 +10,13 @@ APP=$(basename $0)
 
 GITREP=$HOME/src/ind
 export GCAL="--resource-file=nil --exclude-fixed-dates-list-title --suppress-fixed-dates-list-separator"
+EMACSLP="$HOME/.emacs.d/etc/init" # load-path
 
 FULLCE=
 COMMON=true
 RNUM=true
 
+RCAL=true
 FRCAL=
 HHPC=
 ERISIAN=
@@ -45,11 +47,12 @@ HOLSYM=" +"
 
 # Conversion dates
 nabconvert=747	# Reign of the Babylonian King Nabūnāṣiru; 747 BCE
-dioconvert=284	# Reign of Diocletian, September 11th; 284 CE
+dioconvert=284	# Reign of Diocletian, November 20th; 284 CE
 
 romconvert=753  # Founding of Rome, January 1st (Julian calendar); 753 BCE
 byzconvert=5509 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
+yapconvert=1950	# Years After Present; 1950 CE
 
 masconvert=4000	;mas=t	# Masoretic; 4000 BCE
 arcconvert=1353 ;arc=t	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
@@ -61,7 +64,7 @@ PGLconvert=1792 ;PGL=t	# PGL year; 1792 CE
 GLCconvert=1855 ;GLC=t	# GLC year; 1855 CE
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
-chiconvert=2698	# Chinese Lunar year, 21 January to 20 February; 2698 BCE
+chiconvert=2698	# Chinese Anno Huangdi; Lunar year, 21 January to 20 February; 2698 BCE
 rocconvert=1912 # ROC year; 1912 CE
 
 frcconvert=1792 # French Revolutionary Calendar; 22 September 1792 CE
@@ -129,7 +132,7 @@ NWR() { # Not within range
 	}
 displayall() {
 	COMMON=true; FRCAL=true;
-	NABON=true;
+	NABON=;
 	HHPC=true; ERISIAN=true;
 	HEBREW=true; BAHAI=true;
 	ROME=true; BYZANTINE=true;
@@ -277,7 +280,7 @@ if [ $(which phases) ]; then _PH=true
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[0]=$i && MOONSET=true
 	done
 	[ $MOONSET ] && [ $ymd = ${moonphase[0]} ] && moon=${PHASES[0]} && MTYPE=0
-	[ $BLKMOON ] && [ $ymd = $BLKMOON ] && moon="Black Moon" && MTYPE=0
+	[ $BLKMOON ] && [ $ymd = $BLKMOON ] && moon="Black" && MTYPE=0
 	unset MOONSET
 
 	for i in "${fullmoon[@]}"; do
@@ -285,7 +288,7 @@ if [ $(which phases) ]; then _PH=true
 		[ "${i:5:2}" = "$month" ] && [ ! $MOONSET ] && moonphase[2]=$i && MOONSET=true
 	done
 	[ $MOONSET ] && [ $ymd = ${moonphase[2]} ] && moon=${PHASES[2]} && FULL=true && MTYPE=2
-	[ $BLUMOON ] && [ $ymd = $BLUMOON ] && moon="Blue Moon" && MTYPE=2
+	[ $BLUMOON ] && [ $ymd = $BLUMOON ] && moon="Blue" && MTYPE=2
 
 	if [ $OBSERVS ]; then [ "$moon" ] && printf -- "%sUposatha\n" "$PREFIX"; exit; fi
 
@@ -394,6 +397,16 @@ if [ $BYZANTINE ]; then
 	byzind="$byzind$(ordinal $byzind)"
 else unset BYZANTINE; fi
 
+# HACK 2025-12-15
+# Diocletian
+if [ $ROME ]; then
+	(( dio=year-dioconvert ))
+	doycmp=$(date -d "20 Nov $year" +%-j) # November 20th (Day 1) Gregorian
+	[[ 10#$doy -ge 10#$doycmp ]] && (( dio+=1 ))
+	[[ 10#$doy -eq 10#$doycmp ]] && newdio=$CHGSYM
+	[ $dio -le 0 ] && unset dio
+	fi
+
 (( ind=($year+2)%15+1 )) # Gregorian
 ind="$ind$(ordinal $ind)"
 
@@ -431,6 +444,18 @@ if [ $COMMON ]; then
 
 	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}$newreg"
 	fi
+
+# HACK 2025-12-14
+# Roman Calendar
+# note: absolute date -- Roman dates normally start at sunset the previous day
+[ ! -f "$EMACSLP/roman-clock.el" ] && unset RCAL
+if [ $RCAL ] && [ $(which emacs) ]; then
+	rcal=$(emacs -Q --batch \
+		--eval="(add-to-list 'load-path \"$EMACSLP\")" \
+		--eval="(require 'roman-clock)" \
+		--eval="(print (roman-clock--ante-diem-from-dmy $day $month $year))" |
+		sed 's/\"//g;/^$/d')
+else unset RCAL; fi
 
 # French Revolutionary Calendar (revised, from 22 September 1792)
 (( frc=year-frcconvert ))
@@ -472,6 +497,10 @@ if [ $(which jday) ]; then
 	[ ! "$tjd" ] && [ $mjd ]   && tjd="MJD $mjd"
 	[ ! "$tjd" ] && [ ! $mjd ] && [ $RD ] && tjd="RD $RD"
 else unset tjd; fi
+
+# Years After Present
+(( yap=year-yapconvert ))
+[ $yap -le 0 ] && unset yap
 
 # Set Hanke-Henry date; DEP hh
 if [ $HHPC ] && [ $(which hh) ] && [ $year -ge 2018 ]; then
@@ -578,9 +607,11 @@ if [ $COMMON ]; then
 	[ ! $yos ]	&& printf "Day %d Week %d %s %3s\n" $doy $iwn "$qtr" "$ltz" &&
 	[ $jymd ]	&& printf "O.S. %s Day %03d\n" "${jymd:5}" "$jdoy" |sed 's/-/\//'
 
+	[ $RCAL ] && [ "$rcal" ] && printf "%s\n" "$rcal"
+
 	[ "$reg" ]	&& printf "%s " "$reg"; [ ! "$reg" ] && [ "$frc" ] && printf "FRC "
 	[ "$frc" ]	&& printf "%s " "$frc"
-	[ "$tjd" ]	&& printf "%s"  "$tjd"
+	[ "$tjd" ]	&& printf "%s " "$tjd"
 	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
 
 	[ $MTYPE ]	&& printf -- "- %s -\n" "$moon Moon"
@@ -597,9 +628,11 @@ if [ $COMMON ]; then
 
 [ $NABON ]		&& printf "Babylonian          AN %d%s\n" $nabyear "$newnab"
 [ $ROME ]		&& printf "City of Rome       AUC %d%s\n" $rome "$newrom"
+[ "$ROME" -a "$dio" ] && printf "Reign of Diocletian RD %d%s\n" $dio "$newdio"
 [ $BYZANTINE ]	&& printf "Byzantine %-4s      AM %d%s\n" "$byzind" $byzantine "$newbyz"
 
 [ $JULIANP ]	&& printf "Julian Period       JP %d\n" $julp
+[ "$JULIANP" -a "$yap" ] && printf   "Years After Present AP %4d\n" $yap
 
 [ "$MASORETIC" -a "$mas" ] && printf "Anno Lucis          AL %d\n" $mas
 [ "$MASORETIC" -a "$arc" ] && printf "Anno Rosae Crucis   RC %d%s\n" $arc "$newarc"
@@ -608,7 +641,7 @@ if [ $COMMON ]; then
 [ "$MASORETIC" -a "$mkt" ] && printf "Anno Ordinis KT     AO %4d\n" $mkt
 
 [ $JAPANIY ]	&& printf "Japanese Imperial  %3s %d\n" "$jen" $jiy
-[ $CHINALY ]	&& printf "Chinese Lunar      %3s %d%s\n" "$roc" $cly "$newchi"
+[ $CHINALY ]	&& printf "Chinese Huangdi    %3s %d%s\n" "$roc" $cly "$newchi"
 [ $BUDDHIST ]	&& printf "Buddhist            BE %d\n"	$buddhist
 
 if [ $GRAND ] ; then
@@ -646,3 +679,5 @@ if [ $VERBOSE ]; then
 # Local Variables:
 # truncate-lines: -1
 # End:
+
+#  LocalWords:  Huangdi usr init Baháʼí

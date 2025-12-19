@@ -1,5 +1,13 @@
 ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 
+* 3.12.14 - 2025-12-14
+- tweaks
+- rename 'Lunar' to 'Huangdi'
+- add 'Reign of Diocletian'
+- add 'Roman Calendar'
+- add 'Years After Present'
+- (mob) tweaks
+
 * 3.12.13 - 2024-11-02
 - tweaks
 - display bug squashing

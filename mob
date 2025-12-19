@@ -53,14 +53,14 @@ while getopts ":njeYlbhzpxy:HDPI?" OPTION; do
 			YAHR=true;;
 		l)	# Holiday information
 			printf "Movable observances:\n\n"
-			printf "Purim              Festival of Lots, deliverance\n"
-			printf "Pesach (Passover)  Pilgrimage, the Exodus from Egypt\n"
-			printf "Shavuot            Pilgrimage, the giving of the Torah\n"
-			printf "Tisha B'Av         Day of Mourning, destruction of the Temples\n"
+			printf "Purim              Festival of Lots\n"
+			printf "Passover (Pesach)  Pilgrimage, Exodus from Egypt\n"
+			printf "Shavuot            Pilgrimage, giving of the Torah\n"
+			printf "Tisha B'Av         Day of Mourning, the Temples\n"
 			printf "Rosh Hashana       New Year\n"
 			printf "Yom Kippur         Day of Atonement, fasting\n"
-			printf "Sukkot             Pilgrimage, the wandering in the desert\n"
-			printf "Chanukah           Festival of Lights, rededication of the Temple\n\n"
+			printf "Sukkot             Pilgrimage, wandering in the desert\n"
+			printf "Chanukah           Festival of Lights, Temple re-dedication\n\n"
 			printf "Yahrzeit           Anniversary of the death of a parent or close relative\n"
 			exit;;
 		b)	# Buddhist
@@ -173,7 +173,7 @@ if [ $PROXIM ]; then [ $outp ] && echo; outp=true
 	# Black Friday (&c)
 	FourthThuNov="Nov $(ncal -h 11 $year |awk '/^Th/{print $5}')"
 	printf "%s*\tBlack Friday\n"	"$(date -d "$FourthThuNov +1 day"  +"$DATEFMT")"
-	printf "%s*\tCyber Monday\n"	"$(date -d "$FourthThuNov +4 days" +"$DATEFMT")"
+	#printf "%s*\tCyber Monday\n"	"$(date -d "$FourthThuNov +4 days" +"$DATEFMT")"
 	printf "%s*\tGiving Tuesday\n" 	"$(date -d "$FourthThuNov +5 days" +"$DATEFMT")"
 
 	fi
