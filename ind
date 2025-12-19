@@ -628,7 +628,7 @@ if [ $COMMON ]; then
 
 [ $NABON ]		&& printf "Babylonian          AN %d%s\n" $nabyear "$newnab"
 [ $ROME ]		&& printf "City of Rome       AUC %d%s\n" $rome "$newrom"
-[ "$ROME" -a "$dio" ] && printf "Reign of Diocletian RD %d%s\n" $dio "$newdio"
+[ "$ROME" -a "$dio" ] && printf "Diocletian          RD %d%s\n" $dio "$newdio"
 [ $BYZANTINE ]	&& printf "Byzantine %-4s      AM %d%s\n" "$byzind" $byzantine "$newbyz"
 
 [ $JULIANP ]	&& printf "Julian Period       JP %d\n" $julp
