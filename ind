@@ -1,22 +1,25 @@
 #!/usr/bin/env bash
 # Calculates Byzantine Date & Indiction
-# 2013-07-16/pjh
+# 2013-07-16/cpj
 
 # See ChangeLog for changes.
 
 APP=$(basename $0)
+# Homebrew aliases put GNU tools ahead of BSD ones in PATH.
+# Let's check if they're present.
 [ $(uname) = 'Darwin' ] && [ ! $(which gdate) ] && echo "$APP: 'coreutils' is required."	&& exit 1
 [ $(uname) = 'Darwin' ] && [ ! $(which gsed)  ] && echo "$APP: 'GNU sed' is required."		&& exit 1
 
 GITREP=$HOME/src/ind
 export GCAL="--resource-file=nil --exclude-fixed-dates-list-title --suppress-fixed-dates-list-separator"
-EMACSLP="$HOME/.emacs.d/etc/init" # load-path
+EMACSLP="$HOME/.emacs.d/usr/" # load-path
 
 FULLCE=
 COMMON=true
 RNUM=true
 
 RCAL=true
+PAPAL=true
 FRCAL=
 HHPC=
 ERISIAN=
@@ -35,6 +38,7 @@ MASORETIC=
 JAPANIY=
 CHINALY=
 BUDDHIST=
+TIBETAN=
 
 OBSERVS=
 GRAND=
@@ -46,7 +50,7 @@ CHGSYM=" !"
 HOLSYM=" +"
 
 # Conversion dates
-nabconvert=747	# Reign of the Babylonian King Nabūnāṣiru; 747 BCE
+nabconvert=747	# Reign of the Babylonian King Nabūnāṣiru (Nabonassar); 747 BCE
 dioconvert=284	# Reign of Diocletian, November 20th; 284 CE
 
 romconvert=753  # Founding of Rome, January 1st (Julian calendar); 753 BCE
@@ -54,14 +58,16 @@ byzconvert=5509 # Byzantine year, September 1st (Julian calendar); 5509 BCE
 jupconvert=4713	# Julian Period; 4713 BCE
 yapconvert=1950	# Years After Present; 1950 CE
 
-masconvert=4000	;mas=t	# Masoretic; 4000 BCE
-arcconvert=1353 ;arc=t	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
-yodconvert=530	;yod=t	# Anno Inventionis; 530 BCE; building of the Second Temple by Zerubbabel
-depconvert=1000 ;dep=	# Anno Depositionis; 1000 BCE; completion of the First Temple by Solomon
+masconvert=4000	;mas=t	# Anno Lucis (Masoretic); 4000 BCE
+arcconvert=1353 ;arc=	# Anno R.C., March 21th, 1:06 a.m. ET; 1353 BCE
+yodconvert=530	;yod=t	# Anno Inventionis; 530 BCE;  Second Temple by Zerubbabel (destroyed 70 CE)
+depconvert=1000 ;dep=	# Anno Depositionis; 1000 BCE; First Temple by Solomon (destroyed 587/586 BCE)
 mktconvert=1118 ;mkt=	# Anno Ordinis; 1118 CE
 UGLconvert=1717 ;UGL=t	# UGL year; 1717 CE
 PGLconvert=1792 ;PGL=t	# PGL year; 1792 CE
 GLCconvert=1855 ;GLC=t	# GLC year; 1855 CE
+
+AFconvert=1250	# Anno Foederis; 1250 BCE; establishment of the Covenant at Sinai
 
 jiyconvert=660	# Japanese Imperial year; 660 BCE
 chiconvert=2698	# Chinese Anno Huangdi; Lunar year, 21 January to 20 February; 2698 BCE
@@ -86,17 +92,14 @@ PHASES=("New" "First" "Full" "Last")
 BUDOBS=("Magha (Sangha)" "Vesak (Buddha)" "Asalha (Dhamma)" "Vassa" "Pavarana")
 
 ZODIAC=(- Rat Ox Tiger Rabbit Dragon Snake Horse Goat Monkey Rooster Dog Pig)
+TIBZODIAC=(- Mouse Ox Tiger Rabbit Dragon Snake Horse Sheep Monkey Bird Dog Pig)
 CNYDATE=(02-05 01-25 02-12 02-01 01-22 02-10 01-29 02-17 02-06 01-26 02-13
 		 02-03 01-23 02-11 01-31 02-19 02-08 01-28 02-15 02-04)
 ERANAME=(- "Meiji ㍾" "Taishō ㍽" "Shōwa ㍼" "Heisei ㍻" "Reiwa ㋿")
 
-REGNAME=(- "Geo 3"	"Geo 4" "Wm 4"	"Vict"	"Edw 7"	"Geo 5"	"Edw 8"	"Geo 6" "Eliz 2" "Cha 3")
-REGDATE=(- "10/25"	"01/29"	"06/26" "06/20" "01/22"	"05/06"	"01/20"	"12/11"	"02/06" "09/08")
-REGYEAR=(- "1760"	"1820"	"1830"	"1837"	"1901"	"1910"	"1936"	"1936"	"1952"	"2022")
-
 setdate() { # usage: setdate [yesterday|today|tomorrow]
 	sd="$@"
-	if [ "$(grep '\+\|\-' <<< $sd)" ]; then
+	if [ "$(grep '\+' <<< $sd)" ]; then
 		[ "$(grep -v '[Dd]ay' <<< $sd)" ] && sd=$(echo $sd |sed 's/$/ day/'); fi
 	year=$(date -d "$sd 00:18" +%Y 2>/dev/null); [ $? -ne 0 ] && NWR
 	month=$(date -d "$sd 00:18" +%0m)
@@ -138,7 +141,8 @@ displayall() {
 	ROME=true; BYZANTINE=true;
 	JULIANP=true; MASORETIC=true;
 	JAPANIY=true; CHINALY=true;
-	BUDDHIST=true; HIJRI=true;
+	BUDDHIST=true; TIBETAN=true;
+	HIJRI=true;
 
 	SEPARATOR=true
 	}
@@ -151,14 +155,15 @@ displaynone() {
 	unset ROME; unset BYZANTINE;
 	unset JULIANP; unset MASORETIC;
 	unset JAPANIY; unset CHINALY;
-	unset BUDDHIST; unset HIJRI;
+	unset BUDDHIST; unset TIBETAN;
+	unset HIJRI;
 
 	unset VERBOSE; unset LUNAR; unset CHINESE;
 	}
 
 setdate today			# set today's date
 
-while getopts ":anfcFpekjrzuxiqby:m:d:AHPSBoOXvlCZDU?" OPTION
+while getopts ":anfcFpekjrzuxiqtby:m:d:AHPSBoOXZvlCDU?" OPTION
 do case $OPTION in
 		a) 	displayall;;													# display all
 		n)	displaynone;;													# display none
@@ -179,6 +184,7 @@ do case $OPTION in
 
 		i)	[ $JAPANIY ] 	&& unset JAPANIY	|| JAPANIY=true;;			# Japanese Imperial
 		q)	[ $CHINALY ]	&& unset CHINALY	|| CHINALY=true;;			# Chinese Lunar
+		t)	[ $TIBETAN ]	&& unset TIBETAN	|| TIBETAN=true;;			# Tibetan
 		b)	[ $BUDDHIST ] 	&& unset BUDDHIST 	|| BUDDHIST=true;;			# Buddhist
 
 		y)	year=$OPTARG;;													# set year
@@ -205,13 +211,12 @@ do case $OPTION in
 					then date -d"$u" +"%e %b*%tUposatha"; fi; done
 			exit;;
 		X)	[ $GRAND ]		&& unset GRAND		|| GRAND=true;;				# GL dates
+		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		# Year of the Zodiac
 
  		v)	[ $VERBOSE ]	&& unset VERBOSE 	|| displaynone;VERBOSE=true;; # verbose
 		l)	[ $LUNAR ]		&& unset LUNAR		|| displaynone;LUNAR=true;;	# lunar
 
 		C)	[ $CHINESE ]	&& unset CHINESE	|| CHINESE=true;;			#- Chinese NY diagnostics
-		Z)	[ $ZODIACYEAR ]	&& unset ZODIACYEAR	|| ZODIACYEAR=true;;		#- Year of the Zodiac
-
 		D)	while IFS= read -r line; do										#- check dependencies
 				[ $(which $line) ] || echo "Install '$line'"
 			done < <(grep "DEP" $0 |sed -e "/grep DEP/d;s/^.*DEP[: ]*//")
@@ -271,6 +276,7 @@ fi
 
 #
 # Moons; DEP phases
+# phases input of "2026 2 2" produces output of "2026-02-01 22:00".
 if [ $(which phases) ]; then _PH=true
 	while IFS= read -r line; do newmoon+=( "$(date -d "$line UTC" +%F)"); done < <(phases $year $month 0)
 	while IFS= read -r line; do fullmoon+=("$(date -d "$line UTC" +%F)"); done < <(phases $year $month 2)
@@ -330,19 +336,37 @@ if [ $(which phases) ]; then _PH=true
 	[[ 10#$doy -eq 10#$doycmp ]] && newchi=$CHGSYM
 	(( roc=year-rocconvert+1 )); [ $roc -le 0 ] && unset roc
 
-	# 'year of'
-	(( yearof = ( $year - 3 ) % 12 ))
-	[[ $yearof == 0 ]] && yearof=12
+	# Chinese sexagenary year for the Chinese New Year occurring in Gregorian year
+	(( cny_stem   = (($year - 4) % 10) + 1 ))
+	(( cny_branch = (($year - 4) % 12) + 1 ))
 
+	# Yin / Yang follows stem parity
+	(( cny_stem % 2 )) && cny_yinyang="Yang" || cny_yinyang="Yin"
+
+	CSTEM=( "" Jia Yi Bing Ding Wu Ji Geng Xin Ren Gui )
+	CNBRANCH=( "" Zi Chou Yin Mao Chen Si Wu Wei Shen You Xu Hai )
+	CELEMENT=( "" Wood Wood Fire Fire Earth Earth Metal Metal Water Water )
+
+	cny_stem_name=${CSTEM[$cny_stem]}
+	cny_branch_name=${CNBRANCH[$cny_branch]}
+	cny_element=${CELEMENT[$cny_stem]}
+	cny_animal=${ZODIAC[$cny_branch]}
+
+	cny_ganzhi="${cny_stem_name}${cny_branch_name}"
+	cny_sexagenary="$cny_element $cny_animal"
+	cny_full="$cny_yinyang $cny_element $cny_animal"
+
+	# Support for GNU Calendar (https://github.com/cpjhenry/ccalendar)
 	if [ $ZODIACYEAR ]; then
-		[ $cny ] && printf "%s*\tYear of the %s " ${cny:5} ${ZODIAC[$yearof]} |sed 's/-/\//'
-		[ $(which rnum) ] && printf "%s\n" "$(rnum $yearof)" || printf "%d\n" $yearof
+		[ $cny ] && printf "%s*\t%s (%s) " ${cny:5} "$cny_full" "$cny_ganzhi" |sed 's/-/\//'
+		[ $(which rnum) ] && printf "%s\n" "$(rnum $cny_branch)" || printf "%d\n" $cny_branch
 		exit; fi
 
+	# Debugging tools
 	if [ $CHINESE ]; then
 		if [ $year -ge 1999 ] && [ $year -le 2038 ]; then
-			printf "%s %s %s %s " $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$yearof]}
-			[ $(which rnum) ] && printf "%s\n" "$(rnum $yearof)" || printf "%d\n" $yearof
+			printf "%s %s %s %s " $year ${cny:5:5} ${CNYDATE[(($year-2019))]} ${ZODIAC[$cny_branch]}
+			[ $(which rnum) ] && printf "%s\n" "$(rnum $cny_branch)" || printf "%d\n" $cny_branch
 			fi
 		exit; fi
 
@@ -397,7 +421,6 @@ if [ $BYZANTINE ]; then
 	byzind="$byzind$(ordinal $byzind)"
 else unset BYZANTINE; fi
 
-# HACK 2025-12-15
 # Diocletian
 if [ $ROME ]; then
 	(( dio=year-dioconvert ))
@@ -413,45 +436,128 @@ ind="$ind$(ordinal $ind)"
 # Beware the Ides...
 # [ $month -eq 3 -o $month -eq 5 -o $month -eq 7 -o $month -eq 10 ] && ides=15 || ides=13
 
-# Regnal Year (United Kingdom, from 1 Jan 1801)
-if [ $COMMON ]; then
-	case 1 in
-		$(($year>=9999)) ) REGNUM=12;;
-		$(($year>=9999)) ) REGNUM=11;;
-		$(($year>=2022)) ) REGNUM=10;;
-		$(($year>=1952)) ) REGNUM=9;;
-		$(($year>=1937)) ) REGNUM=8;;
-		$(($year>=1936)) ) [ $month -eq 12 -a $day -ge 11 ] && REGNUM=8 || REGNUM=7;;
-		$(($year>=1910)) ) REGNUM=6;;
-		$(($year>=1901)) ) REGNUM=5;;
-		$(($year>=1837)) ) REGNUM=4;;
-		$(($year>=1830)) ) REGNUM=3;;
-		$(($year>=1820)) ) REGNUM=2;;
-		$(($year>=1801)) ) REGNUM=1;;
-		*) REGNUM=0;;
-		esac
+#
+# Regnal Year (Canada/United Kingdom, from 1801-01-01)
+# Dates prior to 1801-01-01 return nil.
+# Regnal years are calculated from accession.
 
-	[ $REGNUM -eq 0 ] && REGDATE="$month/$day" && REGYEAR=$year
-	regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
-	[ $year -eq ${REGYEAR[$REGNUM]} ] && [[ 10#$doy -lt 10#$regdt ]] &&
-		(( REGNUM-=1 )) && regdt=$(date -d"${REGDATE[$REGNUM]}" +%-j)
-	if [ $REGNUM -gt 0 ]; then
-		(( reg=$year-${REGYEAR[REGNUM]} ))
-		[[ 10#$doy -ge 10#$regdt ]] && (( reg+=1 ))
-		[[ 10#$doy -eq 10#$regdt ]] && newreg=$HOLSYM
-	else reg=0; fi
-	[ $year -gt	$(date +%Y) ] && reg=0 # Display up to current year only
+ymd_num=${ymd//-/}
 
-	[ $reg -eq 0 ] && reg="" || reg="$reg ${REGNAME[10#$REGNUM]}$newreg"
-	fi
+MONARCH="nil"
+MONACC=""
+MONYEAR=""
 
-# HACK 2025-12-14
+if (( ymd_num >= 18010101 )); then
+    if   (( ymd_num >= 20220908 )); then
+        MONARCH="Cha 3"
+        MONACC="2022-09-08"
+    elif (( ymd_num >= 19520206 )); then
+        MONARCH="Eliz 2"
+        MONACC="1952-02-06"
+    elif (( ymd_num >= 19361211 )); then
+        MONARCH="Geo 6"
+        MONACC="1936-12-11"
+    elif (( ymd_num >= 19360120 )); then
+        MONARCH="Edw 8"
+        MONACC="1936-01-20"
+    elif (( ymd_num >= 19100506 )); then
+        MONARCH="Geo 5"
+        MONACC="1910-05-06"
+    elif (( ymd_num >= 19010122 )); then
+        MONARCH="Edw 7"
+        MONACC="1901-01-22"
+    elif (( ymd_num >= 18370620 )); then
+        MONARCH="Vict"
+        MONACC="1837-06-20"
+    elif (( ymd_num >= 18300626 )); then
+        MONARCH="Wm 4"
+        MONACC="1830-06-26"
+    elif (( ymd_num >= 18200129 )); then
+        MONARCH="Geo 4"
+        MONACC="1820-01-29"
+    else
+        MONARCH="Geo 3"
+        MONACC="1760-10-25"
+    fi
+
+    ACCY=${MONACC:0:4}
+    ACCM=${MONACC:5:2}
+    ACCD=${MONACC:8:2}
+
+    Y=${ymd:0:4}
+    M=${ymd:5:2}
+    D=${ymd:8:2}
+
+    reg=$((10#$Y - 10#$ACCY))
+    if (( 10#$M * 100 + 10#$D >= 10#$ACCM * 100 + 10#$ACCD )); then
+        reg=$((reg + 1))
+        [[ $M$D == $ACCM$ACCD ]] && newreg=$HOLSYM
+    fi
+
+    # Display up to current year only
+    (( 10#$Y > $(date +%Y) )) && reg=0
+fi
+
+[[ "$MONARCH" == "nil" || $reg -eq 0 ]] && reg="" || reg="$reg $MONARCH$newreg"
+
+# Papacy (modern epoch)
+# Defined from the Lateran Treaty (1929-02-11), which establishes
+# Vatican City as a sovereign entity. Dates prior to this return nil.
+# Regnal years are calculated from accession, not from the epoch.
+
+ymd_num=${ymd//-/}
+
+if [ $PAPAL ] && (( ymd_num >= 19290211 )); then
+    if   (( ymd_num >= 20250518 )); then
+        POPE="Leo XIV"
+        POPEACC="2025-05-18"
+    elif (( ymd_num >= 20130319 )); then
+        POPE="Francis"
+        POPEACC="2013-03-19"
+    elif (( ymd_num >= 20050424 )); then
+        POPE="Benedict XVI"
+        POPEACC="2005-04-24"
+    elif (( ymd_num >= 19781016 )); then
+        POPE="John Paul II"
+        POPEACC="1978-10-16"
+    elif (( ymd_num >= 19780826 )); then
+        POPE="John Paul I"
+        POPEACC="1978-08-26"
+    elif (( ymd_num >= 19630621 )); then
+        POPE="Paul VI"
+        POPEACC="1963-06-21"
+    elif (( ymd_num >= 19581028 )); then
+        POPE="John XXIII"
+        POPEACC="1958-10-28"
+    elif (( ymd_num >= 19390302 )); then
+        POPE="Pius XII"
+        POPEACC="1939-03-02"
+    else
+        POPE="Pius XI"
+        POPEACC="1922-02-06"
+    fi
+
+    # Regnal (pontifical) year calculation
+    ACCY=${POPEACC:0:4}
+    ACCM=${POPEACC:5:2}
+    ACCD=${POPEACC:8:2}
+
+    Y=${ymd:0:4}
+    M=${ymd:5:2}
+    D=${ymd:8:2}
+
+    POPEYEAR=$((10#$Y - 10#$ACCY))
+    if (( 10#$M * 100 + 10#$D >= 10#$ACCM * 100 + 10#$ACCD )); then
+        POPEYEAR=$((POPEYEAR + 1))
+    fi
+fi
+
+#
 # Roman Calendar
 # note: absolute date -- Roman dates normally start at sunset the previous day
 [ ! -f "$EMACSLP/roman-clock.el" ] && unset RCAL
 if [ $RCAL ] && [ $(which emacs) ]; then
-	rcal=$(emacs -Q --batch \
-		--eval="(add-to-list 'load-path \"$EMACSLP\")" \
+	rcal=$(emacs -Q -L $EMACSLP --batch \
 		--eval="(require 'roman-clock)" \
 		--eval="(print (roman-clock--ante-diem-from-dmy $day $month $year))" |
 		sed 's/\"//g;/^$/d')
@@ -485,18 +591,20 @@ if [ "$frcal" ]; then
 	unset frc; fi
 
 # Set Julian Period; Truncated Julian Date; DEP jday
+# Fallback from TJD to Modified Julian Date
+# Fallback from MJD to Rata Die
 (( julp=year+jupconvert ))
 if [ $(which jday) ]; then
 	tjd=$(echo "$(jday -d $utc)-2440000.5" |bc |cut -f1 -d"." |sed '/\-/d')
-	[[ $tjd -lt 1 ]] || [[ $tjd -gt 65535 ]] && unset tjd &&
-		mjd=$(echo "$(jday -d $utc)-2400000.5" |bc |cut -f1 -d"." |sed '/\-/d')
-	[[ $mjd -lt 1 ]] && unset mjd &&
-		RD=$(echo "$(jday -d $utc)-1721424.5"  |bc |cut -f1 -d"." |sed '/\-/d')
-
-	[ "$frcal" ] && [ $tjd ]   && tjd="TJD $tjd"
-	[ ! "$tjd" ] && [ $mjd ]   && tjd="MJD $mjd"
-	[ ! "$tjd" ] && [ ! $mjd ] && [ $RD ] && tjd="RD $RD"
+	[[ $tjd -lt 1 ]] || [[ $tjd -gt 65535 ]] && unset tjd
+	mjd=$(echo "$(jday -d $utc)-2400000.5" |bc |cut -f1 -d"." |sed '/\-/d')
+	[[ $mjd -lt 1 ]] && unset mjd
+	RD=$(echo "$(jday -d $utc)-1721424.5"  |bc |cut -f1 -d"." |sed '/\-/d')
 else unset tjd; fi
+
+# HACK
+# Timekeeping on Mars (Mars Sol Date)
+# MSD = ⁠((JD − 2451549.5)/1.0274912517)⁠ + 44796.0 − 0.0009626
 
 # Years After Present
 (( yap=year-yapconvert ))
@@ -569,6 +677,9 @@ if [ $arc ]; then
 [ $PGL ] && (( PGL=year-PGLconvert )); [[ PGL -le 0 ]] && unset PGL
 [ $GLC ] && (( GLC=year-GLCconvert )); [[ GLC -le 0 ]] && unset GLC
 
+# Anno Foederis
+(( af = year + AFconvert ))
+
 # Japanese Era Name
 (( jiy=year+jiyconvert ))
 case 1 in
@@ -584,6 +695,42 @@ case 1 in
 
 # Buddhist year calculations
 (( buddhist=year+budconvert ))
+
+# Tibetan year calculations; DEP tibdate
+if [[ "$TIBETAN" ]] && command -v tibdate >/dev/null 2>&1 &&
+	IFS='|' read -r tibcycle tibyear tibmonth tibleapm tibday tibleapd < <(tibdate "$ymd"); then
+	tib_rabjung="$tibcycle/$tibyear"
+	(( tib_rablo = (tibcycle - 1) * 60 + tibyear ))
+	(( tib_te = tib_rablo + 1153 ))
+	[[ $tibmonth -eq 1 && $tibday -eq 1 && $tibleapm -eq 0 ]] && newtib=$CHGSYM
+else
+	unset TIBETAN
+fi
+
+# Tibetan Losar for Gregorian year
+if [[ "$VERBOSE" ]] && command -v tibdate >/dev/null 2>&1 &&
+    IFS='|' read -r loscycle losyear _ _ _ _ < <(tibdate "$year-07-01"); then
+    tib_losar=$(tibdate --losar "$loscycle" "$losyear")
+
+	# Zodiac for Gregorian year, not inspected date
+	(( los_rablo = (loscycle - 1) * 60 + losyear ))
+	(( losz = (los_rablo + 3) % 12 ))
+	[[ $losz -eq 0 ]] && losz=12
+
+	# Tibetan element / gender / animal for the Tibetan year whose Losar falls in Gregorian year
+	(( los_stem   = ((los_rablo + 2) % 10) + 1 ))
+	(( los_branch = ((los_rablo + 2) % 12) + 1 ))
+
+	(( los_stem % 2 )) && los_gender="Male" || los_gender="Female"
+
+	TELEMENT=( "" Wood Wood Fire Fire Earth Earth Iron Iron Water Water )
+
+	los_element=${TELEMENT[$los_stem]}
+	los_animal=${TIBZODIAC[$los_branch]}
+
+	los_sexagenary="$los_element $los_animal"
+	los_full="$los_gender $los_element $los_animal"
+fi
 
 #
 # main()
@@ -609,10 +756,18 @@ if [ $COMMON ]; then
 
 	[ $RCAL ] && [ "$rcal" ] && printf "%s\n" "$rcal"
 
-	[ "$reg" ]	&& printf "%s " "$reg"; [ ! "$reg" ] && [ "$frc" ] && printf "FRC "
-	[ "$frc" ]	&& printf "%s " "$frc"
-	[ "$tjd" ]	&& printf "%s " "$tjd"
-	[ "$reg" ] || [ "$frc" ] || [ "$tjd" ] && printf "\n"
+	[ "$reg" ] && printf "%s" "$reg"
+	[ "$reg" ] && [ "$POPE" ] && printf " · "
+	[ "$POPE" ] && printf "%d %s" $POPEYEAR "$POPE"
+	[ "$reg" ] || [ "$POPE" ] && printf "\n"
+
+	[ "$frc" ] && printf "FRC %s" "$frc"; [ "$frc" ] && printf " "
+	[ "$tjd" ] && printf "TJD %s" "$tjd"
+	[ "$tjd" ] && [ "$frcal" ] && printf " MJD %s" "$mjd" # Add MJD where TJD is otherwise alone
+	[ ! "$tjd" ] && [ "$mjd" ] && printf "MJD %s" "$mjd"
+	[ ! "$tjd" ] && [ "$mjd" ] && [ "$RD" ] && [ "$frcal" ] && printf " RD %s" "$RD" # same for MJD
+	[ ! "$tjd" ] && [ ! "$mjd" ] && [ "$RD" ] && printf "RD %s" "$RD"
+	[ "$frc" ] || [ "$tjd" ] || [ "$mjd" ] || [ "$RD" ] && printf "\n"
 
 	[ $MTYPE ]	&& printf -- "- %s -\n" "$moon Moon"
 	fi
@@ -640,8 +795,11 @@ if [ $COMMON ]; then
 [ "$MASORETIC" -a "$dep" ] && printf "Anno Depositionis   AD %d\n" $dep
 [ "$MASORETIC" -a "$mkt" ] && printf "Anno Ordinis KT     AO %4d\n" $mkt
 
+[ "$MASORETIC" ] && printf "Anno Foederis       AF %4d\n" "$af"
+
 [ $JAPANIY ]	&& printf "Japanese Imperial  %3s %d\n" "$jen" $jiy
-[ $CHINALY ]	&& printf "Chinese Huangdi    %3s %d%s\n" "$roc" $cly "$newchi"
+[ $CHINALY ]	&& printf "Chinese     ROC %3s YE %d%s\n" "$roc" $cly "$newchi"
+[ $TIBETAN ]	&& printf "Tibetan       %5s TE %4s%s\n" "$tib_rabjung" "$tib_te" "$newtib"
 [ $BUDDHIST ]	&& printf "Buddhist            BE %d\n"	$buddhist
 
 if [ $GRAND ] ; then
@@ -670,7 +828,8 @@ if [ $VERBOSE ]; then
 	[ $hijra ]	&& printf "Hijra               %s\n" "$hijra"
 
 	[ "$jen" ]	&& printf "Japanese Era        %s\n" "${ERANAME[10#$ERANUM]}"
-	[ $cny ] 	&& printf "Chinese New Year    %s %s\n" "${cny:5}" "${ZODIAC[10#$yearof]}" |sed 's/-/\//'
+	[ "$cny" ]  && printf "Chinese New Year    %s %s\n" "${cny:5}" "$cny_full" |sed 's/-/\//'
+	[ "$losz" ] && printf "Tibetan Losar       %s %s\n" "${tib_losar:5}" "$los_full" |sed 's/-/\//'
 
 	[ $_PH ]	&& printf "Vassa               07/%02s\n" $(date -d"$(phases $year 7 2 |sed -n 1p) +1 day" +%d)
 	[ $_PH ]	&& printf "Pavarana            10/%02s\n" $(date -d"$(phases $year 10 2 |sed -n 1p)" +%d)
@@ -680,4 +839,7 @@ if [ $VERBOSE ]; then
 # truncate-lines: -1
 # End:
 
-#  LocalWords:  Huangdi usr init Baháʼí
+#  LocalWords:  Huangdi usr init Baháʼí ⁠JD jen cny yearof tibz Losar
+#  LocalWords:  tib losar shmita hijra newtib Dominical dominical ymd
+#  LocalWords:  Epact losz newchi rabjung tibdate tibcycle tibyear
+#  LocalWords:  chinesemoon yinyang tYear ganzhi los

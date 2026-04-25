@@ -1,5 +1,17 @@
 ChangeLog -- ind / cpjhenry <cpjhenry@gmail.com>
 
+* 3.13.0 - 2026-04-25
+- tweaks
+- added Papal Regnal years
+- updated Regnal code
+- added 'Anno Foederis'
+- updated Chinese New Year to include stem, branch, and element (gānzhī)
+- tweaked TJD/MJD/RD fallback code
+- added Tibetan year (Bö Gyello), rabjyung cycle, New Year (Losar), and Zodiac
+- rough-in for Mars Sol Date
+- (mob) tweaks
+- (mob) 'Feast of Esther' display as default
+
 * 3.12.14 - 2025-12-14
 - tweaks
 - rename 'Lunar' to 'Huangdi'
